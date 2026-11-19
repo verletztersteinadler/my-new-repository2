@@ -1,4 +1,5 @@
 import { seriesById, sizeById, CONSENT_VERSION, MANUFACTURER_ID, type CategoryId } from "@/data/catalog";
+import { deliverLead, type DeliveryStatus } from "@/lib/leads-delivery.server";
 
 const CATEGORIES = new Set(["hw115", "hw170", "steam", "oil", "block", "auto"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -40,7 +41,7 @@ export type LeadRecord = {
   categoryId: string | null;
   pageUrl: string;
   consentVersion: string;
-  deliveryStatus: "pending";
+  deliveryStatus: DeliveryStatus;
 };
 
 type LeadResult =
@@ -83,7 +84,7 @@ export function getLead(id: string) {
   return undefined;
 }
 
-export function acceptLead(input: LeadInput): LeadResult {
+export async function acceptLead(input: LeadInput): Promise<LeadResult> {
   if (input.honeypot) {
     return { ok: false, status: 422, message: "Заявка не принята", errors: { form: "Проверьте поля формы" } };
   }
@@ -173,5 +174,6 @@ export function acceptLead(input: LeadInput): LeadResult {
   };
   bucket.bySubmission.set(id, lead);
   bucket.hits.push(now);
+  lead.deliveryStatus = await deliverLead(lead);
   return { ok: true, status: 201, lead, replay: false };
 }

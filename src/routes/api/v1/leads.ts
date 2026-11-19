@@ -66,9 +66,20 @@ async function readInput(request: Request): Promise<LeadInput | Response> {
 }
 
 async function handlePost({ request }: { request: Request }) {
+  const origin = request.headers.get("origin");
+  if (origin) {
+    let originHost = "";
+    try {
+      originHost = new URL(origin).host;
+    } catch {
+      return json({ message: "Forbidden" }, 403);
+    }
+    const host = request.headers.get("x-forwarded-host") ?? new URL(request.url).host;
+    if (originHost !== host) return json({ message: "Forbidden" }, 403);
+  }
   const input = await readInput(request);
   if (input instanceof Response) return input;
-  const result = acceptLead(input);
+  const result = await acceptLead(input);
   const wantsJson = (request.headers.get("accept") || "").includes("application/json");
   if (!result.ok) {
     if (!wantsJson) {
