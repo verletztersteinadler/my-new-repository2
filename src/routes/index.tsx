@@ -10,7 +10,7 @@ export type HomeSearch = {
 };
 
 const regions = new Set(["ru", "cis", "tr", "eu", "us", "other"]);
-const lines = new Set(["boiler", "burner", "air"]);
+const lines = new Set(["boiler", "burner", "air", "pump"]);
 
 function read(value: unknown, max = 80) {
   if (typeof value !== "string") return undefined;

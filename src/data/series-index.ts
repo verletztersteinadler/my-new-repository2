@@ -202,6 +202,7 @@ import { vetrosSeries } from "@/data/vetros";
 import { webSeries } from "@/data/web";
 import { zotaSeries } from "@/data/zota";
 import { temronSeries } from "@/data/temron";
+import { hmsLivgidromashSeries, knzSeries, enaSeries, istratexSeries, svnPumpSeries, hmsLivnasosSeries, villinaSeries, vmzNasosSeries, unipumpSeries, ridanSeries, grundfosSeries, wiloSeries, ksbSeries, dabPumpsSeries, lowaraSeries, ebaraSeries, calpedaSeries, saerSeries, impPumpsSeries, hermeticPumpenSeries, dickowSeries, allweilerSeries, prominentSeries, cnpSeries, shinhooSeries } from "@/data/pumps-a";
 
 export function findSeries(id: string | undefined) {
   return (
@@ -408,6 +409,7 @@ export function findSeries(id: string | undefined) {
     seriesById(id, vetrosSeries) ??
     seriesById(id, webSeries) ??
     seriesById(id, zotaSeries) ??
+    publishedCatalogs.flatMap((catalog) => catalog.series).find((item) => item.id === id) ??
     fills.flatMap((item) => item.series).find((item) => item.id === id)
   );
 }
@@ -617,6 +619,31 @@ export const publishedCatalogs: { slug: string; title: string; series: Series[] 
   { slug: "geosoyuz", title: "Союз", series: soyuzSeries },
   { slug: "oaozko", title: "ЗКО", series: zkoSeries },
   ...fills.map((item) => ({ slug: item.slug, title: item.title, series: item.series })),
+  { slug: "hms-livgidromash", title: "ГМС Ливгидромаш", series: hmsLivgidromashSeries },
+  { slug: "knz", title: "КНЗ (Катая)", series: knzSeries },
+  { slug: "ena", title: "ЭНА", series: enaSeries },
+  { slug: "istratex", title: "ИСТРАТЕХ", series: istratexSeries },
+  { slug: "svn-pump", title: "SVN PUMP", series: svnPumpSeries },
+  { slug: "hms-livnasos", title: "ГМС Ливнасос", series: hmsLivnasosSeries },
+  { slug: "villina", title: "ВИЛЛИНА", series: villinaSeries },
+  { slug: "vmz-nasos", title: "ВМЗ (Валдайский завод)", series: vmzNasosSeries },
+  { slug: "unipump", title: "UNIPUMP", series: unipumpSeries },
+  { slug: "ridan", title: "Ridan", series: ridanSeries },
+  { slug: "grundfos", title: "Grundfos", series: grundfosSeries },
+  { slug: "wilo", title: "Wilo", series: wiloSeries },
+  { slug: "ksb", title: "KSB", series: ksbSeries },
+  { slug: "dab-pumps", title: "DAB Pumps", series: dabPumpsSeries },
+  { slug: "lowara", title: "Lowara (Xylem)", series: lowaraSeries },
+  { slug: "ebara", title: "Ebara", series: ebaraSeries },
+  { slug: "calpeda", title: "Calpeda", series: calpedaSeries },
+  { slug: "saer", title: "SAER Elettropompe", series: saerSeries },
+  { slug: "imp-pumps", title: "IMP Pumps", series: impPumpsSeries },
+  { slug: "hermetic-pumpen", title: "HERMETIC-Pumpen", series: hermeticPumpenSeries },
+  { slug: "dickow", title: "DICKOW", series: dickowSeries },
+  { slug: "allweiler", title: "ALLWEILER", series: allweilerSeries },
+  { slug: "prominent", title: "ProMinent", series: prominentSeries },
+  { slug: "cnp", title: "CNP", series: cnpSeries },
+  { slug: "shinhoo", title: "SHINHOO", series: shinhooSeries },
 ];
 
 function family(id: CategoryId) {

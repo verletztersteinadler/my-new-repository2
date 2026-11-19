@@ -240,6 +240,7 @@ import { LeadForm, type LeadContext } from "@/components/lead-form";
 import { Logo } from "@/components/logo";
 import { FactoryCard } from "@/components/factory-card";
 import { manufacturerBySlug } from "@/data/manufacturers";
+import { hmsLivgidromashCategories, hmsLivgidromashDocuments, hmsLivgidromashSeries, knzCategories, knzDocuments, knzSeries, enaCategories, enaDocuments, enaSeries, istratexCategories, istratexDocuments, istratexSeries, svnPumpCategories, svnPumpDocuments, svnPumpSeries, hmsLivnasosCategories, hmsLivnasosDocuments, hmsLivnasosSeries, villinaCategories, villinaDocuments, villinaSeries, vmzNasosCategories, vmzNasosDocuments, vmzNasosSeries, unipumpCategories, unipumpDocuments, unipumpSeries, ridanCategories, ridanDocuments, ridanSeries, grundfosCategories, grundfosDocuments, grundfosSeries, wiloCategories, wiloDocuments, wiloSeries, ksbCategories, ksbDocuments, ksbSeries, dabPumpsCategories, dabPumpsDocuments, dabPumpsSeries, lowaraCategories, lowaraDocuments, lowaraSeries, ebaraCategories, ebaraDocuments, ebaraSeries, calpedaCategories, calpedaDocuments, calpedaSeries, saerCategories, saerDocuments, saerSeries, impPumpsCategories, impPumpsDocuments, impPumpsSeries, hermeticPumpenCategories, hermeticPumpenDocuments, hermeticPumpenSeries, dickowCategories, dickowDocuments, dickowSeries, allweilerCategories, allweilerDocuments, allweilerSeries, prominentCategories, prominentDocuments, prominentSeries, cnpCategories, cnpDocuments, cnpSeries, shinhooCategories, shinhooDocuments, shinhooSeries } from "@/data/pumps-a";
 
 import type { CatalogSearch } from "@/routes/manufacturers/$slug";
 
@@ -588,6 +589,32 @@ function profileFor(slug: string) {
   if (slug === "pem-energo") return pack("ПроЭнергоМаш", pemCategories, pemSeries, pemDocuments);
   if (slug === "geosoyuz") return pack("Союз", soyuzCategories, soyuzSeries, soyuzDocuments);
   if (slug === "oaozko") return pack("ЗКО", zkoCategories, zkoSeries, zkoDocuments);
+  if (slug === "hms-livgidromash") return pack("ГМС Ливгидромаш", hmsLivgidromashCategories, hmsLivgidromashSeries, hmsLivgidromashDocuments);
+  if (slug === "knz") return pack("КНЗ (Катая)", knzCategories, knzSeries, knzDocuments);
+  if (slug === "ena") return pack("ЭНА", enaCategories, enaSeries, enaDocuments);
+  if (slug === "istratex") return pack("ИСТРАТЕХ", istratexCategories, istratexSeries, istratexDocuments);
+  if (slug === "svn-pump") return pack("SVN PUMP", svnPumpCategories, svnPumpSeries, svnPumpDocuments);
+  if (slug === "hms-livnasos") return pack("ГМС Ливнасос", hmsLivnasosCategories, hmsLivnasosSeries, hmsLivnasosDocuments);
+  if (slug === "villina") return pack("ВИЛЛИНА", villinaCategories, villinaSeries, villinaDocuments);
+  if (slug === "vmz-nasos") return pack("ВМЗ (Валдайский завод)", vmzNasosCategories, vmzNasosSeries, vmzNasosDocuments);
+  if (slug === "unipump") return pack("UNIPUMP", unipumpCategories, unipumpSeries, unipumpDocuments);
+  if (slug === "ridan") return pack("Ridan", ridanCategories, ridanSeries, ridanDocuments);
+  if (slug === "grundfos") return pack("Grundfos", grundfosCategories, grundfosSeries, grundfosDocuments);
+  if (slug === "wilo") return pack("Wilo", wiloCategories, wiloSeries, wiloDocuments);
+  if (slug === "ksb") return pack("KSB", ksbCategories, ksbSeries, ksbDocuments);
+  if (slug === "dab-pumps") return pack("DAB Pumps", dabPumpsCategories, dabPumpsSeries, dabPumpsDocuments);
+  if (slug === "lowara") return pack("Lowara (Xylem)", lowaraCategories, lowaraSeries, lowaraDocuments);
+  if (slug === "ebara") return pack("Ebara", ebaraCategories, ebaraSeries, ebaraDocuments);
+  if (slug === "calpeda") return pack("Calpeda", calpedaCategories, calpedaSeries, calpedaDocuments);
+  if (slug === "saer") return pack("SAER Elettropompe", saerCategories, saerSeries, saerDocuments);
+  if (slug === "imp-pumps") return pack("IMP Pumps", impPumpsCategories, impPumpsSeries, impPumpsDocuments);
+  if (slug === "hermetic-pumpen") return pack("HERMETIC-Pumpen", hermeticPumpenCategories, hermeticPumpenSeries, hermeticPumpenDocuments);
+  if (slug === "dickow") return pack("DICKOW", dickowCategories, dickowSeries, dickowDocuments);
+  if (slug === "allweiler") return pack("ALLWEILER", allweilerCategories, allweilerSeries, allweilerDocuments);
+  if (slug === "prominent") return pack("ProMinent", prominentCategories, prominentSeries, prominentDocuments);
+  if (slug === "cnp") return pack("CNP", cnpCategories, cnpSeries, cnpDocuments);
+  if (slug === "shinhoo") return pack("SHINHOO", shinhooCategories, shinhooSeries, shinhooDocuments);
+
   const filled = fillBySlug(slug);
   if (filled) return pack(filled.title, filled.categories, filled.series, filled.documents);
   return emptyProfile(slug);
@@ -605,7 +632,9 @@ function pack(
 function emptyProfile(slug: string) {
   const maker = manufacturerBySlug(slug);
   const categories: Category[] =
-    maker?.line === "burner"
+    maker?.line === "pump"
+      ? [{ id: "pumps", title: "Насосы", param: "none" }]
+      : maker?.line === "burner"
       ? [{ id: "auto", title: "Горелки", param: "none" }]
       : maker?.line === "air"
         ? [{ id: "air", title: "Воздухонагреватели", param: "power" }]
@@ -720,6 +749,9 @@ export function CatalogPage() {
             <Link to="/" search={{ line: "boiler" }} className="hover:text-white">Котлы</Link>
             <Link to="/" search={{ line: "burner" }} className="hover:text-white">Горелки</Link>
             <Link to="/" search={{ line: "air" }} className="hover:text-white">Воздухонагреватели</Link>
+            <Link to="/" search={{ line: "pump" }} className="hover:text-white">
+              Насосы
+            </Link>
             <Link to="/" hash="manufacturers" className="hover:text-white">Производители</Link>
             <Link to="/politika" className="hover:text-white">О каталоге</Link>
           </nav>
@@ -742,7 +774,7 @@ export function CatalogPage() {
         </p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
           <h1 className="max-w-3xl font-display text-4xl leading-[0.95] font-extrabold tracking-[-0.04em] text-balance md:text-6xl">
-            {category ? category.title : maker?.line === "burner" ? "Горелки" : maker?.line === "air" ? "Воздухонагреватели" : "Котлы"}{" "}
+            {category ? category.title : maker?.line === "burner" ? "Горелки" : maker?.line === "air" ? "Воздухонагреватели" : maker?.line === "pump" ? "Насосы" : "Котлы"}{" "}
             <span className="text-accent">{profile.brand}</span>
           </h1>
           {models[0] ? (
@@ -906,7 +938,7 @@ export function CatalogPage() {
             <h2 className="mt-2 text-3xl font-semibold">О производителе {profile.brand}</h2>
             <p className="mt-3 text-sm text-pretty text-muted">
               {maker ? maker.name : profile.brand}. {maker ? `${maker.place}. ` : ""}
-              Специализация в справочнике: {maker?.line === "burner" ? "горелки" : maker?.line === "air" ? "воздухонагреватели" : "промышленные котлы"}. Год основания здесь не указан: в этой сборке он не подтверждён.
+              Специализация в справочнике: {maker?.line === "burner" ? "горелки" : maker?.line === "air" ? "воздухонагреватели" : maker?.line === "pump" ? "насосы" : "промышленные котлы"}. Год основания здесь не указан: в этой сборке он не подтверждён.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {profile.categories.map((item) => (
@@ -1396,6 +1428,7 @@ function FilterFields({
           ))}
         </select>
       </label>
+      {showPower || showSteam ? (
       <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
         {showSteam && !showPower ? "Пар" : "Мощность"}
         <select
@@ -1409,6 +1442,7 @@ function FilterFields({
           ))}
         </select>
       </label>
+      ) : null}
       <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
         Сортировка
         <select className="h-11 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink normal-case" value={query.sort ?? ""} onChange={(event) => patch({ sort: event.target.value || undefined })}>
