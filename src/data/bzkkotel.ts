@@ -1,0 +1,80 @@
+import type { Category, FuelId, Series, Size } from "@/data/catalog";
+
+const checked = "Сверка 18.11.2026. bzkkotel.ru. Отдельных таблиц по моделям нет: ряд взят из карточек каталога и окон «Подробнее». Котельные, топки, дымососы, фильтры и деаэраторы не внесены.";
+
+const burnerSizes: Size[] = ["РГМГ-1", "РГМГ-2", "ГГ-1", "ГГ-2", "ГМГ", "ГМ", "ГМП"].map((name) => ({
+  id: `bzkkotel-${name.toLowerCase()}`,
+  name,
+  powerKw: null,
+  steamKgH: null,
+}));
+
+export const bzkkotelCategories: Category[] = [
+  { id: "steam", title: "Паровые", param: "steam" },
+  { id: "water", title: "Водогрейные", param: "power" },
+  { id: "auto", title: "Горелки", param: "none" },
+];
+export const bzkkotelDocuments = [{ title: "Каталог bzkkotel.ru" }];
+export const bzkkotelSeries: Series[] = [
+  {
+    id: "bzkkotel-steam",
+    name: "БЗК, паровые",
+    categoryId: "steam",
+    kind: "Паровой",
+    image: "/catalog/waterpipe.jpg",
+    summary: "0,5–25 т/ч. В этой строке названы ДКВр, КЕ и ДЕ.",
+    powerMinKw: null,
+    powerMaxKw: null,
+    steamMinKgH: 500,
+    steamMaxKgH: 25000,
+    tempMaxC: null,
+    pressureNote: null,
+    fuels: ["solid", "gas", "heavy"] as FuelId[],
+    feature: "Уголь, газ, мазут, древесные отходы",
+    extra: `${checked} В окне паровых дополнительно названы ДСЕ и Е-1,0-0,9, без своего диапазона. Давление и температура не указаны.`,
+    sizes: [],
+    sizesNote: "ДКВр, КЕ, ДЕ — в строке 0,5–25 т/ч. ДСЕ и Е-1,0-0,9 названы отдельно, без цифр.",
+    aliases: ["бзк", "дквр", "ке", "де"],
+  },
+  {
+    id: "bzkkotel-water",
+    name: "БЗК, водогрейные",
+    categoryId: "water",
+    kind: "Водогрейный",
+    image: "/catalog/waterpipe.jpg",
+    summary: "0,125–100 Гкал/ч. В строке названы ПТВМ и КВГМ.",
+    powerMinKw: 145,
+    powerMaxKw: 116300,
+    steamMinKgH: null,
+    steamMaxKgH: null,
+    tempMaxC: null,
+    pressureNote: null,
+    fuels: ["solid", "gas", "heavy"] as FuelId[],
+    feature: "Уголь, газ, мазут, древесные отходы, брикеты",
+    extra: `${checked} Киловатты пересчитаны как 1 Гкал/ч = 1,163 МВт. На странице стоят Гкал/ч. В окне также названы КВ-ТС, КВ (КВр, КВм, КВа), КВ-ГМ, КВР, ДСЕВ, ДЕВ, КЕВ и КВЕ без отдельных мощностей.`,
+    powerNote: "0,125–100 Гкал/ч",
+    sizes: [],
+    sizesNote: null,
+    aliases: ["птвм", "квгм"],
+  },
+  {
+    id: "bzkkotel-burners",
+    name: "БЗК, горелки",
+    categoryId: "auto",
+    kind: "Горелка",
+    image: "/catalog/cabinet.jpg",
+    summary: "Названы модели. Мощность в кВт не указана.",
+    powerMinKw: null,
+    powerMaxKw: null,
+    steamMinKgH: null,
+    steamMaxKgH: null,
+    tempMaxC: null,
+    pressureNote: null,
+    fuels: [],
+    feature: "кВт не указаны",
+    extra: `${checked} Газовыми страница прямо называет только ГГ-1 и ГГ-2. У остальных топливо в тексте не подписано.`,
+    sizes: burnerSizes,
+    sizesNote: null,
+    aliases: ["ргмг", "гмг"],
+  },
+];
