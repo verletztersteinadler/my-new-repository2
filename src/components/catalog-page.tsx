@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
@@ -20,6 +20,7 @@ import {
   primarySpec,
   seriesById,
   seriesList,
+  sizeById,
   steamBands,
   type CatalogQuery,
   type Category,
@@ -645,6 +646,19 @@ export function CatalogPage() {
   const models = useMemo(() => flattenModels(rows), [rows]);
   const visibleModels = models.slice(0, shown);
   const activeSeries = seriesById(search.series, profile.series);
+  const activeSize = activeSeries ? sizeById(activeSeries, search.size) : undefined;
+  const askedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (search.ask !== "1") {
+      askedRef.current = null;
+      return;
+    }
+    if (!activeSeries) return;
+    const key = `${activeSeries.id}|${search.size ?? ""}`;
+    if (askedRef.current === key) return;
+    askedRef.current = key;
+    setLead({ intent: "kp", seriesId: activeSeries.id, sizeId: activeSize?.id, categoryId: activeSeries.categoryId });
+  }, [search.ask, search.series, search.size, activeSeries, activeSize]);
   const category = profile.categories.find((item) => item.id === query.type);
   const showPower = !query.type || category?.param === "power";
   const showSteam = !query.type || category?.param === "steam";
@@ -665,9 +679,14 @@ export function CatalogPage() {
     });
   }
 
-  function openSeries(id: string) {
+  function openSeries(id: string, sizeId?: string) {
     navigate({
-      search: (prev) => ({ ...prev, series: id }),
+      search: (prev) => {
+        const next = { ...prev, series: id };
+        if (sizeId) next.size = sizeId;
+        else delete next.size;
+        return next;
+      },
       resetScroll: false,
     });
   }
@@ -677,6 +696,7 @@ export function CatalogPage() {
       search: (prev) => {
         const next = { ...prev };
         delete next.series;
+        delete next.size;
         return next;
       },
       resetScroll: false,
@@ -815,7 +835,7 @@ export function CatalogPage() {
                   <div className="flex min-w-0 items-center gap-3">
                     <img src={row.series.image} alt="" width={80} height={60} className="size-14 shrink-0 rounded-lg object-cover" />
                     <div className="min-w-0">
-                      <button type="button" className="truncate text-left font-semibold hover:text-accent" onClick={() => openSeries(row.series.id)}>{row.title}</button>
+                      <button type="button" className="truncate text-left font-semibold hover:text-accent" onClick={() => openSeries(row.series.id, row.sizeId)}>{row.title}</button>
                       <p className="truncate text-xs text-muted">{row.series.kind} · {row.series.name}</p>
                     </div>
                   </div>
@@ -829,7 +849,7 @@ export function CatalogPage() {
                     <button type="button" className="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover" onClick={() => setLead({ intent: "kp", seriesId: row.series.id, sizeId: row.sizeId, categoryId: row.series.categoryId })}>
                       Подобрать
                     </button>
-                    <button type="button" className="text-sm font-semibold text-ink hover:text-accent" onClick={() => openSeries(row.series.id)}>
+                    <button type="button" className="text-sm font-semibold text-ink hover:text-accent" onClick={() => openSeries(row.series.id, row.sizeId)}>
                       Характеристики
                     </button>
                   </div>
@@ -902,7 +922,7 @@ export function CatalogPage() {
       </footer>
 
       <SeriesDialog
-        series={activeSeries}
+        series={search.ask === "1" ? undefined : activeSeries}
         maker={maker}
         onClose={closeSeries}
         onConsult={(sizeId) => {

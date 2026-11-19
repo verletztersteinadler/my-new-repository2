@@ -11,6 +11,7 @@ export type CatalogSearch = {
   steam?: string;
   sort?: string;
   series?: string;
+  size?: string;
   ask?: string;
   accepted?: string;
 };
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/manufacturers/$slug")({
     steam: read(search.steam, 20),
     sort: read(search.sort, 20),
     series: read(search.series, 40),
+    size: read(search.size, 60),
     ask: read(search.ask, 4),
     accepted: read(search.accepted, 40),
   }),
