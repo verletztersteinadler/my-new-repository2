@@ -1,9 +1,10 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import { CONSENT_VERSION } from "@/data/catalog";
 
 export const Route = createFileRoute("/soglasie")({
   component: ConsentPage,
-  head: () => ({ meta: [{ title: "Согласие на обращение — KOTLY.SU" }] }),
+  head: () => ({ meta: [{ title: "Согласие на обращение — KOTLY.SU" }, { name: "robots", content: "noindex" }], links: [{ rel: "canonical", href: `${SITE_URL}/soglasie` }] }),
 });
 
 function ConsentPage() {

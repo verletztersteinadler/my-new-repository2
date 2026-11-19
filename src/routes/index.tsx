@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HomePage } from "@/components/home-page";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 export type HomeSearch = {
   q?: string;
@@ -16,6 +17,28 @@ function read(value: unknown, max = 80) {
   return text || undefined;
 }
 
+const homeJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: `${SITE_URL}/`,
+      name: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      inLanguage: "ru",
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+      url: `${SITE_URL}/`,
+      logo: `${SITE_URL}/favicon.svg`,
+    },
+  ],
+};
+
+
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): HomeSearch => ({
     q: read(search.q),
@@ -26,10 +49,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "KOTLY.SU — справочник промышленных котлов" },
-      {
-        name: "description",
-        content: "Независимый справочник открытых серий. Не сайт производителя и не предложение о продаже.",
-      },
+      { name: "description", content: SITE_DESCRIPTION },
     ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify(homeJsonLd) }],
   }),
 });

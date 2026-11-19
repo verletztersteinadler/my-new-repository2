@@ -1,8 +1,9 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 
 export const Route = createFileRoute("/politika")({
   component: PolicyPage,
-  head: () => ({ meta: [{ title: "Политика обработки данных — KOTLY.SU" }] }),
+  head: () => ({ meta: [{ title: "Политика обработки данных — KOTLY.SU" }, { name: "robots", content: "noindex" }], links: [{ rel: "canonical", href: `${SITE_URL}/politika` }] }),
 });
 
 function PolicyPage() {
