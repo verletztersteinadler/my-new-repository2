@@ -31,7 +31,7 @@ const tasks: { id: Task; label: string }[] = [
 const kits: { id: KitId; label: string; published: boolean }[] = [
   { id: "burner", label: "Горелка", published: false },
   { id: "auto", label: "Автоматика", published: true },
-  { id: "pumps", label: "Насосы", published: false },
+  { id: "pumps", label: "Насосы", published: true },
   { id: "economizer", label: "Экономайзер", published: false },
   { id: "water", label: "Водоподготовка", published: false },
   { id: "other", label: "Прочие комплектующие", published: false },
