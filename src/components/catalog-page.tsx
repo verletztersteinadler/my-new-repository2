@@ -758,6 +758,9 @@ export function CatalogPage() {
           <Link to="/" hash="podbor" className="ml-auto inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover">
             Подобрать модель
           </Link>
+          <Link to="/" hash="konstruktor" className="mr-4 hidden text-sm text-white/75 hover:text-white md:inline-flex md:h-10 md:items-center">
+            Конструктор
+          </Link>
         </div>
       </header>
 

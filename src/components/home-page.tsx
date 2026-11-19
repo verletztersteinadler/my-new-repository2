@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/logo";
 import { SolutionBuilder } from "@/components/solution-builder";
+import { BoilerRoomBuilder } from "@/components/boiler-room-builder";
 import { manufacturers, regions, lines, type RegionId, type LineId } from "@/data/manufacturers";
 import { publishedSlugs } from "@/data/published-slugs";
 
@@ -59,6 +60,9 @@ export function HomePage() {
             <a href="#podbor" className="hover:text-ink">
               Подбор
             </a>
+            <a href="#konstruktor" className="hover:text-ink">
+              Конструктор
+            </a>
             <a href="#manufacturers" className="hover:text-ink">
               Производители
             </a>
@@ -88,7 +92,9 @@ export function HomePage() {
           </p>
         </section>
 
-        <SolutionBuilder />
+<SolutionBuilder />
+
+        <BoilerRoomBuilder />
 
         <div id="manufacturers" className="mx-auto mt-8 flex max-w-6xl scroll-mt-20 flex-col gap-3 px-4">
           <input
