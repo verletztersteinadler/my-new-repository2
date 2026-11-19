@@ -80,7 +80,7 @@ export function HomePage() {
 
         <SolutionBuilder />
 
-        <div id="manufacturers" className="mx-auto mt-8 flex max-w-6xl flex-col gap-3 px-4">
+        <div id="manufacturers" className="mx-auto mt-8 flex max-w-6xl scroll-mt-20 flex-col gap-3 px-4">
           <input
               value={search.q ?? ""}
               onChange={(event) => patch({ q: event.target.value })}

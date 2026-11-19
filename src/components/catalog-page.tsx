@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
+import { SheetHandle } from "@/components/sheet-handle";
 import {
   BRAND,
   MANUFACTURER_SITE,
@@ -238,6 +239,8 @@ import { LeadForm, type LeadContext } from "@/components/lead-form";
 import { Logo } from "@/components/logo";
 import { FactoryCard } from "@/components/factory-card";
 import { manufacturerBySlug } from "@/data/manufacturers";
+
+import type { CatalogSearch } from "@/routes/manufacturers/$slug";
 
 const routeApi = getRouteApi("/manufacturers/$slug");
 
@@ -631,6 +634,7 @@ export function CatalogPage() {
   const [shown, setShown] = useState(PAGE);
   const [lead, setLead] = useState<LeadContext | null>(null);
   const [analogsFor, setAnalogsFor] = useState<Series | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const query = useMemo<CatalogQuery>(
     () => ({
       type: profile.categories.some((item) => item.id === search.type) ? (search.type as CategoryId) : undefined,
@@ -662,6 +666,7 @@ export function CatalogPage() {
   const category = profile.categories.find((item) => item.id === query.type);
   const showPower = !query.type || category?.param === "power";
   const showSteam = !query.type || category?.param === "steam";
+  const filterCount = [query.type, query.q, query.fuel, query.power, query.steam].filter(Boolean).length;
 
   function patch(next: Partial<typeof search>, dropSeries = true) {
     setShown(PAGE);
@@ -753,7 +758,7 @@ export function CatalogPage() {
         </p>
 
         <form
-          className="mt-6 rounded-2xl border border-line bg-surface p-4"
+          className="mt-6 hidden rounded-2xl border border-line bg-surface p-4 md:block"
           onSubmit={(event) => {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
@@ -769,50 +774,62 @@ export function CatalogPage() {
             ) : null}
           </div>
           <div className="grid gap-2 md:grid-cols-4">
-            <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
-              Тип
-              <select className="h-11 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink normal-case" value={query.type ?? ""} onChange={(event) => patch({ type: event.target.value || undefined })}>
-                <option value="">Все серии</option>
-                {profile.categories.map((item) => (
-                  <option key={item.id} value={item.id}>{item.title}</option>
-                ))}
-              </select>
-            </label>
-            <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
-              Топливо
-              <select className="h-11 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink normal-case" value={query.fuel ?? ""} onChange={(event) => patch({ fuel: event.target.value || undefined })}>
-                <option value="">Любое</option>
-                {fuels.filter((item) => profile.series.some((series) => series.fuels.includes(item.id))).map((item) => (
-                  <option key={item.id} value={item.id}>{item.title}</option>
-                ))}
-              </select>
-            </label>
-            <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
-              {showSteam && !showPower ? "Пар" : "Мощность"}
-              <select
-                className="h-11 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink normal-case"
-                value={showSteam && !showPower ? (query.steam ?? "") : (query.power ?? "")}
-                onChange={(event) => patch(showSteam && !showPower ? { steam: event.target.value || undefined } : { power: event.target.value || undefined })}
-              >
-                <option value="">Любая</option>
-                {(showSteam && !showPower ? steamBands : powerBands).map((band) => (
-                  <option key={band.id} value={band.id}>{band.title}</option>
-                ))}
-              </select>
-            </label>
-            <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
-              Сортировка
-              <select className="h-11 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink normal-case" value={query.sort ?? ""} onChange={(event) => patch({ sort: event.target.value || undefined })}>
-                <option value="">Порядок каталога</option>
-                <option value="name">По названию</option>
-                <option value="param">По параметру</option>
-              </select>
-            </label>
+            <FilterFields query={query} profile={profile} showSteam={showSteam} showPower={showPower} patch={patch} />
           </div>
           <div className="mt-3 flex justify-end">
             <button type="submit" className="inline-flex h-11 items-center rounded-full bg-accent px-5 text-sm font-semibold text-on-accent hover:bg-accent-hover">Показать</button>
           </div>
         </form>
+
+        <div className="mt-6 md:hidden">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-line bg-surface px-4 text-sm font-semibold"
+              onClick={() => setFiltersOpen(true)}
+            >
+              Фильтры
+              {filterCount > 0 ? (
+                <span className="inline-flex size-5 items-center justify-center rounded-full bg-accent text-xs font-bold text-on-accent">
+                  {filterCount}
+                </span>
+              ) : null}
+            </button>
+            {filterCount > 0 ? (
+              <button
+                type="button"
+                className="h-11 shrink-0 rounded-full px-4 text-sm text-muted"
+                onClick={() => patch({ type: undefined, q: undefined, fuel: undefined, power: undefined, steam: undefined })}
+              >
+                Сбросить
+              </button>
+            ) : null}
+          </div>
+          <Dialog.Root open={filtersOpen} onOpenChange={setFiltersOpen}>
+            <Dialog.Portal>
+              <Dialog.Overlay className="fixed inset-0 z-40 bg-black/70" />
+              <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 max-h-dvh overflow-y-auto rounded-t-3xl bg-surface p-4 pb-safe shadow-lg">
+                <SheetHandle />
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <Dialog.Title className="text-xl font-semibold">Фильтр оборудования</Dialog.Title>
+                  <Dialog.Close className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg bg-chip" aria-label="Закрыть">
+                    <X className="size-5" />
+                  </Dialog.Close>
+                </div>
+                <Dialog.Description className="sr-only">
+                  Фильтры применяются сразу при выборе значения.
+                </Dialog.Description>
+                <div className="grid gap-2">
+                  <FilterFields query={query} profile={profile} showSteam={showSteam} showPower={showPower} patch={patch} />
+                </div>
+                <Dialog.Close className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-full bg-accent px-5 text-sm font-semibold text-on-accent hover:bg-accent-hover">
+                  Показать
+                </Dialog.Close>
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
+        </div>
+
 
         {profile.series.length === 0 ? (
           <MissingSeries brand={profile.brand} openInitially={search.ask === "1"} />
@@ -845,11 +862,11 @@ export function CatalogPage() {
                   </p>
                   <p className="text-sm text-muted">{row.series.feature}</p>
                   <p className="text-sm">{row.series.fuels.length ? row.series.fuels.map(fuelTitle).join(" / ") : "Не указано"}</p>
-                  <div className="flex items-center gap-3">
-                    <button type="button" className="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover" onClick={() => setLead({ intent: "kp", seriesId: row.series.id, sizeId: row.sizeId, categoryId: row.series.categoryId })}>
+                  <div className="flex items-center gap-3 max-md:flex-col max-md:items-stretch">
+                    <button type="button" className="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover max-md:h-11 max-md:justify-center" onClick={() => setLead({ intent: "kp", seriesId: row.series.id, sizeId: row.sizeId, categoryId: row.series.categoryId })}>
                       Подобрать
                     </button>
-                    <button type="button" className="text-sm font-semibold text-ink hover:text-accent" onClick={() => openSeries(row.series.id, row.sizeId)}>
+                    <button type="button" className="text-sm font-semibold text-ink hover:text-accent max-md:h-11 max-md:w-full max-md:text-center" onClick={() => openSeries(row.series.id, row.sizeId)}>
                       Характеристики
                     </button>
                   </div>
@@ -895,7 +912,7 @@ export function CatalogPage() {
           </aside>
         </section>
 
-        <section id="consult" className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#161616] px-5 py-6 text-white">
+        <section id="consult" className="mt-4 flex scroll-mt-20 flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#161616] px-5 py-6 text-white">
           <div>
             <p className="text-xs font-semibold tracking-[0.14em] text-[#f0c4cc] uppercase">Подбор по параметрам</p>
             <h2 className="mt-2 font-display text-3xl leading-none font-extrabold tracking-[-0.04em]">Нужно подобрать модель под задачу?</h2>
@@ -937,7 +954,8 @@ export function CatalogPage() {
       <Dialog.Root open={lead != null} onOpenChange={(open) => !open && setLead(null)}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-40 bg-black/70" />
-          <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 max-h-dvh overflow-y-auto rounded-t-3xl bg-surface p-4 shadow-lg md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
+          <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 max-h-dvh overflow-y-auto rounded-t-3xl bg-surface p-4 pb-safe shadow-lg md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
+            <SheetHandle />
             <div className="mb-3 flex items-start justify-between gap-3">
               <Dialog.Title className="font-display text-3xl leading-none font-extrabold tracking-[-0.04em]">Консультация по серии</Dialog.Title>
               <Dialog.Close className="inline-flex size-11 items-center justify-center rounded-lg bg-chip" aria-label="Закрыть">
@@ -999,7 +1017,7 @@ function MissingSeries({ brand, openInitially }: { brand: string; openInitially:
   }
 
   return (
-    <div id="analogs" className="mt-6 rounded-3xl border-2 border-accent bg-surface p-6">
+    <div id="analogs" className="mt-6 scroll-mt-20 rounded-3xl border-2 border-accent bg-surface p-6">
       <p className="font-display text-2xl leading-none font-extrabold tracking-[-0.04em]">Информация на сайте производителя не предоставлена</p>
       <p className="mt-3 max-w-2xl text-sm text-muted">
         У {brand} в открытых страницах нет ряда, который можно перенести. Модель справочник не назначает.
@@ -1182,7 +1200,8 @@ function SeriesDialog({
     <Dialog.Root open={Boolean(series)} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-ink/50" />
-        <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 max-h-dvh overflow-y-auto rounded-t-sm bg-surface p-4 md:inset-x-auto md:top-8 md:bottom-8 md:left-1/2 md:w-full md:max-w-3xl md:-translate-x-1/2 md:rounded-sm">
+        <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 max-h-dvh overflow-y-auto rounded-t-sm bg-surface p-4 pb-safe md:inset-x-auto md:top-8 md:bottom-8 md:left-1/2 md:w-full md:max-w-3xl md:-translate-x-1/2 md:rounded-sm">
+          <SheetHandle />
           {series ? (
             <>
               <div className="flex items-start justify-between gap-3">
@@ -1263,7 +1282,8 @@ function AnalogsDialog({ series, sourceSlug, onClose }: { series: Series | null;
     <Dialog.Root open={series != null} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-[60] bg-black/70" />
-        <Dialog.Content className="fixed inset-x-0 bottom-0 z-[70] max-h-dvh overflow-y-auto rounded-t-3xl bg-surface p-4 shadow-lg md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
+        <Dialog.Content className="fixed inset-x-0 bottom-0 z-[70] max-h-dvh overflow-y-auto rounded-t-3xl bg-surface p-4 pb-safe shadow-lg md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
+          <SheetHandle />
           <div className="mb-3 flex items-start justify-between gap-3">
             <div>
               <Dialog.Title className="font-display text-3xl leading-none font-extrabold tracking-[-0.04em]">Похожие серии</Dialog.Title>
@@ -1323,4 +1343,62 @@ function isPower(value: string | undefined): value is PowerBand {
 }
 function isSteam(value: string | undefined): value is SteamBand {
   return steamBands.some((item) => item.id === value);
+}
+
+function FilterFields({
+  query,
+  profile,
+  showSteam,
+  showPower,
+  patch,
+}: {
+  query: CatalogQuery;
+  profile: ReturnType<typeof profileFor>;
+  showSteam: boolean;
+  showPower: boolean;
+  patch: (next: Partial<CatalogSearch>) => void;
+}) {
+  return (
+    <>
+      <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
+        Тип
+        <select className="h-11 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink normal-case" value={query.type ?? ""} onChange={(event) => patch({ type: event.target.value || undefined })}>
+          <option value="">Все серии</option>
+          {profile.categories.map((item) => (
+            <option key={item.id} value={item.id}>{item.title}</option>
+          ))}
+        </select>
+      </label>
+      <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
+        Топливо
+        <select className="h-11 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink normal-case" value={query.fuel ?? ""} onChange={(event) => patch({ fuel: event.target.value || undefined })}>
+          <option value="">Любое</option>
+          {fuels.filter((item) => profile.series.some((series) => series.fuels.includes(item.id))).map((item) => (
+            <option key={item.id} value={item.id}>{item.title}</option>
+          ))}
+        </select>
+      </label>
+      <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
+        {showSteam && !showPower ? "Пар" : "Мощность"}
+        <select
+          className="h-11 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink normal-case"
+          value={showSteam && !showPower ? (query.steam ?? "") : (query.power ?? "")}
+          onChange={(event) => patch(showSteam && !showPower ? { steam: event.target.value || undefined } : { power: event.target.value || undefined })}
+        >
+          <option value="">Любая</option>
+          {(showSteam && !showPower ? steamBands : powerBands).map((band) => (
+            <option key={band.id} value={band.id}>{band.title}</option>
+          ))}
+        </select>
+      </label>
+      <label className="grid gap-1 text-xs font-semibold tracking-wide text-muted uppercase">
+        Сортировка
+        <select className="h-11 rounded-lg border border-line bg-surface px-3 text-sm font-medium text-ink normal-case" value={query.sort ?? ""} onChange={(event) => patch({ sort: event.target.value || undefined })}>
+          <option value="">Порядок каталога</option>
+          <option value="name">По названию</option>
+          <option value="param">По параметру</option>
+        </select>
+      </label>
+    </>
+  );
 }

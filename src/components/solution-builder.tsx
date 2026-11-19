@@ -108,7 +108,7 @@ export function SolutionBuilder() {
   const comment = `Консультация по открытым сериям. Задача: ${taskLabel}. Топливо: ${fuelLabel}. Параметр: ${paramLabel}. Комплектация: ${kitLabel}. Это не заказ.`;
 
   return (
-    <section id="podbor" className="mx-auto mt-8 max-w-6xl px-4">
+    <section id="podbor" className="mx-auto mt-8 max-w-6xl scroll-mt-20 px-4">
       <div className="rounded-3xl border border-line bg-surface p-4 sm:p-6">
         <p className="text-xs font-semibold tracking-[0.14em] text-ink uppercase">Открытые серии</p>
         <h2 className="mt-2 font-display text-3xl leading-[0.95] font-extrabold tracking-[-0.04em]">Фильтр справочника</h2>
