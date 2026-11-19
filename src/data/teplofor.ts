@@ -4,6 +4,8 @@ const checked =
   "Сверка 16.11.2026. Каталог котлов на teplofor.pro, на него ведёт teploros.org. На страницах указано ООО «НТ», завод в Ростове-на-Дону. Типоразмеры поимённо не расписаны.";
 
 const none: Series["sizes"] = [];
+const bmkChecked =
+  "Проверено 19.11.2026 по каталогу «Котельные Teploros» (PDF, 60 стр.) с teploros.org.";
 const unnamed = "Отдельные типоразмеры на странице не названы.";
 
 export const teploforCategories: Category[] = [
@@ -622,6 +624,69 @@ export const teploforSeries: Series[] = [
     sizesNote: unnamed,
     aliases: ["lextop"],
   }),
+  row({
+    id: "tf-bmk-h",
+    name: "Teploros БМК H",
+    categoryId: "block",
+    kind: "Транспортабельная блочно-модульная котельная, водогрейная (отопление и ГВС)",
+    image: "/catalog/tf-bmk.jpg",
+    summary:
+      "Мощность 100 кВт — 60 МВт. График отопления 115...80/80...50 °C, ГВС 70...55/50...40 °C, давление до 6 бар. Топливо: природный газ (основное), дизель, мазут, сжиженный газ.",
+    powerMinKw: 100,
+    powerMaxKw: 60000,
+    steamMinKgH: null,
+    steamMaxKgH: null,
+    tempMaxC: 115,
+    pressureNote: "до 6 бар",
+    fuels: ["gas", "diesel", "heavy"],
+    feature: "100 кВт — 60 МВт в транспортабельных блоках",
+    extra: `${bmkChecked} Серия H — водогрейные БМК для жилых, общественных, промышленных и административных зданий. В составе: котлы Teplofor, горелки Pikinno, насосы, теплообменники ГВС, химводоподготовка, КИПиА, диспетчеризация, внутренний газопровод, дымовая труба. II категория электроснабжения, сейсмостойкость 9 баллов, гарантия 24 месяца. Источник: https://teploros.org/produktsiya/kotelnye/blochno-modulnye-kotelnye/.`,
+    sizes: none,
+    sizesNote: "Типоразмеры 100–1200 и 1400–4000 кВт; до 60 МВт — многоблочное исполнение.",
+    aliases: ["бмк h", "teploros h", "блочно-модульная котельная h"],
+  }),
+  row({
+    id: "tf-bmk-s",
+    name: "Teploros БМК S",
+    categoryId: "steam",
+    kind: "Транспортабельная блочно-модульная котельная, паровая",
+    image: "/catalog/tf-steam.jpg",
+    summary:
+      "Паровая БМК мощностью 100 кВт — 60 МВт. Топливо: природный газ (основное), дизель, мазут, сжиженный газ. Полная заводская готовность, автоматический режим без постоянного персонала.",
+    powerMinKw: 100,
+    powerMaxKw: 60000,
+    steamMinKgH: null,
+    steamMaxKgH: null,
+    tempMaxC: null,
+    pressureNote: null,
+    fuels: ["gas", "diesel", "heavy"],
+    feature: "Паровая котельная 100 кВт — 60 МВт в блоках",
+    extra: `${bmkChecked} Серия S — паровые БМК. Проектирование по РД 34.37.506-88 и РД 24.031.120-91. Источник: https://teploros.org/produktsiya/kotelnye/blochno-modulnye-kotelnye/.`,
+    sizes: none,
+    sizesNote: "Мощность 100 кВт — 60 МВт; состав блоков — по опросному листу.",
+    aliases: ["бмк s", "teploros s", "паровая бмк"],
+  }),
+  row({
+    id: "tf-bmk-hs",
+    name: "Teploros БМК HS",
+    categoryId: "block",
+    kind: "Транспортабельная блочно-модульная котельная, пароводогрейная (пар + отопление/ГВС)",
+    image: "/catalog/tf-bmk.jpg",
+    summary:
+      "Мощность 100 кВт — 60 МВт, пар до 60 т/ч. Одновременное теплоснабжение и пароснабжение производственных зданий из одного блока.",
+    powerMinKw: 100,
+    powerMaxKw: 60000,
+    steamMinKgH: null,
+    steamMaxKgH: 60000,
+    tempMaxC: 115,
+    pressureNote: "до 6 бар (водогрейный контур)",
+    fuels: ["gas", "diesel", "heavy"],
+    feature: "Пар + горячая вода из одного блока",
+    extra: `${bmkChecked} Серия HS — пароводогрейные БМК: отопление и ГВС плюс пар для производства (до 60 т/ч по teploros.org). Источник: https://teploros.org/produktsiya/kotelnye/paro-vodogrejnye-kotelnye/.`,
+    sizes: none,
+    sizesNote: "Типоразмеры 100–1200 и 1400–4000 кВт; до 60 МВт — многоблочное исполнение.",
+    aliases: ["бмк hs", "teploros hs", "пароводогрейная"],
+  }),
 ];
 
 export const teploforDocuments = [
@@ -630,4 +695,6 @@ export const teploforDocuments = [
   { title: "Термомасло", href: "https://teplofor.pro/catalog/termomasljanye-kotly/" },
   { title: "Наружные", href: "https://teplofor.pro/catalog/ulichnye-kotly/" },
   { title: "Teploros", href: "https://teploros.org/produktsiya/kotly/" },
+  { title: "БМК Teploros H/S/HS — каталог", href: "https://teploros.org/produktsiya/kotelnye/blochno-modulnye-kotelnye/" },
+  { title: "Пароводогрейные котельные Teploros HS", href: "https://teploros.org/produktsiya/kotelnye/paro-vodogrejnye-kotelnye/" },
 ];
