@@ -3,6 +3,7 @@ import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { SheetHandle } from "@/components/sheet-handle";
+import { togglePick, usePicks } from "@/lib/picks";
 import {
   BRAND,
   MANUFACTURER_SITE,
@@ -635,6 +636,7 @@ export function CatalogPage() {
   const [lead, setLead] = useState<LeadContext | null>(null);
   const [analogsFor, setAnalogsFor] = useState<Series | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const picks = usePicks();
   const query = useMemo<CatalogQuery>(
     () => ({
       type: profile.categories.some((item) => item.id === search.type) ? (search.type as CategoryId) : undefined,
@@ -667,6 +669,7 @@ export function CatalogPage() {
   const showPower = !query.type || category?.param === "power";
   const showSteam = !query.type || category?.param === "steam";
   const filterCount = [query.type, query.q, query.fuel, query.power, query.steam].filter(Boolean).length;
+  const pickedKeys = useMemo(() => new Set(picks.map((item) => `${item.seriesId}|${item.sizeId ?? ""}`)), [picks]);
 
   function patch(next: Partial<typeof search>, dropSeries = true) {
     setShown(PAGE);
@@ -847,7 +850,9 @@ export function CatalogPage() {
               <p className="text-sm text-muted tabular-nums">{models.length}</p>
             </div>
             <ul className="overflow-hidden rounded-2xl border border-line bg-surface">
-              {visibleModels.map((row) => (
+              {visibleModels.map((row) => {
+                const picked = pickedKeys.has(`${row.series.id}|${row.sizeId ?? ""}`);
+                return (
                 <li key={row.key} className="grid items-center gap-3 border-b border-line px-3 py-3 last:border-b-0 md:grid-cols-[1.5fr_0.7fr_0.8fr_0.7fr_auto] md:px-4">
                   <div className="flex min-w-0 items-center gap-3">
                     <img src={row.series.image} alt="" width={80} height={60} className="size-14 shrink-0 rounded-lg object-cover" />
@@ -863,6 +868,18 @@ export function CatalogPage() {
                   <p className="text-sm text-muted">{row.series.feature}</p>
                   <p className="text-sm">{row.series.fuels.length ? row.series.fuels.map(fuelTitle).join(" / ") : "Не указано"}</p>
                   <div className="flex items-center gap-3 max-md:flex-col max-md:items-stretch">
+                    <button
+                      type="button"
+                      aria-pressed={picked}
+                      className={
+                        picked
+                          ? "inline-flex h-10 items-center rounded-full border border-accent bg-chip px-4 text-sm font-semibold text-accent max-md:h-11 max-md:w-full max-md:justify-center"
+                          : "inline-flex h-10 items-center rounded-full border border-line px-4 text-sm font-semibold hover:bg-chip max-md:h-11 max-md:w-full max-md:justify-center"
+                      }
+                      onClick={() => togglePick({ seriesId: row.series.id, sizeId: row.sizeId, slug, title: row.title, maker: profile.brand })}
+                    >
+                      {picked ? "✓ В подборке" : "+ В подборку"}
+                    </button>
                     <button type="button" className="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover max-md:h-11 max-md:justify-center" onClick={() => setLead({ intent: "kp", seriesId: row.series.id, sizeId: row.sizeId, categoryId: row.series.categoryId })}>
                       Подобрать
                     </button>
@@ -871,7 +888,8 @@ export function CatalogPage() {
                     </button>
                   </div>
                 </li>
-              ))}
+                );
+              })}
             </ul>
             <p className="mt-3 text-xs text-muted">Иллюстрация условная и не воспроизводит геометрию конкретного типоразмера. Взято с оф. сайта производителя.</p>
           </section>

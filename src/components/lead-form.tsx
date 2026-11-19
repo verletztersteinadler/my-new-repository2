@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent, type InputHTMLAttributes } from "react";
 import { CONSENT_VERSION, sizeById, type Series } from "@/data/catalog";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export type LeadContext = {
@@ -87,6 +88,7 @@ export function LeadForm({
       const payload = (await response.json()) as { lead_id?: string; message?: string; errors?: FieldErrors };
       if (response.status === 409) {
         setErrors({ form: payload.message || "Заявка уже сохранена с другими данными" });
+        toast.warning("Заявка с такими данными уже отправлена");
         return;
       }
       if (!response.ok || !payload.lead_id) {
@@ -94,9 +96,11 @@ export function LeadForm({
         return;
       }
       setLeadId(payload.lead_id);
+      toast.success(`Заявка ${payload.lead_id} принята`);
       onDone?.(payload.lead_id);
     } catch {
       setErrors({ form: "Нет ответа сервера. Поля сохранены, можно отправить ещё раз." });
+      toast.error("Нет ответа сервера. Попробуйте ещё раз.");
     } finally {
       setPending(false);
     }

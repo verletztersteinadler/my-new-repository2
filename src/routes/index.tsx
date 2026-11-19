@@ -6,6 +6,7 @@ export type HomeSearch = {
   q?: string;
   region?: string;
   line?: string;
+  accepted?: string;
 };
 
 const regions = new Set(["ru", "cis", "tr", "eu", "us", "other"]);
@@ -44,6 +45,7 @@ export const Route = createFileRoute("/")({
     q: read(search.q),
     region: regions.has(String(search.region)) ? String(search.region) : undefined,
     line: lines.has(String(search.line)) ? String(search.line) : undefined,
+    accepted: read(search.accepted, 40),
   }),
   component: HomePage,
   head: () => ({
