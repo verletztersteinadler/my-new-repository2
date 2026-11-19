@@ -1,7 +1,9 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog-page";
 import { manufacturerBySlug } from "@/data/manufacturers";
-import { publishedCatalogs } from "@/data/series-index";
+import { publishedSlugs } from "@/data/published-slugs";
+
+const publishedSlugSet = new Set(publishedSlugs.map((item) => item.slug));
 
 export type CatalogSearch = {
   type?: string;
@@ -43,13 +45,13 @@ export const Route = createFileRoute("/manufacturers/$slug")({
   head: ({ loaderData }) => ({
     meta: [
       {
-        title: publishedCatalogs.some((item) => item.slug === loaderData?.slug)
+        title: publishedSlugSet.has(loaderData?.slug ?? "")
           ? `Серии ${loaderData?.title} в независимом справочнике`
           : `${loaderData?.title ?? "Производитель"} — карточка справочника`,
       },
       {
         name: "description",
-        content: publishedCatalogs.some((item) => item.slug === loaderData?.slug)
+        content: publishedSlugSet.has(loaderData?.slug ?? "")
           ? "Открытые сведения о сериях. Страница не является сайтом производителя и не предлагает купить оборудование."
           : "Информация на сайте производителя не предоставлена. Карточка не назначает модели.",
       },
