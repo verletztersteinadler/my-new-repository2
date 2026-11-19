@@ -1,0 +1,70 @@
+import type { Category, FuelId, Series } from "@/data/catalog";
+
+const checked = "Сверка 16.11.2026. Страница пакетных котлов babcock.com. Фунты переведены по их же строке в т/ч, где она есть.";
+
+export const babcockCategories: Category[] = [{ id: "steam", title: "Паровые", param: "steam" }];
+
+export const babcockDocuments = [{ title: "Пакетные водотрубные Babcock & Wilcox" }];
+
+export const babcockSeries: Series[] = [
+  {
+    id: "bw-fm",
+    name: "B&W FM",
+    categoryId: "steam",
+    kind: "Водотрубный, пакетный",
+    image: "/catalog/waterpipe.jpg",
+    summary: "8 200–40 000 фунтов/ч, на странице без отдельной строки в т/ч.",
+    powerMinKw: null,
+    powerMaxKw: null,
+    steamMinKgH: 3720,
+    steamMaxKgH: 18140,
+    tempMaxC: null,
+    pressureNote: null,
+    fuels: ["gas", "diesel", "heavy"] as FuelId[],
+    feature: "Модели FM 9-22, 26, 30, 34, 39, 43, 48, 52, 57",
+    extra: `${checked} 8 200 фунтов/ч ≈ 3,72 т/ч, 40 000 ≈ 18,14 т/ч. Пар по каждой модели не разложен. Имена PFI, PFT и TSSG на странице есть без диапазона и в отдельные карточки не вынесены.`,
+    sizes: [],
+    sizesNote: "Имена моделей есть, их паропроизводительность по отдельности нет.",
+    aliases: ["fm"],
+  },
+  {
+    id: "bw-hcfm",
+    name: "B&W HCFM",
+    categoryId: "steam",
+    kind: "Водотрубный, пакетный",
+    image: "/catalog/waterpipe.jpg",
+    summary: "90,6–158,6 т/ч. До 1 250 psig и 825 °F.",
+    powerMinKw: null,
+    powerMaxKw: null,
+    steamMinKgH: 90600,
+    steamMaxKgH: 158600,
+    tempMaxC: 441,
+    pressureNote: "до 7,2 МПа",
+    fuels: ["gas", "diesel", "heavy"] as FuelId[],
+    feature: "200 000–350 000 фунтов/ч",
+    extra: `${checked} Страница сама пишет 90.6 to 158.6 T/h и to 825F (441C).`,
+    sizes: [],
+    sizesNote: null,
+    aliases: ["hcfm"],
+  },
+  {
+    id: "bw-pfm",
+    name: "B&W PFM",
+    categoryId: "steam",
+    kind: "Водотрубный, пакетный",
+    image: "/catalog/waterpipe.jpg",
+    summary: "90,6–271,8 т/ч.",
+    powerMinKw: null,
+    powerMaxKw: null,
+    steamMinKgH: 90600,
+    steamMaxKgH: 271800,
+    tempMaxC: null,
+    pressureNote: null,
+    fuels: ["gas", "diesel", "heavy"] as FuelId[],
+    feature: "200 000–600 000 фунтов/ч",
+    extra: `${checked} Давление и температура в извлечённой строке PFM не названы и не скопированы с HCFM. Общий потолок страницы — 10 000–1 200 000 фунтов/ч, 250–2 400 psig, до 540 °C — это не диапазон одной серии.`,
+    sizes: [],
+    sizesNote: null,
+    aliases: ["pfm"],
+  },
+];
