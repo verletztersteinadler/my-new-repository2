@@ -1,6 +1,5 @@
-import { useRef, useState, type FormEvent, type InputHTMLAttributes } from "react";
-import { CONSENT_VERSION, sizeById } from "@/data/catalog";
-import { findSeries } from "@/data/series-index";
+import { useEffect, useRef, useState, type FormEvent, type InputHTMLAttributes } from "react";
+import { CONSENT_VERSION, sizeById, type Series } from "@/data/catalog";
 import { cn } from "@/lib/utils";
 
 export type LeadContext = {
@@ -36,7 +35,17 @@ export function LeadForm({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [leadId, setLeadId] = useState<string | null>(null);
   const [sizeId, setSizeId] = useState(context.sizeId ?? "");
-  const series = findSeries(context.seriesId);
+  const [series, setSeries] = useState<Series | undefined>(undefined);
+  useEffect(() => {
+    if (!context.seriesId) return;
+    let alive = true;
+    import("@/data/series-index").then((module) => {
+      if (alive) setSeries(module.findSeries(context.seriesId));
+    });
+    return () => {
+      alive = false;
+    };
+  }, [context.seriesId]);
   const size = sizeById(series, sizeId);
 
   if (leadId) {

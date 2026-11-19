@@ -31,8 +31,18 @@ export function segments(value) {
   return [...plain.split("/"), ...paren].map(fold).filter((item) => item.length >= 4 && !GENERIC.has(item));
 }
 
-export function catalogProblems({ manufacturers, catalogs, pageSlugs }) {
+export function catalogProblems({ manufacturers, catalogs, pageSlugs, slugList }) {
   const problems = [];
+  if (slugList) {
+    const catalogSlugs = new Set(catalogs.map((catalog) => catalog.slug));
+    const lightSlugs = new Set(slugList);
+    for (const slug of lightSlugs) {
+      if (!catalogSlugs.has(slug)) problems.push(`published-slugs.ts: slug ${slug} отсутствует в publishedCatalogs (series-index.ts)`);
+    }
+    for (const slug of catalogSlugs) {
+      if (!lightSlugs.has(slug)) problems.push(`published-slugs.ts не синхронизирован с series-index.ts: нет slug ${slug}`);
+    }
+  }
   const seen = new Map();
   for (const item of manufacturers) {
     if (seen.has(item.slug)) problems.push(`повтор slug ${item.slug}`);
@@ -78,6 +88,8 @@ export function readCatalogSources(root) {
   const indexText = readFileSync(join(root, "src/data/series-index.ts"), "utf8");
   const pageText = readFileSync(join(root, "src/components/catalog-page.tsx"), "utf8");
   const fillText = existsSync(join(root, "src/data/fill-rest.ts")) ? readFileSync(join(root, "src/data/fill-rest.ts"), "utf8") : "";
+  const slugsText = existsSync(join(root, "src/data/published-slugs.ts")) ? readFileSync(join(root, "src/data/published-slugs.ts"), "utf8") : "";
+  const slugList = [...slugsText.matchAll(/slug: "([^"]+)"/g)].map((match) => match[1]);
   const manufacturers = [...manufacturersText.matchAll(/slug: "([^"]+)", title: "(.*?)", name: "(.*?)"/g)].map((match) => ({
     slug: match[1],
     title: match[2],
@@ -89,7 +101,7 @@ export function readCatalogSources(root) {
   if (pageText.includes("fillBySlug")) {
     for (const match of fillText.matchAll(/one\("([^"]+)"/g)) pageSlugs.add(match[1]);
   }
-  return { manufacturers, catalogs, pageSlugs };
+  return { manufacturers, catalogs, pageSlugs, slugList };
 }
 
 function main() {

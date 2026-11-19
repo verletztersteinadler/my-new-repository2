@@ -3,11 +3,11 @@ import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/logo";
 import { SolutionBuilder } from "@/components/solution-builder";
 import { manufacturers, regions, lines, type RegionId, type LineId } from "@/data/manufacturers";
-import { publishedCatalogs } from "@/data/series-index";
+import { publishedSlugs } from "@/data/published-slugs";
 
 const routeApi = getRouteApi("/");
 
-const openedSeries = new Set(publishedCatalogs.map((item) => item.slug));
+const openedSeries = new Set(publishedSlugs.map((item) => item.slug));
 
 export function HomePage() {
   const search = routeApi.useSearch();

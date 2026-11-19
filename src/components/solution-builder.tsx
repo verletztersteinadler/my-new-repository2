@@ -12,7 +12,8 @@ import {
   type Series,
   type SteamBand,
 } from "@/data/catalog";
-import { publishedCatalogs } from "@/data/series-index";
+
+type PublishedCatalog = (typeof import("@/data/series-index"))["publishedCatalogs"][number];
 
 type Task = "any" | "water" | "steam" | "oil" | "air" | "block";
 type KitId = "burner" | "auto" | "pumps" | "economizer" | "water" | "other";
@@ -48,6 +49,17 @@ export function SolutionBuilder() {
   const [steam, setSteam] = useState<SteamBand | "any">("any");
   const [kit, setKit] = useState<KitId[]>([]);
   const [done, setDone] = useState(false);
+  const [catalogs, setCatalogs] = useState<PublishedCatalog[]>([]);
+
+  useEffect(() => {
+    let alive = true;
+    import("@/data/series-index").then((module) => {
+      if (alive) setCatalogs(module.publishedCatalogs);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!done) return;
@@ -56,7 +68,7 @@ export function SolutionBuilder() {
 
   const showSteam = task === "steam";
   const hits = useMemo(() => {
-    const boilers = publishedCatalogs.flatMap((catalog) =>
+    const boilers = catalogs.flatMap((catalog) =>
       filterSeries(
         {
           fuel: fuel === "any" ? undefined : fuel,
@@ -70,13 +82,13 @@ export function SolutionBuilder() {
     );
     if (!kit.includes("auto")) return boilers;
     const seen = new Set(boilers.map((item) => `${item.slug}-${item.series.id}`));
-    const automation = publishedCatalogs.flatMap((catalog) =>
+    const automation = catalogs.flatMap((catalog) =>
       catalog.series
         .filter((series) => series.categoryId === "auto")
         .map((series) => ({ series, slug: catalog.slug, maker: catalog.title })),
     );
     return [...boilers, ...automation.filter((item) => !seen.has(`${item.slug}-${item.series.id}`))];
-  }, [fuel, kit, power, showSteam, steam, task]);
+  }, [catalogs, fuel, kit, power, showSteam, steam, task]);
 
   function toggleKit(id: KitId) {
     setKit((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
@@ -167,8 +179,10 @@ export function SolutionBuilder() {
           <p className="mt-2 text-xs text-muted">Можно отметить несколько. Отдельной серии в справочнике может не быть — тогда позиция в списке не появляется.</p>
         </fieldset>
 
-        <p className="mt-5 text-sm text-muted">По фильтру в открытом каталоге: {hits.length}</p>
-        {hits.length === 0 ? (
+        {catalogs.length > 0 ? (
+          <p className="mt-5 text-sm text-muted">По фильтрам в открытом каталоге: {hits.length}</p>
+        ) : null}
+        {catalogs.length > 0 && hits.length === 0 ? (
           <p className="mt-2 text-sm">Совпадений в открытых сериях нет.</p>
         ) : (
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -186,7 +200,7 @@ export function SolutionBuilder() {
             ))}
           </ul>
         )}
-        {hits.length > 8 ? <p className="mt-2 text-xs text-muted">Показаны 8 из {hits.length}.</p> : null}
+        {catalogs.length > 0 && hits.length > 8 ? <p className="mt-2 text-xs text-muted">Показаны 8 из {hits.length}.</p> : null}
         {missingKit.length ? (
           <p className="mt-3 text-sm text-muted">
             {missingKit.join(", ")}: отдельных серий в опубликованном справочнике нет. Марка не подставляется.
