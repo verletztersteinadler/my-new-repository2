@@ -4,7 +4,7 @@ export const CONSENT_VERSION = "kotly-consent-draft-2026-11-15";
 export const MANUFACTURER_SITE = "https://omzit.ru/";
 export const SOURCE_CHECKED = "2026-11-15";
 
-export type CategoryId = "hw115" | "hw170" | "water" | "steam" | "oil" | "block" | "auto" | "air";
+export type CategoryId = "hw115" | "hw170" | "water" | "steam" | "oil" | "block" | "auto" | "air" | "pumps";
 export type FuelId = "gas" | "diesel" | "furnace" | "heavy" | "solid";
 export type PowerBand = "u1" | "m1to5" | "m5to15" | "o15";
 export type SteamBand = "u5" | "t5to15" | "o15";
@@ -52,6 +52,7 @@ export const categories: Category[] = [
   { id: "oil", title: "Термомасляные", param: "power" },
   { id: "block", title: "Котловые блоки", param: "power" },
   { id: "auto", title: "Автоматика", param: "none" },
+  { id: "pumps", title: "Насосы", param: "none" },
 ];
 
 export const fuels: { id: FuelId; title: string }[] = [
@@ -521,7 +522,7 @@ export function primarySpec(series: Series) {
   if (series.categoryId === "steam") {
     return { label: "Паропроизводительность", value: formatSteamRange(series.steamMinKgH, series.steamMaxKgH) };
   }
-  if (series.categoryId === "auto") {
+  if (series.categoryId === "auto" || series.categoryId === "pumps") {
     return { label: "Назначение", value: series.feature };
   }
   return { label: "Мощность", value: series.powerNote || formatPowerRange(series.powerMinKw, series.powerMaxKw) };

@@ -15,7 +15,7 @@ import {
 
 type PublishedCatalog = (typeof import("@/data/series-index"))["publishedCatalogs"][number];
 
-type Task = "any" | "water" | "steam" | "oil" | "air" | "block";
+type Task = "any" | "water" | "steam" | "oil" | "air" | "block" | "pumps";
 type KitId = "burner" | "auto" | "pumps" | "economizer" | "water" | "other";
 
 const tasks: { id: Task; label: string }[] = [
@@ -25,6 +25,7 @@ const tasks: { id: Task; label: string }[] = [
   { id: "oil", label: "Термомасло" },
   { id: "air", label: "Воздух" },
   { id: "block", label: "Котловой блок" },
+  { id: "pumps", label: "Насосы" },
 ];
 
 const kits: { id: KitId; label: string; published: boolean }[] = [
