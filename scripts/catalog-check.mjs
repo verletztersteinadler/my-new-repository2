@@ -31,7 +31,7 @@ export function segments(value) {
   return [...plain.split("/"), ...paren].map(fold).filter((item) => item.length >= 4 && !GENERIC.has(item));
 }
 
-export function catalogProblems({ manufacturers, catalogs, pageSlugs, slugList }) {
+export function catalogProblems({ manufacturers, catalogs, pageSlugs, slugList, sitemapLocs }) {
   const problems = [];
   if (slugList) {
     const catalogSlugs = new Set(catalogs.map((catalog) => catalog.slug));
@@ -41,6 +41,19 @@ export function catalogProblems({ manufacturers, catalogs, pageSlugs, slugList }
     }
     for (const slug of catalogSlugs) {
       if (!lightSlugs.has(slug)) problems.push(`published-slugs.ts не синхронизирован с series-index.ts: нет slug ${slug}`);
+    }
+  }
+  if (sitemapLocs && slugList) {
+    const sitemapSlugs = new Set(
+      sitemapLocs
+        .filter((loc) => loc.includes("/manufacturers/"))
+        .map((loc) => loc.split("/manufacturers/")[1]),
+    );
+    for (const slug of slugList) {
+      if (!sitemapSlugs.has(slug)) problems.push(`public/sitemap.xml: no <loc> for slug ${slug} from published-slugs.ts`);
+    }
+    for (const slug of sitemapSlugs) {
+      if (!slugList.includes(slug)) problems.push(`public/sitemap.xml: extra slug ${slug} not present in published-slugs.ts`);
     }
   }
   const seen = new Map();
@@ -90,6 +103,10 @@ export function readCatalogSources(root) {
   const fillText = existsSync(join(root, "src/data/fill-rest.ts")) ? readFileSync(join(root, "src/data/fill-rest.ts"), "utf8") : "";
   const slugsText = existsSync(join(root, "src/data/published-slugs.ts")) ? readFileSync(join(root, "src/data/published-slugs.ts"), "utf8") : "";
   const slugList = [...slugsText.matchAll(/slug: "([^"]+)"/g)].map((match) => match[1]);
+  const sitemapPath = join(root, "public/sitemap.xml");
+  const sitemapLocs = existsSync(sitemapPath)
+    ? [...readFileSync(sitemapPath, "utf8").matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])
+    : undefined;
   const manufacturers = [...manufacturersText.matchAll(/slug: "([^"]+)", title: "(.*?)", name: "(.*?)"/g)].map((match) => ({
     slug: match[1],
     title: match[2],
@@ -101,7 +118,7 @@ export function readCatalogSources(root) {
   if (pageText.includes("fillBySlug")) {
     for (const match of fillText.matchAll(/one\("([^"]+)"/g)) pageSlugs.add(match[1]);
   }
-  return { manufacturers, catalogs, pageSlugs, slugList };
+  return { manufacturers, catalogs, pageSlugs, slugList, sitemapLocs };
 }
 
 function main() {

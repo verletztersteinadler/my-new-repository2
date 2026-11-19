@@ -3,6 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { PickBar } from "@/components/pick-bar";
 import appCss from "../styles.css?url";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -14,6 +15,7 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#161616" },
       { property: "og:title", content: "Котлы.pro — справочник промышленных котлов" },
       { property: "og:description", content: "Независимый справочник котлов, горелок и воздухонагревателей. Не сайт завода и не предложение о продаже." },
+      { property: "og:locale", content: "ru_RU" },
       { property: "og:image", content: "/og.jpg" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

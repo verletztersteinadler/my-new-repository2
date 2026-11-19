@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog-page";
 import { manufacturerBySlug } from "@/data/manufacturers";
 import { publishedSlugs } from "@/data/published-slugs";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 const publishedSlugSet = new Set(publishedSlugs.map((item) => item.slug));
 
@@ -42,21 +43,35 @@ export const Route = createFileRoute("/manufacturers/$slug")({
     if (!maker) throw notFound();
     return maker;
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      {
-        title: publishedSlugSet.has(loaderData?.slug ?? "")
-          ? `Серии ${loaderData?.title} в независимом справочнике`
-          : `${loaderData?.title ?? "Производитель"} — карточка справочника`,
-      },
-      {
-        name: "description",
-        content: publishedSlugSet.has(loaderData?.slug ?? "")
-          ? "Открытые сведения о сериях. Страница не является сайтом производителя и не предлагает купить оборудование."
-          : "Информация на сайте производителя не предоставлена. Карточка не назначает модели.",
-      },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    const slug = loaderData?.slug ?? "";
+    const canonical = `${SITE_URL}/manufacturers/${slug}`;
+    const published = publishedSlugSet.has(slug);
+    const title = published
+      ? `Серии ${loaderData?.title} в независимом справочнике`
+      : `${loaderData?.title ?? "Производитель"} — карточка справочника`;
+    const description = published
+      ? "Открытые сведения о сериях. Станция не является сайтом производителя и не предлагает купить оборудование."
+      : "Информация на сайте производителя не предоставлена. Карточка не назначает модели.";
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: title,
+      description,
+      url: canonical,
+      inLanguage: "ru",
+      isPartOf: { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: SITE_NAME },
+      about: { "@type": "Organization", name: loaderData?.title ?? slug },
+    };
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+      ],
+      links: [{ rel: "canonical", href: canonical }],
+      scripts: [{ type: "application/ld+json", children: JSON.stringify(jsonLd) }],
+    };
+  },
   component: ManufacturerRoute,
 });
 
