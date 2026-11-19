@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { toast } from "sonner";
 import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/logo";
 import { SolutionBuilder } from "@/components/solution-builder";
@@ -15,6 +16,14 @@ export function HomePage() {
   const region = regions.some((item) => item.id === search.region) ? (search.region as RegionId) : undefined;
   const line = lines.some((item) => item.id === search.line) ? (search.line as LineId) : undefined;
   const q = (search.q ?? "").trim().toLocaleLowerCase("ru");
+  const toastedAccepted = useRef<string | null>(null);
+  useEffect(() => {
+    if (!search.accepted || toastedAccepted.current === search.accepted) return;
+    toastedAccepted.current = search.accepted;
+    toast.success(`Заявка ${search.accepted} принята. Ответим в рабочее время.`);
+    patch({ accepted: undefined });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.accepted]);
 
   const rows = useMemo(() => {
     const found = manufacturers.filter((item) => {
@@ -26,13 +35,14 @@ export function HomePage() {
     return found.slice().sort((a, b) => Number(b.published) - Number(a.published) || a.title.localeCompare(b.title, "ru"));
   }, [q, region, line]);
 
-  function patch(next: { q?: string; region?: string; line?: string }) {
+  function patch(next: { q?: string; region?: string; line?: string; accepted?: string }) {
     navigate({
       search: (prev) => {
         const merged = { ...prev, ...next };
         if (!merged.q) delete merged.q;
         if (!merged.region) delete merged.region;
         if (!merged.line) delete merged.line;
+      if (!merged.accepted) delete merged.accepted;
         return merged;
       },
       resetScroll: false,
