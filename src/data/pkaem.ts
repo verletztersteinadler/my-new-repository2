@@ -1,0 +1,161 @@
+import type { Category, FuelId, Series, Size } from "@/data/catalog";
+
+const checked = "Сверка 18.11.2026. Каталог pkaem.ru. Внесены ступени, которые стоят в открытых разделах. Исполнения по топливу и давлению внутри одной ступени не разворачивались. Экономайзеры, дымососы и циклоны в ряд котлов не внесены.";
+
+const water = (id: string, name: string, powers: Size[], fuels: FuelId[], feature: string, extra: string): Series => ({
+  id,
+  name,
+  categoryId: "water",
+  kind: "Водогрейный",
+  image: "/catalog/waterpipe.jpg",
+  summary: feature,
+  powerMinKw: powers[0].powerKw,
+  powerMaxKw: powers[powers.length - 1].powerKw,
+  steamMinKgH: null,
+  steamMaxKgH: null,
+  tempMaxC: 150,
+  pressureNote: null,
+  fuels,
+  feature,
+  extra,
+  sizes: powers,
+  sizesNote: "Температура на карточках: вход 70 °C, выход 150 °C.",
+  aliases: [],
+});
+
+const steam = (id: string, name: string, sizes: Size[], temp: number | null, fuels: FuelId[], note: string): Series => ({
+  id,
+  name,
+  categoryId: "steam",
+  kind: "Паровой",
+  image: "/catalog/waterpipe.jpg",
+  summary: note,
+  powerMinKw: null,
+  powerMaxKw: null,
+  steamMinKgH: sizes[0].steamKgH,
+  steamMaxKgH: sizes[sizes.length - 1].steamKgH,
+  tempMaxC: temp,
+  pressureNote: null,
+  fuels,
+  feature: note,
+  extra: checked,
+  sizes,
+  sizesNote: "Одно давление на серию не ставится: у исполнений оно разное.",
+  aliases: [],
+});
+
+const kw = (id: string, name: string, powerKw: number): Size => ({ id, name, powerKw, steamKgH: null });
+const th = (id: string, name: string, tons: number): Size => ({ id, name, powerKw: null, steamKgH: tons * 1000 });
+
+export const pkaemCategories: Category[] = [
+  { id: "water", title: "Водогрейные", param: "power" },
+  { id: "steam", title: "Паровые", param: "steam" },
+  { id: "auto", title: "Горелки", param: "none" },
+];
+export const pkaemDocuments = [{ title: "Каталог pkaem.ru" }];
+export const pkaemSeries: Series[] = [
+  water(
+    "pkaem-kvgm",
+    "Алтайэнергомаш КВ-ГМ",
+    [
+      kw("kvgm-465", "КВ-ГМ-4,65-150", 4650),
+      kw("kvgm-756", "КВ-ГМ-7,56-150", 7560),
+      kw("kvgm-1163", "КВ-ГМ-11,63-150", 11630),
+      kw("kvgm-2326", "КВ-ГМ-23,26-150", 23260),
+      kw("kvgm-35", "КВ-ГМ-35-150", 35000),
+      kw("kvgm-582", "КВ-ГМ-58,2-150", 58200),
+      kw("kvgm-116", "КВ-ГМ-116,3-150", 116300),
+      kw("kvgm-139", "КВ-ГМ-139,6-150", 139600),
+      kw("kvgm-209", "КВ-ГМ-209-150", 209000),
+    ],
+    ["gas", "heavy"],
+    "4,65–209 МВт, газ или мазут",
+    `${checked} Мощность взята из обозначения в МВт, не из соседней строки в Гкал/ч.`,
+  ),
+  water(
+    "pkaem-kvts",
+    "Алтайэнергомаш КВ-ТС",
+    [
+      kw("kvts-465", "КВ-ТС-4,65-150", 4650),
+      kw("kvts-756", "КВ-ТС-7,56-150", 7560),
+      kw("kvts-1163", "КВ-ТС-11,63-150", 11630),
+      kw("kvts-2326", "КВ-ТС-23,26-150", 23260),
+      kw("kvts-35", "КВ-ТС-35-150", 35000),
+    ],
+    [],
+    "4,65–35 МВт",
+    `${checked} Топливо на карточках КВ-ТС не подписано.`,
+  ),
+  water(
+    "pkaem-ptvm",
+    "Алтайэнергомаш ПТВМ",
+    [
+      kw("ptvm-30", "ПТВМ-30", 35000),
+      kw("ptvm-50", "ПТВМ-50", 58200),
+      kw("ptvm-60", "ПТВМ-60", 69800),
+      kw("ptvm-100", "ПТВМ-100", 116300),
+      kw("ptvm-120", "ПТВМ-120", 139600),
+      kw("ptvm-180", "ПТВМ-180", 209000),
+    ],
+    [],
+    "35–209 МВт",
+    `${checked} В скобках у карточек стоит обозначение КВ-ГМ той же мощности. Отдельная строка топлива на ПТВМ не напечатана.`,
+  ),
+  steam(
+    "pkaem-dse",
+    "Алтайэнергомаш ДСЕ",
+    [th("dse-16", "ДСЕ-1,6", 1.6), th("dse-25", "ДСЕ-2,5", 2.5), th("dse-40", "ДСЕ-4,0", 4)],
+    194,
+    ["gas", "heavy", "diesel", "solid"],
+    "1,6–4 т/ч, пар 194 °C",
+  ),
+  steam("pkaem-dkvr", "Алтайэнергомаш ДКВр", [th("dkvr-25", "ДКВр-2,5", 2.5), th("dkvr-4", "ДКВр-4", 4), th("dkvr-65", "ДКВр-6,5", 6.5), th("dkvr-10", "ДКВр-10", 10), th("dkvr-20", "ДКВр-20", 20)], null, [], "Разделы каталога 2,5–20 т/ч"),
+  steam("pkaem-ke", "Алтайэнергомаш КЕ", [th("ke-25", "КЕ-2,5", 2.5), th("ke-4", "КЕ-4", 4), th("ke-65", "КЕ-6,5", 6.5), th("ke-10", "КЕ-10", 10), th("ke-25t", "КЕ-25", 25)], null, [], "Разделы каталога 2,5–25 т/ч"),
+  steam("pkaem-de", "Алтайэнергомаш ДЕ", [th("de-4", "ДЕ-4", 4), th("de-65", "ДЕ-6,5", 6.5), th("de-10", "ДЕ-10", 10), th("de-16", "ДЕ-16", 16), th("de-25", "ДЕ-25", 25)], null, [], "Разделы каталога 4–25 т/ч"),
+  {
+    id: "pkaem-e",
+    name: "Алтайэнергомаш Е",
+    categoryId: "steam",
+    kind: "Паровой",
+    image: "/catalog/waterpipe.jpg",
+    summary: "На открытой странице две модели по 1 т/ч.",
+    powerMinKw: null,
+    powerMaxKw: null,
+    steamMinKgH: 1000,
+    steamMaxKgH: 1000,
+    tempMaxC: 170,
+    pressureNote: null,
+    fuels: ["solid", "diesel"],
+    feature: "1 т/ч, 170 °C",
+    extra: `${checked} Видны Е 1.0-0.9 Р (каменный и бурый уголь) и Е 1.0-9 ГМ (жидкое топливо). Другие Е этой выборкой не подтверждены.`,
+    sizes: [th("e-09", "Е 1.0-0.9 Р", 1), th("e-gm", "Е 1.0-9 ГМ", 1)],
+    sizesNote: null,
+    aliases: [],
+  },
+  burner("pkaem-gm", "Алтайэнергомаш ГМ", ["ГМ-2.5", "ГМ-4.5", "ГМ-7.0", "ГМ-10"]),
+  burner("pkaem-gmg", "Алтайэнергомаш ГМГ", ["ГМГ-1.5", "ГМГ-2.0", "ГМГ-4.0", "ГМГ-5.0"]),
+  burner("pkaem-gmp", "Алтайэнергомаш ГМП", ["ГМП-16"]),
+];
+
+function burner(id: string, name: string, models: string[]): Series {
+  return {
+    id,
+    name,
+    categoryId: "auto",
+    kind: "Горелка",
+    image: "/catalog/cabinet.jpg",
+    summary: "Мощность в кВт на странице раздела не указана.",
+    powerMinKw: null,
+    powerMaxKw: null,
+    steamMinKgH: null,
+    steamMaxKgH: null,
+    tempMaxC: null,
+    pressureNote: null,
+    fuels: [],
+    feature: "кВт на странице не указаны",
+    extra: `${checked} Индекс в названии горелки в кВт не переводился.`,
+    sizes: models.map((model) => ({ id: `${id}-${model}`, name: model, powerKw: null, steamKgH: null })),
+    sizesNote: models.join(", "),
+    aliases: [],
+  };
+}

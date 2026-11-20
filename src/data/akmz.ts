@@ -1,0 +1,80 @@
+import type { Category, Series, Size } from "@/data/catalog";
+
+const checked = "Сверка 18.11.2026. akmz.net, разделы водогрейных, паровых и котлов-утилизаторов. Теплообменники, регистры и кристаллизаторы не внесены.";
+
+const ptvm: Size[] = ["30", "50", "60", "100", "180"].map((n) => ({
+  id: `akmz-ptvm-${n}`,
+  name: `ПТВМ-${n}`,
+  powerKw: null,
+  steamKgH: null,
+}));
+
+export const akmzCategories: Category[] = [
+  { id: "water", title: "Водогрейные", param: "power" },
+  { id: "steam", title: "Паровые", param: "steam" },
+];
+export const akmzDocuments = [{ title: "akmz.net" }];
+export const akmzSeries: Series[] = [
+  {
+    id: "akmz-ptvm",
+    name: "АКМЗ ПТВМ",
+    categoryId: "water",
+    kind: "Водогрейный",
+    image: "/catalog/waterpipe.jpg",
+    summary: "Названы ПТВМ-30, 50, 60, 100 и 180. Мощность каждой модели не подписана.",
+    powerMinKw: 1000,
+    powerMaxKw: 80000,
+    steamMinKgH: null,
+    steamMaxKgH: null,
+    tempMaxC: null,
+    pressureNote: null,
+    fuels: [],
+    feature: "Мощность модели не подписана",
+    extra: `${checked} Отдельной фразой страница пишет линейку от 1 до 80 МВт. К какому из пяти ПТВМ относится какая мощность, не сказано. Топливо, давление и температура не указаны.`,
+    powerNote: "1–80 МВт на линейку, не на модель",
+    sizes: ptvm,
+    sizesNote: "Индекс модели в МВт не переводился.",
+    aliases: ["птвм"],
+  },
+  {
+    id: "akmz-steam",
+    name: "АКМЗ, паровые",
+    categoryId: "steam",
+    kind: "1–100 МВт",
+    image: "/catalog/waterpipe.jpg",
+    summary: "1–100 МВт. Пар до 400 °C, давление до 20 кгс/см².",
+    powerMinKw: 1000,
+    powerMaxKw: 100000,
+    steamMinKgH: null,
+    steamMaxKgH: null,
+    tempMaxC: 400,
+    pressureNote: "до 20 кгс/см²",
+    fuels: ["solid", "gas", "heavy"],
+    feature: "Бурый и каменный уголь, газ или мазут",
+    extra: `${checked} Паропроизводительность в т/ч на странице не дана. Заголовок страницы перечисляет П, ПК, ТПЕ, ПП, ТГМП и ТГМЕ без отдельных таблиц, поэтому отдельными сериями они не заведены.`,
+    powerNote: "1–100 МВт",
+    sizes: [],
+    sizesNote: null,
+    aliases: ["акмз пар"],
+  },
+  {
+    id: "akmz-whb",
+    name: "АКМЗ, котлы-утилизаторы",
+    categoryId: "steam",
+    kind: "Утилизатор",
+    image: "/catalog/steam-hood.jpg",
+    summary: "Диапазон серии не задан. На странице примеры выполненных котлов 2 и 6 МВт.",
+    powerMinKw: null,
+    powerMaxKw: null,
+    steamMinKgH: null,
+    steamMaxKgH: null,
+    tempMaxC: null,
+    pressureNote: null,
+    fuels: [],
+    feature: "Диапазон серии не задан",
+    extra: `${checked} Температуры +350…+400 °C и +900…+1500 °C относятся к горячим газам, не к пару. 2 и 6 МВт — выполненные поставки, не границы ряда.`,
+    sizes: [],
+    sizesNote: null,
+    aliases: ["утилизатор"],
+  },
+];
