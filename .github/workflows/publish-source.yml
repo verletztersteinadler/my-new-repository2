@@ -1,0 +1,106 @@
+name: Publish project source from ZIP
+
+on:
+  push:
+    branches:
+      - work/catalog-completion-2026-11-20
+    paths:
+      - .github/workflows/publish-source.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unpack-test-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Extract existing project archive safely
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import zipfile, shutil, stat
+          archive = Path("kotly-pro.zip")
+          if not archive.is_file():
+              raise SystemExit("Missing kotly-pro.zip")
+          with zipfile.ZipFile(archive) as z:
+              infos = [i for i in z.infolist() if not i.is_dir()]
+              package_files = [i.filename for i in infos if PurePosixPath(i.filename).name == "package.json"]
+              if not package_files:
+                  raise SystemExit("No package.json in archive")
+              package_path = min(package_files, key=lambda s: (len(PurePosixPath(s).parts), len(s)))
+              prefix = str(PurePosixPath(package_path).parent)
+              if prefix == ".":
+                  prefix = ""
+              else:
+                  prefix += "/"
+              excluded = {".git", ".github", "node_modules", ".next", ".output", "dist", "build", "coverage", ".tanstack", ".vercel"}
+              total = 0
+              count = 0
+              for info in infos:
+                  name = info.filename
+                  if prefix and not name.startswith(prefix):
+                      continue
+                  rel = name[len(prefix):]
+                  path = PurePosixPath(rel)
+                  if not rel or path.is_absolute() or ".." in path.parts:
+                      continue
+                  if any(part in excluded or part.startswith(".env") for part in path.parts):
+                      continue
+                  if stat.S_ISLNK((info.external_attr >> 16) & 0o170000):
+                      continue
+                  if info.file_size > 50_000_000:
+                      raise SystemExit("Oversized file in ZIP: " + name)
+                  total += info.file_size
+                  count += 1
+                  if total > 300_000_000 or count > 25_000:
+                      raise SystemExit("Unreasonable archive size")
+                  target = Path(*path.parts)
+                  if target == Path("kotly-pro.zip"):
+                      continue
+                  if target == Path("README.md"):
+                      target = Path("PROJECT-README.md")
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  with z.open(info) as src, target.open("wb") as dst:
+                      shutil.copyfileobj(src, dst)
+              if count < 15 or not Path("package.json").is_file():
+                  raise SystemExit("Extraction failed: unexpectedly few files")
+              print(f"Extracted {count} source files ({total} uncompressed bytes); archive root={prefix or '/'}")
+          PY
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck --if-present
+
+      - name: Validate catalog
+        run: npm run check:catalog --if-present
+
+      - name: Test catalog
+        run: npm run test:catalog --if-present
+
+      - name: Build
+        run: npm run build:dev --if-present
+
+      - name: Commit validated source files to work branch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "build: publish extracted and verified kotly.pro source"
+            git push origin HEAD:work/catalog-completion-2026-11-20
+          fi
