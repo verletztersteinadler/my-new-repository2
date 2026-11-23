@@ -47,6 +47,38 @@ jobs:
       - name: Validate generated routes and TypeScript
         run: npm run typecheck
 
+      - name: Check PHP syntax and fail-closed API status
+        shell: bash
+        run: |
+          php -l dist-reg-ru/api/v1/leads/index.php
+          php -S 127.0.0.1:18765 -t dist-reg-ru > /tmp/kotly-php-test.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          python3 - <<'PY'
+          import json, time, urllib.request, urllib.error
+          target = "http://127.0.0.1:18765/api/v1/leads/index.php"
+          for i in range(25):
+              try:
+                  with urllib.request.urlopen(target, timeout=2) as r:
+                      response=json.load(r)
+                  break
+              except Exception:
+                  time.sleep(.2)
+          else:
+              raise AssertionError("PHP endpoint not running")
+          assert response.get("enabled") is False, response
+          request = urllib.request.Request(target,
+              data=b'{}',
+              headers={"Content-Type":"application/json","Origin":"https://kotly.pro"},
+              method="POST")
+          try:
+              urllib.request.urlopen(request, timeout=2)
+              raise AssertionError("Unconfigured PHP backend accepted a lead")
+          except urllib.error.HTTPError as e:
+              assert e.code == 503, e.code
+          print("PHP endpoint disabled until private legal/operator configuration is complete")
+          PY
+
       - name: Verify static output and create upload ZIP
         shell: bash
         run: |
@@ -59,6 +91,10 @@ jobs:
           htaccess = root / ".htaccess"
           assert index.is_file() and index.stat().st_size > 250, "No static index.html"
           assert htaccess.is_file(), "No routing .htaccess"
+          php = root / "api" / "v1" / "leads" / "index.php"
+          assert php.is_file(), "Missing PHP lead endpoint"
+          assert "kotly-pro-private" in php.read_text(encoding="utf-8"), "Missing private lead storage config"
+          assert not (root / "kotly-pro-private").exists(), "Private lead data included in public ZIP"
           boiler_house_page = root / "kotelnaya" / "index.html"
           assert boiler_house_page.is_file(), "Missing prerendered /kotelnaya page"
           assert "конфигурацию котельной" in boiler_house_page.read_text(encoding="utf-8").lower(), "Boiler-house page content not prerendered"
