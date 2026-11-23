@@ -49,6 +49,7 @@ export function HomePage() {
             <a href="#podbor" className="hover:text-ink">
               Подбор
             </a>
+            <Link to="/kotelnaya" className="font-semibold text-accent hover:text-ink">Котельная под ключ</Link>
             <a href="#manufacturers" className="hover:text-ink">
               Производители
             </a>
@@ -79,6 +80,27 @@ export function HomePage() {
         </section>
 
         <SolutionBuilder />
+
+        <section className="mx-auto mt-8 max-w-6xl px-4">
+          <div className="overflow-hidden rounded-3xl border border-line bg-[#161616] px-5 py-7 text-white sm:px-8 sm:py-9">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f0c4cc]">Следующий уровень подбора</p>
+            <div className="mt-3 grid items-end gap-5 md:grid-cols-[1fr_auto]">
+              <div>
+                <h2 className="max-w-3xl font-display text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+                  Собрать котельную под вашу задачу
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/75">
+                  Водогрейная, паровая или комбинированная схема: расчёт нагрузки и резервирования N+1,
+                  подбор серий котлоагрегатов, насосы, водоподготовка, автоматика, дымоудаление.
+                  В результате — техническое задание и общая форма инженерного запроса.
+                </p>
+              </div>
+              <Link to="/kotelnaya" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-6 text-sm font-bold text-on-accent hover:bg-accent-hover">
+                Конструктор котельной →
+              </Link>
+            </div>
+          </div>
+        </section>
 
         <div id="manufacturers" className="mx-auto mt-8 flex max-w-6xl flex-col gap-3 px-4">
           <input
