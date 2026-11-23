@@ -20,6 +20,13 @@ export type Size = {
   name: string;
   powerKw: number | null;
   steamKgH: number | null;
+  /** Confirmed properties of this exact model/execution, never inherited from whole family. */
+  fuels?: FuelId[];
+  execution?: string;
+  tempMaxC?: number;
+  workingPressureBar?: number;
+  sourceUrl?: string;
+  aliases?: string[];
 };
 
 export type Series = {
@@ -43,6 +50,12 @@ export type Series = {
   sizes: Size[];
   sizesNote: string | null;
   aliases: string[];
+  /** Per-series primary source (not proof of every model specification). */
+  sourceUrl?: string;
+  sourceRevision?: string;
+  sourceChecked?: string;
+  /** "draft" is for a company/series placeholder, never a purchasable model. */
+  recordStatus?: "catalogued" | "not-filled" | "project";
 };
 
 export const categories: Category[] = [
@@ -400,8 +413,7 @@ export function fuelTitle(id: FuelId) {
 }
 
 function trimNum(value: number) {
-  const rounded = Math.round(value * 10) / 10;
-  return rounded.toLocaleString("ru-RU", { maximumFractionDigits: 1 });
+  return value.toLocaleString("ru-RU", { maximumFractionDigits: 3 });
 }
 
 export function formatKw(kw: number) {
@@ -473,10 +485,17 @@ export function filterSeries(query: CatalogQuery, list: Series[] = seriesList) {
   const needle = query.q ? norm(query.q) : "";
   const rows = list.filter((series) => {
     if (query.type && series.categoryId !== query.type) return false;
-    if (query.fuel && !series.fuels.includes(query.fuel)) return false;
+    if (query.fuel) {
+      // Verified model-specific fuel overrides generic series capabilities.
+      const modelsWithFuel = series.sizes.filter((size) => size.fuels !== undefined);
+      if (modelsWithFuel.length) {
+        if (!modelsWithFuel.some((size) => size.fuels?.includes(query.fuel!))) return false;
+      } else if (!series.fuels.includes(query.fuel)) return false;
+    }
     if (needle) {
       const hay = norm(
-        [series.name, series.kind, series.summary, series.feature, ...series.aliases, ...series.sizes.map((size) => size.name)].join(" "),
+        [series.name, series.kind, series.summary, series.feature, ...series.aliases,
+          ...series.sizes.flatMap((size) => [size.name, ...(size.aliases ?? [])])].join(" "),
       );
       if (!hay.includes(needle)) return false;
     }
