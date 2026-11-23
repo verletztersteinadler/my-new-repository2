@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { LeadForm } from "@/components/lead-form";
+import { PumpGroupsEditor, defaultPumpRoles, validPumpRoles } from "@/components/pump-groups-editor";
+import { evaluatePumpGroup, newPumpGroup, type PumpGroup } from "@/lib/pump-engineering";
+import { pumpRoles } from "@/data/pumps";
 import { fuels, type FuelId } from "@/data/catalog";
 import { manufacturers } from "@/data/manufacturers";
 import { publishedCatalogs } from "@/data/series-index";
@@ -170,6 +173,10 @@ export function BoilerHouseBuilder() {
   const [step, setStep] = useState(0);
   const [furthest, setFurthest] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [pumpGroups, setPumpGroups] = useState<PumpGroup[]>([
+    newPumpGroup("network","pump-1"),
+    newPumpGroup("makeup","pump-2"),
+  ]);
   const patch = (x: Partial<State>) => setS((prev)=>({...prev,...x}));
   const hasWater=s.mode!=="steam";
   const hasSteam=s.mode!=="water";
@@ -188,6 +195,9 @@ export function BoilerHouseBuilder() {
   const availableSystems=systemChoices.filter((v)=>v.mode==="both"||(v.mode==="water"&&hasWater)||(v.mode==="steam"&&hasSteam));
   const selectedSystems=availableSystems.filter((v)=>s.systems.includes(v.id));
   const fuelName=(id:FuelId|"")=>fuels.find((v)=>v.id===id)?.title??"";
+  const allowedPumpRoles = new Set(validPumpRoles(s.mode).map((p)=>p.id));
+  const activePumps = pumpGroups.filter((p)=>allowedPumpRoles.has(p.role));
+  const pumpInputIssues = activePumps.flatMap((p)=>evaluatePumpGroup(p).issues);
   const waterCandidates = useMemo(()=>findBoilerCandidates({entries:catalogEntries,kind:"water",
     dutyPerUnit:plant.heat?.minimumPerDutyUnit??0,mainFuel:s.mainFuel,reserveFuel:s.alternateFuel,
     minimumTempC:waterSupplyC,limit:5}),
@@ -212,13 +222,26 @@ export function BoilerHouseBuilder() {
       ? "Проверьте температуры, давление и возврат конденсата (0–100 %). Для воды укажите обе температуры или ни одной.":
       hasWater&&waterSupplyC!=null&&waterReturnC!=null&&waterSupplyC<=waterReturnC?"Температура подачи должна быть выше температуры обратной линии.":null,
     (hasWater&&!plant.heat)||(hasSteam&&!plant.steam)?"При резервировании N+1 требуется минимум два котлоагрегата.":null,
-    null,null,
+    pumpInputIssues.length ? "Проверьте параметры насосных групп: "+pumpInputIssues.join("; ") : null,
+    null,
   ];
   const allValid=errs.every((e)=>!e);
   const togglePurpose=(v:string)=>patch({purposes:s.purposes.includes(v)?s.purposes.filter((x)=>x!==v):[...s.purposes,v]});
-  const changeMode=(v:PlantMode)=>patch({mode:v,systems:[...new Set([
-    ...s.systems.filter((id)=>systemChoices.find((x)=>x.id===id)?.mode==="both"),
-    ...(v!=="steam"?waterSystems:[]),...(v!=="water"?steamSystems:[])])]});
+  const changeMode=(v:PlantMode)=>{
+    if(v===s.mode)return;
+    patch({mode:v,systems:[...new Set([
+      ...s.systems.filter((id)=>systemChoices.find((x)=>x.id===id)?.mode==="both"),
+      ...(v!=="steam"?waterSystems:[]),...(v!=="water"?steamSystems:[])])]});
+    setPumpGroups((previous)=>{
+      const available=new Set(validPumpRoles(v).map((role)=>role.id));
+      const kept=previous.filter((group)=>available.has(group.role));
+      const present=new Set(kept.map((group)=>group.role));
+      const start=Math.max(0,...previous.map((group)=>Number(group.id.replace(/^pump-/,""))||0))+1;
+      const extra=defaultPumpRoles(v).filter((role)=>!present.has(role))
+        .map((role,index)=>newPumpGroup(role,"pump-"+(start+index)));
+      return [...kept,...extra];
+    });
+  };
   const changeUnit=(which:"powerUnit"|"steamUnit"|"tempUnit"|"pressureUnit",newUnit:string)=>{
     const convert=(raw:string,fn:(n:number)=>number)=>{
       const n=parse(raw,true);
@@ -258,7 +281,7 @@ export function BoilerHouseBuilder() {
     condensateReturnPct:condensate,mainFuel:fuelName(s.mainFuel),reserveFuel:fuelName(s.alternateFuel),
     operation:s.operation,placement:s.placement,circuit:s.circuit,automation:s.automation,
     heatTrain:plant.heat,steamTrain:plant.steam,chosenSystems:selectedSystems.map((v)=>v.title),
-    preferredEquipment,notes:s.notes,
+    preferredEquipment,pumpGroups:activePumps,notes:s.notes,
   });
   const toNext=()=>{if(errs[step])return;setStep((v)=>Math.min(v+1,4));setFurthest((v)=>Math.max(v,step+1));setCopied(false);};
 
@@ -414,6 +437,7 @@ export function BoilerHouseBuilder() {
                 onChange={()=>patch({systems:s.systems.includes(v.id)?s.systems.filter((x)=>x!==v.id):[...s.systems,v.id]})}/>
               <span><strong className="block text-sm">{v.title}</strong><span className="mt-1 block text-xs text-muted">{v.hint}</span></span>
             </label>)}</div>
+            <PumpGroupsEditor mode={s.mode} groups={activePumps} onChange={setPumpGroups}/>
             <label className="mt-5 grid gap-2 text-sm font-semibold">Дополнительные исходные данные
               <textarea className="min-h-28 w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm font-normal"
                 maxLength={800} rows={4} value={s.notes} onChange={(e)=>patch({notes:e.target.value})}
@@ -433,13 +457,43 @@ export function BoilerHouseBuilder() {
                 {hasSteam&&<Matches kind="steam" train={plant.steam} mainFuel={s.mainFuel} alternateFuel={s.alternateFuel}
                   temp={null} selected={s.preferredSteam} setSelected={(v)=>patch({preferredSteam:v})}/>}
               </div>
+              <section className="mt-5 rounded-2xl border border-line p-4">
+                <h3 className="font-semibold">Насосные группы к инженерной проверке</h3>
+                {activePumps.length===0 ? <p className="mt-2 text-sm text-muted">Насосные группы не заданы.</p> :
+                <ul className="mt-3 grid gap-2">{activePumps.map((g)=>{
+                  const role=pumpRoles.find((r)=>r.id===g.role);
+                  const calc=evaluatePumpGroup(g);
+                  return <li key={g.id} className="rounded-xl bg-chip p-3 text-sm">
+                    <strong>{role?.name??"Насосная группа"}</strong>
+                    <p className="mt-1 text-xs text-muted">{g.dutyUnits} рабочих + {g.standbyUnits} резервных;
+                      Q = {calc.totalM3S==null?"уточнить":fmt(calc.totalM3S,8)+" м³/с"};
+                      H = {calc.headM==null?"уточнить":fmt(calc.headM)+" м"}.</p>
+                    {calc.unknowns.length>0&&<p className="mt-1 text-xs text-muted">
+                      Не хватает данных: {calc.unknowns.join(", ")}.</p>}
+                  </li>;
+                })}</ul>}
+                <p className="mt-3 text-xs text-muted">Насосные модели не назначаются без достоверных кривых Q–H, КПД и NPSHr.</p>
+              </section>
               <label className="mt-6 grid gap-2 text-sm font-bold">Предварительное ТЗ
                 <textarea readOnly rows={16} value={brief} className="w-full rounded-xl border border-line bg-bg/40 p-3 text-xs font-normal leading-relaxed"/>
               </label>
-              <button type="button" className="mt-3 h-11 rounded-xl border border-line px-5 text-sm font-semibold"
-                onClick={async()=>{try{await navigator.clipboard.writeText(brief);setCopied(true);}catch{setCopied(false);}}}>
-                {copied?"ТЗ скопировано":"Скопировать ТЗ"}
-              </button>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button type="button" className="h-11 rounded-xl border border-line px-5 text-sm font-semibold"
+                  onClick={async()=>{try{await navigator.clipboard.writeText(brief);setCopied(true);}catch{setCopied(false);}}}>
+                  {copied?"ТЗ скопировано":"Скопировать ТЗ"}
+                </button>
+                <button type="button" className="h-11 rounded-xl bg-ink px-5 text-sm font-semibold text-bg"
+                  onClick={()=>{
+                    const blob=new Blob(["\uFEFF"+brief],{type:"text/plain;charset=utf-8"});
+                    const url=URL.createObjectURL(blob);
+                    const link=document.createElement("a");
+                    link.href=url; link.download="tehnicheskoe-zadanie-kotelnaya.txt";
+                    document.body.appendChild(link); link.click(); link.remove();
+                    URL.revokeObjectURL(url);
+                  }}>
+                  Скачать полное ТЗ (.txt)
+                </button>
+              </div>
               <div className="mt-7 rounded-2xl border border-line p-4">
                 <h3 className="text-xl font-bold">Отправить инженерный запрос</h3>
                 <p className="mt-2 text-sm text-muted">Та же форма, что в подборщике котлов. К запросу прилагаются введённые характеристики и выбранные системы.</p>
@@ -473,6 +527,7 @@ export function BoilerHouseBuilder() {
             <p className="text-sm">Размещение: {labels.placement[s.placement]}</p>
             <p className="text-sm">Режим: {labels.operation[s.operation]}</p>
             <p className="text-sm">Систем в запросе: {selectedSystems.length}</p>
+            <p className="text-sm">Насосных групп: {activePumps.length}</p>
           </div>
           <p className="mt-5 border-t border-white/20 pt-4 text-xs leading-relaxed text-white/65">
             Не выполняет теплогидравлический расчёт, расчёт выбросов, определение категории надёжности и проверку требований безопасности.
