@@ -5,7 +5,7 @@
  * It is a technical brief, not a hydraulic/thermal design or safety assessment.
  */
 import type { FuelId, Series } from "@/data/catalog";
-import { rangeIntersects } from "@/lib/engineering-units";
+import { rangeIntersects } from "./engineering-units.ts";
 
 export type PlantMode = "water" | "steam" | "combined";
 export type DutyKind = "water" | "steam";
