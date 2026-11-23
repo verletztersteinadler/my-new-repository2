@@ -64,6 +64,7 @@ type State = {
   mainFuel: FuelId | ""; alternateFuel: FuelId | "";
   placement: PlantLocation; automation: AutomationLevel;
   systems: string[]; notes: string;
+  preferredWater: string; preferredSteam: string;
 };
 const initial: State = {
   mode:"water", object:"", location:"", purposes:["Отопление и вентиляция"],
@@ -74,7 +75,7 @@ const initial: State = {
   waterPressure:"", steamPressure:"", pressureUnit:"bar", circuit:"to-decide",
   heatCount:2, steamCount:2, heatReserve:"n-plus-one", steamReserve:"n-plus-one",
   mainFuel:"", alternateFuel:"", placement:"modular", automation:"to-decide",
-  systems:[...sharedSystems, ...waterSystems], notes:"",
+  systems:[...sharedSystems, ...waterSystems], notes:"", preferredWater:"", preferredSteam:"",
 };
 const purposeChoices = ["Отопление и вентиляция", "Горячее водоснабжение", "Технологическое тепло", "Технологический пар", "Резерв существующего объекта"];
 const labels = {
@@ -130,8 +131,9 @@ function TrainBox({ name, train, unit }: { name: string; train: TrainCalculation
     </> : <p className="mt-2 text-sm text-muted">Проверьте нагрузку и резервирование.</p>}
   </div>;
 }
-function Matches({ kind, train, mainFuel, alternateFuel, temp }: {
+function Matches({ kind, train, mainFuel, alternateFuel, temp, selected, setSelected }: {
   kind:DutyKind; train:TrainCalculation|null;mainFuel:FuelId|"";alternateFuel:FuelId|"";temp:number|null;
+  selected:string;setSelected:(id:string)=>void;
 }) {
   const results=useMemo(()=>findBoilerCandidates({entries:catalogEntries,kind,dutyPerUnit:train?.minimumPerDutyUnit??0,
     mainFuel,reserveFuel:alternateFuel,minimumTempC:kind==="water"?temp:null,limit:5}),
@@ -147,9 +149,17 @@ function Matches({ kind, train, mainFuel, alternateFuel, temp }: {
         <p className="mt-1 text-xs text-muted">Диапазон: {fmt(v.capacityMin)}–{fmt(v.capacityMax)} {unit}</p>
         <p className="mt-1 text-xs text-muted">{v.closestPublishedSize?"Опубликованный типоразмер по производительности: "+v.closestPublishedSize.name:
           "Подтверждён только диапазон серии — модель не определена"}</p>
-        <Link to="/manufacturers/$slug" params={{slug:v.slug}} className="mt-2 inline-block text-sm font-semibold text-accent hover:underline">
-          Открыть характеристики
-        </Link>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <Link to="/manufacturers/$slug" params={{slug:v.slug}} className="inline-block text-sm font-semibold text-accent hover:underline">
+            Открыть характеристики
+          </Link>
+          <button type="button" aria-pressed={selected===v.slug+"/"+v.series.id}
+            onClick={()=>setSelected(selected===v.slug+"/"+v.series.id?"":v.slug+"/"+v.series.id)}
+            className={("rounded-xl border px-3 py-2 text-xs font-semibold "+(selected===v.slug+"/"+v.series.id
+              ?"border-accent bg-accent text-on-accent":"border-line bg-surface text-ink hover:bg-chip"))}>
+            {selected===v.slug+"/"+v.series.id?"Выбрано для ТЗ":"Добавить в ТЗ"}
+          </button>
+        </div>
       </li>)}</ul>}
     <p className="mt-3 text-xs leading-relaxed text-muted">Кандидаты подобраны только по категории, диапазону производительности, топливу и опубликованной температуре водогрейной серии. Давление, КПД, комплектация и применимость проверяются отдельно.</p>
   </div>;
@@ -178,6 +188,19 @@ export function BoilerHouseBuilder() {
   const availableSystems=systemChoices.filter((v)=>v.mode==="both"||(v.mode==="water"&&hasWater)||(v.mode==="steam"&&hasSteam));
   const selectedSystems=availableSystems.filter((v)=>s.systems.includes(v.id));
   const fuelName=(id:FuelId|"")=>fuels.find((v)=>v.id===id)?.title??"";
+  const waterCandidates = useMemo(()=>findBoilerCandidates({entries:catalogEntries,kind:"water",
+    dutyPerUnit:plant.heat?.minimumPerDutyUnit??0,mainFuel:s.mainFuel,reserveFuel:s.alternateFuel,
+    minimumTempC:waterSupplyC,limit:5}),
+    [plant.heat?.minimumPerDutyUnit,s.mainFuel,s.alternateFuel,waterSupplyC]);
+  const steamCandidates = useMemo(()=>findBoilerCandidates({entries:catalogEntries,kind:"steam",
+    dutyPerUnit:plant.steam?.minimumPerDutyUnit??0,mainFuel:s.mainFuel,reserveFuel:s.alternateFuel,
+    limit:5}),[plant.steam?.minimumPerDutyUnit,s.mainFuel,s.alternateFuel]);
+  const preferredEquipment = [
+    ...(hasWater ? waterCandidates.filter((v)=>v.slug+"/"+v.series.id===s.preferredWater)
+      .map((v)=>"Водогрейная группа: "+v.maker+" — "+v.series.name) : []),
+    ...(hasSteam ? steamCandidates.filter((v)=>v.slug+"/"+v.series.id===s.preferredSteam)
+      .map((v)=>"Паровая группа: "+v.maker+" — "+v.series.name) : []),
+  ];
   const errs=[
     (hasWater&&(!valid(s.heating)||!valid(s.dhw)||!valid(s.process)||heatKw<=0))||
     (hasSteam&&(!valid(s.steam)||steamKgH<=0))?"Задайте положительную расчётную нагрузку для каждой выбранной группы. Допустимы числа с запятой.":null,
@@ -234,7 +257,8 @@ export function BoilerHouseBuilder() {
       "перегретый, "+(s.steamTemperature.trim()?s.steamTemperature+" "+(s.tempUnit==="K"?"K":"°C"):"температуру уточнить"),
     condensateReturnPct:condensate,mainFuel:fuelName(s.mainFuel),reserveFuel:fuelName(s.alternateFuel),
     operation:s.operation,placement:s.placement,circuit:s.circuit,automation:s.automation,
-    heatTrain:plant.heat,steamTrain:plant.steam,chosenSystems:selectedSystems.map((v)=>v.title),notes:s.notes,
+    heatTrain:plant.heat,steamTrain:plant.steam,chosenSystems:selectedSystems.map((v)=>v.title),
+    preferredEquipment,notes:s.notes,
   });
   const toNext=()=>{if(errs[step])return;setStep((v)=>Math.min(v+1,4));setFurthest((v)=>Math.max(v,step+1));setCopied(false);};
 
@@ -404,8 +428,10 @@ export function BoilerHouseBuilder() {
                 {hasSteam&&<TrainBox name="Паровая группа" train={plant.steam} unit="кг/ч"/>}
               </div>
               <div className="mt-4 grid gap-3">
-                {hasWater&&<Matches kind="water" train={plant.heat} mainFuel={s.mainFuel} alternateFuel={s.alternateFuel} temp={waterSupplyC}/>}
-                {hasSteam&&<Matches kind="steam" train={plant.steam} mainFuel={s.mainFuel} alternateFuel={s.alternateFuel} temp={null}/>}
+                {hasWater&&<Matches kind="water" train={plant.heat} mainFuel={s.mainFuel} alternateFuel={s.alternateFuel}
+                  temp={waterSupplyC} selected={s.preferredWater} setSelected={(v)=>patch({preferredWater:v})}/>}
+                {hasSteam&&<Matches kind="steam" train={plant.steam} mainFuel={s.mainFuel} alternateFuel={s.alternateFuel}
+                  temp={null} selected={s.preferredSteam} setSelected={(v)=>patch({preferredSteam:v})}/>}
               </div>
               <label className="mt-6 grid gap-2 text-sm font-bold">Предварительное ТЗ
                 <textarea readOnly rows={16} value={brief} className="w-full rounded-xl border border-line bg-bg/40 p-3 text-xs font-normal leading-relaxed"/>
