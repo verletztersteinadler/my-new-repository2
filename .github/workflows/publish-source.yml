@@ -11,6 +11,11 @@ on:
       - src/lib/engineering-units.test.ts
       - package.json
       - package-lock.json
+      - src/lib/boiler-house.ts
+      - src/lib/boiler-house.test.ts
+      - src/components/boiler-house-builder.tsx
+      - src/routes/kotelnaya.tsx
+      - src/components/home-page.tsx
   workflow_dispatch:
 
 permissions:
