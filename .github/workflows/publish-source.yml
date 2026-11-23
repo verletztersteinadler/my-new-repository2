@@ -91,9 +91,6 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Typecheck
-        run: npm run typecheck --if-present
-
       - name: Validate catalog
         run: npm run check:catalog --if-present
 
@@ -103,8 +100,14 @@ jobs:
       - name: Verify engineering unit conversions
         run: npm run test:units
 
+      - name: Test boiler-house engineering model
+        run: node --experimental-strip-types --test src/lib/boiler-house.test.ts
+
       - name: Build
         run: npm run build:dev --if-present
+
+      - name: Typecheck generated routes
+        run: npm run typecheck --if-present
 
       - name: Commit validated source files to work branch
         shell: bash
