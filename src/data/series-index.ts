@@ -676,11 +676,17 @@ export function similarSeries(source: Series, sourceSlug: string, limit = 8): An
       if (catalog.slug === sourceSlug && series.id === source.id) continue;
       if (family(series.categoryId) !== group) continue;
       const shared = source.fuels.filter((fuel) => series.fuels.includes(fuel));
-      if (source.fuels.length > 0 && series.fuels.length > 0 && shared.length === 0) continue;
+      if (source.fuels.length > 0 && shared.length === 0) continue;
       const range = group === "steam"
         ? rangesOverlap(source.steamMinKgH, source.steamMaxKgH, series.steamMinKgH, series.steamMaxKgH)
         : rangesOverlap(source.powerMinKw, source.powerMaxKw, series.powerMinKw, series.powerMaxKw);
-      const bits = ["та же задача"];
+      const hasRequestedCapacity = group === "steam"
+        ? source.steamMinKgH != null || source.steamMaxKgH != null
+        : source.powerMinKw != null || source.powerMaxKw != null;
+      // Same category alone must never be presented as a plausible analog if
+      // its capacity is unknown or disjoint from a defined user requirement.
+      if (hasRequestedCapacity && !range) continue;
+      const bits = ["первичный кандидат, не подтверждённая взаимозаменяемость", "та же задача"];
       let score = 4;
       if (series.categoryId === source.categoryId) score += 3;
       if (range) {
