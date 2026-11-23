@@ -45,8 +45,9 @@ function cfgReady(mixed $config, string $store): bool {
     // Do not accept spoofed "From" addresses of third-party domains.
     if (!preg_match('/@kotly\.pro$/i', (string)$config['sender'])) return false;
     if (trim((string)($config['operator_name'] ?? '')) === '') return false;
+    if (trim((string)($config['operator_postal_address'] ?? '')) === '') return false;
     if (!okEmail((string)($config['operator_contact'] ?? ''))) return false;
-    if (($config['policy_version'] ?? '') !== 'kotly-consent-draft-2026-11-15') return false;
+    if (($config['policy_version'] ?? '') !== 'kotly-consent-draft-2026-11-23') return false;
     if (!isset($config['rate_secret']) || !is_string($config['rate_secret']) || strlen($config['rate_secret']) < 32) return false;
     if (!is_dir($store) || !is_writable($store)) return false;
     return true;
@@ -153,7 +154,7 @@ if ($name === '' || textLength($name) > 100) $errors['name'] = 'Укажите �
 if ($phone === '' || digits($phone) < 8 || strlen($phone) > 80) $errors['phone'] = 'Укажите корректный телефон';
 if ($email !== '' && !okEmail($email)) $errors['email'] = 'Проверьте адрес почты';
 if (textLength($comment) > 3000) $errors['comment'] = 'Описание слишком длинное';
-if (!$consent || $consentVersion !== 'kotly-consent-draft-2026-11-15') $errors['consent'] = 'Подтвердите согласие с актуальной политикой';
+if (!$consent || $consentVersion !== 'kotly-consent-draft-2026-11-23') $errors['consent'] = 'Подтвердите согласие с актуальной политикой';
 if (count($errors)) answer(422, ['message' => 'Проверьте поля', 'errors' => $errors]);
 
 // Only record a same-origin path, without query string or fragment.
