@@ -152,6 +152,10 @@ export type PlantDraft = {
 
 export function buildTechnicalBrief(x: PlantDraft): string {
   const fmt = (v: number, d = 4) => v.toLocaleString("ru-RU", { maximumFractionDigits: d });
+  const scheme = { direct: "зависимое присоединение", independent: "независимое через теплообменники", "to-decide": "определить по проекту" } as const;
+  const operation = { continuous: "круглогодичная", seasonal: "сезонная", variable: "переменная / пиковая нагрузка" } as const;
+  const placement = { modular: "блочно-модульная", standalone: "отдельно стоящая", "built-in": "встроенная / пристроенная", existing: "реконструкция" } as const;
+  const automation = { local: "местная", dispatch: "удалённая диспетчеризация", "to-decide": "определить по заданию" } as const;
   const lines: string[] = [
     "ПРЕДВАРИТЕЛЬНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ — КОТЕЛЬНАЯ",
     "Статус: инженерный запрос для уточнения, не проектная документация.",
@@ -167,7 +171,7 @@ export function buildTechnicalBrief(x: PlantDraft): string {
       "Водяной график: " + (x.waterSupplyC == null ? "уточнить" : fmt(x.waterSupplyC) + " °C")
         + " / " + (x.waterReturnC == null ? "уточнить" : fmt(x.waterReturnC) + " °C") + ".",
       "Давление водяного контура: " + (x.waterPressureMPa == null ? "уточнить" : fmt(x.waterPressureMPa) + " МПа") + ".",
-      "Схема присоединения: " + x.circuit + ".",
+      "Схема присоединения: " + scheme[x.circuit] + ".",
     );
   }
   if (x.mode !== "water") {
@@ -191,7 +195,7 @@ export function buildTechnicalBrief(x: PlantDraft): string {
   unitLine("Паровая группа", x.steamTrain, "кг/ч");
   lines.push(
     "Основное топливо: " + (x.mainFuel || "уточнить") + "; резервное: " + (x.reserveFuel || "не предусмотрено / уточнить") + ".",
-    "Режим работы: " + x.operation + "; размещение: " + x.placement + "; автоматика: " + x.automation + ".",
+    "Режим работы: " + operation[x.operation] + "; размещение: " + placement[x.placement] + "; автоматика: " + automation[x.automation] + ".",
     "Вспомогательные системы, включённые в запрос: " + (x.chosenSystems.join(", ") || "не отмечены") + ".",
     "Дополнительные условия: " + (x.notes.trim() || "не указаны") + ".",
     "Важно: подбор не учитывает гидравлический расчёт, КПД, качество воды, допустимые выбросы, теплопотери здания,"
