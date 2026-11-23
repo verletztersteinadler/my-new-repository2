@@ -953,7 +953,7 @@ export function CatalogPage() {
               </Dialog.Close>
             </div>
             <Dialog.Description className="sr-only">Форма инженерной консультации. Не заказ и не покупка.</Dialog.Description>
-            {lead ? <LeadForm key={`${lead.seriesId ?? ""}-${lead.sizeId ?? ""}`} context={lead} submitLabel="Получить консультацию" /> : null}
+            {lead ? <LeadForm key={`${lead.seriesId ?? ""}-${lead.sizeId ?? ""}`} context={{ ...lead, manufacturerSlug: slug }} submitLabel="Получить консультацию" /> : null}
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
