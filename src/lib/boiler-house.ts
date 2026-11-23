@@ -147,6 +147,7 @@ export type PlantDraft = {
   heatTrain: TrainCalculation | null;
   steamTrain: TrainCalculation | null;
   chosenSystems: string[];
+  preferredEquipment?: string[];
   notes: string;
 };
 
@@ -197,6 +198,7 @@ export function buildTechnicalBrief(x: PlantDraft): string {
     "Основное топливо: " + (x.mainFuel || "уточнить") + "; резервное: " + (x.reserveFuel || "не предусмотрено / уточнить") + ".",
     "Режим работы: " + operation[x.operation] + "; размещение: " + placement[x.placement] + "; автоматика: " + automation[x.automation] + ".",
     "Вспомогательные системы, включённые в запрос: " + (x.chosenSystems.join(", ") || "не отмечены") + ".",
+    "Предпочтительные серии котлов к инженерной проверке: " + (x.preferredEquipment?.join("; ") || "не выбраны") + ".",
     "Дополнительные условия: " + (x.notes.trim() || "не указаны") + ".",
     "Важно: подбор не учитывает гидравлический расчёт, КПД, качество воды, допустимые выбросы, теплопотери здания,"
       + " надёжность электроснабжения и обязательные требования безопасности; их нужно проверить проектировщику.",
