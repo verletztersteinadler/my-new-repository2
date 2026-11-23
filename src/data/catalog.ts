@@ -41,6 +41,8 @@ export type Series = {
   steamMinKgH: number | null;
   steamMaxKgH: number | null;
   tempMaxC: number | null;
+  /** Protective safety limit: not the normal supply or working temperature. */
+  tempSafetyMaxC?: number;
   pressureNote: string | null;
   fuels: FuelId[];
   feature: string;
