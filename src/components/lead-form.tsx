@@ -39,6 +39,33 @@ export function LeadForm({
   const series = findSeries(context.seriesId);
   const size = sizeById(series, sizeId);
 
+  // Shared hosting serves only HTML/JS/CSS; it has no /api/v1/leads server route.
+  // Never collect contact details or claim that a lead was accepted there.
+  if (import.meta.env.VITE_STATIC_EXPORT === "1") {
+    return (
+      <div className="rounded-xl border border-line bg-chip p-5" role="status">
+        <p className="text-base font-semibold">Приём заявок пока не подключён</p>
+        <p className="mt-2 text-sm text-muted">
+          Каталог и подбор работают, но отправка обращений из этой статической версии отключена:
+          обработчик заявок и защищённое хранение персональных данных ещё не настроены.
+          Контакты здесь не собираются и не отправляются.
+        </p>
+        {series ? (
+          <p className="mt-3 text-sm">
+            <span className="text-muted">Оборудование: </span>
+            {series.name}{size ? ` · ${size.name}` : ""}
+          </p>
+        ) : null}
+        {initialComment ? (
+          <label className="mt-4 grid gap-2 text-sm font-medium">
+            Параметры вашего подбора — можно выделить и скопировать
+            <textarea readOnly value={initialComment} rows={5} className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm font-normal" />
+          </label>
+        ) : null}
+      </div>
+    );
+  }
+
   if (leadId) {
     return (
       <div className="rounded-xl border border-line bg-chip p-4" role="status">
