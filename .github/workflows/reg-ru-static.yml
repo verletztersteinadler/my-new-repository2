@@ -1,0 +1,77 @@
+name: Build REG.RU static website ZIP
+
+on:
+  push:
+    branches:
+      - deploy/reg-ru-static
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-website:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      KOTLY_STATIC_EXPORT: "1"
+      VITE_STATIC_EXPORT: "1"
+    steps:
+      - name: Checkout static deployment branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Validate TypeScript
+        run: npm run typecheck
+
+      - name: Validate manufacturer catalog
+        run: npm run check:catalog
+
+      - name: Test engineering conversions
+        run: npm run test:units
+
+      - name: Build static website
+        run: npm run build:static
+
+      - name: Verify static output and create upload ZIP
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          import re
+          root = Path("dist-reg-ru")
+          index = root / "index.html"
+          htaccess = root / ".htaccess"
+          assert index.is_file() and index.stat().st_size > 250, "No static index.html"
+          assert htaccess.is_file(), "No routing .htaccess"
+          data = index.read_text(encoding="utf-8")
+          assert "<html" in data.lower() and "</html>" in data.lower(), "Invalid SPA shell"
+          files = [p for p in root.rglob("*") if p.is_file()]
+          assert any(p.suffix == ".js" for p in files), "No browser JS"
+          assert any(p.suffix == ".css" for p in files), "No browser CSS"
+          assert not any(p.name in {"package.json", "package-lock.json"} for p in files), "Server files accidentally included"
+          out = Path("kotly-pro-reg-ru-static.zip")
+          with ZipFile(out, "w", ZIP_DEFLATED, compresslevel=6) as z:
+              for p in files:
+                  z.write(p, p.relative_to(root).as_posix())
+          print("Verified SPA shell, CSS/JS assets and rewrite rules.")
+          print("Packaged", len(files), "static files into", out, "size", out.stat().st_size)
+          print("Archive root:", ", ".join(sorted(p.name for p in root.iterdir())[:15]))
+          PY
+
+      - name: Upload ISPmanager package
+        uses: actions/upload-artifact@v4
+        with:
+          name: kotly-pro-reg-ru-static
+          path: kotly-pro-reg-ru-static.zip
+          if-no-files-found: error
+          retention-days: 30
