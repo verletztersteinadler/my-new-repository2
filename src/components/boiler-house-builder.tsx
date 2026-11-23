@@ -153,7 +153,7 @@ function Matches({ kind, train, mainFuel, alternateFuel, temp, selected, setSele
         <p className="mt-1 text-xs text-muted">{v.closestPublishedSize?"Опубликованный типоразмер по производительности: "+v.closestPublishedSize.name:
           "Подтверждён только диапазон серии — модель не определена"}</p>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <Link to="/manufacturers/$slug" params={{slug:v.slug}} className="inline-block text-sm font-semibold text-accent hover:underline">
+          <Link to="/$slug" params={{slug:v.slug}} className="inline-block text-sm font-semibold text-accent hover:underline">
             Открыть характеристики
           </Link>
           <button type="button" aria-pressed={selected===v.slug+"/"+v.series.id}
