@@ -78,6 +78,67 @@ jobs:
               assert e.code == 503, e.code
           print("PHP endpoint disabled until private legal/operator configuration is complete")
           PY
+          mkdir -m 700 kotly-pro-private
+          cat > kotly-pro-private/config.php <<'PHP'
+          <?php
+          return [
+            'enabled' => true,
+            'privacy_approved' => true,
+            'operator_name' => 'Test Operator (CI only)',
+            'operator_contact' => 'privacy@example.org',
+            'recipient' => 'test@example.org',
+            'sender' => 'no-reply@kotly.pro',
+            'notify_by_email' => false,
+            'policy_version' => 'kotly-consent-draft-2026-11-15',
+            'rate_secret' => '0123456789abcdef0123456789abcdef0123456789abcdef',
+          ];
+          PHP
+          python3 - <<'PY'
+          import json, pathlib, urllib.request, urllib.error, uuid
+          target="http://127.0.0.1:18765/api/v1/leads/index.php"
+          with urllib.request.urlopen(target, timeout=3) as r:
+              assert json.load(r).get("enabled") is True
+          payload={
+              "submission_id":str(uuid.uuid4()),
+              "name":"Тестовая заявка",
+              "phone":"+7 999 123 45 67",
+              "email":"tester@example.org",
+              "comment":"Паровая котельная: 1 т/ч",
+              "consent":True,
+              "consent_version":"kotly-consent-draft-2026-11-15",
+              "page_url":"https://kotly.pro/kotelnaya/?email=must-not-be-stored",
+              "website":"",
+          }
+          def submit(extra=None, origin="https://kotly.pro"):
+              body=json.dumps({**payload,**(extra or {})},ensure_ascii=False).encode("utf-8")
+              request=urllib.request.Request(target, data=body, method="POST",
+                headers={"Origin":origin,"Content-Type":"application/json","Accept":"application/json"})
+              with urllib.request.urlopen(request, timeout=4) as res:
+                  return res.status,json.load(res)
+          code,first=submit()
+          assert code==201 and first["lead_id"].startswith("KP-"),first
+          code,replay=submit()
+          assert code==200 and replay["lead_id"]==first["lead_id"] and replay["replay"] is True
+          try:
+              submit({"consent":False})
+              raise AssertionError("Missing consent incorrectly accepted")
+          except urllib.error.HTTPError as exc:
+              assert exc.code==422
+          try:
+              submit(origin="https://outside.example")
+              raise AssertionError("Cross-origin request accepted")
+          except urllib.error.HTTPError as exc:
+              assert exc.code==403
+          files=list(pathlib.Path("kotly-pro-private").glob("leads-*.jsonl"))
+          assert len(files)==1,files
+          rows=[json.loads(line) for line in files[0].read_text(encoding="utf-8").splitlines()]
+          assert len(rows)==1,rows
+          assert rows[0]["name"]=="Тестовая заявка"
+          assert rows[0]["page_path"]=="/kotelnaya/"
+          assert "must-not-be-stored" not in files[0].read_text(encoding="utf-8")
+          print("Verified PHP lead reception, private storage, idempotency, consent, origin protection")
+          PY
+          rm -rf kotly-pro-private
 
       - name: Verify static output and create upload ZIP
         shell: bash
