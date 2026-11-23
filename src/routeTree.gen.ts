@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PolitikaRouteImport } from './routes/politika'
 import { Route as SoglasieRouteImport } from './routes/soglasie'
-import { Route as ManufacturersSlugRouteImport } from './routes/manufacturers/$slug'
+import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as ApiV1LeadsRouteImport } from './routes/api/v1/leads'
 
 const IndexRoute = IndexRouteImport.update({
@@ -30,9 +30,9 @@ const SoglasieRoute = SoglasieRouteImport.update({
   path: '/soglasie',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ManufacturersSlugRoute = ManufacturersSlugRouteImport.update({
-  id: '/manufacturers/$slug',
-  path: '/manufacturers/$slug',
+const SlugRoute = SlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiV1LeadsRoute = ApiV1LeadsRouteImport.update({
@@ -45,14 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/politika': typeof PolitikaRoute
   '/soglasie': typeof SoglasieRoute
-  '/manufacturers/$slug': typeof ManufacturersSlugRoute
+  '/$slug': typeof SlugRoute
   '/api/v1/leads': typeof ApiV1LeadsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/politika': typeof PolitikaRoute
   '/soglasie': typeof SoglasieRoute
-  '/manufacturers/$slug': typeof ManufacturersSlugRoute
+  '/$slug': typeof SlugRoute
   '/api/v1/leads': typeof ApiV1LeadsRoute
 }
 export interface FileRoutesById {
@@ -60,21 +60,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/politika': typeof PolitikaRoute
   '/soglasie': typeof SoglasieRoute
-  '/manufacturers/$slug': typeof ManufacturersSlugRoute
+  '/$slug': typeof SlugRoute
   '/api/v1/leads': typeof ApiV1LeadsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/politika' | '/soglasie' | '/manufacturers/$slug' | '/api/v1/leads'
+    '/' | '/politika' | '/soglasie' | '/$slug' | '/api/v1/leads'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/politika' | '/soglasie' | '/manufacturers/$slug' | '/api/v1/leads'
+  to: '/' | '/politika' | '/soglasie' | '/$slug' | '/api/v1/leads'
   id:
     | '__root__'
     | '/'
     | '/politika'
     | '/soglasie'
-    | '/manufacturers/$slug'
+    | '/$slug'
     | '/api/v1/leads'
   fileRoutesById: FileRoutesById
 }
@@ -82,7 +82,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PolitikaRoute: typeof PolitikaRoute
   SoglasieRoute: typeof SoglasieRoute
-  ManufacturersSlugRoute: typeof ManufacturersSlugRoute
+  SlugRoute: typeof SlugRoute
   ApiV1LeadsRoute: typeof ApiV1LeadsRoute
 }
 
@@ -109,11 +109,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SoglasieRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/manufacturers/$slug': {
-      id: '/manufacturers/$slug'
-      path: '/manufacturers/$slug'
-      fullPath: '/manufacturers/$slug'
-      preLoaderRoute: typeof ManufacturersSlugRouteImport
+    '/$slug': {
+      id: '/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof SlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/v1/leads': {
@@ -130,7 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PolitikaRoute: PolitikaRoute,
   SoglasieRoute: SoglasieRoute,
-  ManufacturersSlugRoute: ManufacturersSlugRoute,
+  SlugRoute: SlugRoute,
   ApiV1LeadsRoute: ApiV1LeadsRoute,
 }
 export const routeTree = rootRouteImport
