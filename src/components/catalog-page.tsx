@@ -594,7 +594,7 @@ function pack(
   brand: string,
   categories: Category[],
   series: Series[],
-  documents: { title: string }[],
+  documents: { title: string; href?: string }[],
 ) {
   return { brand, site: "", siteLabel: "", checked: "2026-11-16", categories, series, documents };
 }
@@ -644,7 +644,7 @@ export function CatalogPage() {
     [search, profile],
   );
   const rows = useMemo(() => filterSeries(query, profile.series), [query, profile.series]);
-  const models = useMemo(() => flattenModels(rows), [rows]);
+  const models = useMemo(() => flattenModels(rows, query), [rows, query]);
   const visibleModels = models.slice(0, shown);
   const activeSeries = seriesById(search.series, profile.series);
   const category = profile.categories.find((item) => item.id === query.type);
@@ -796,11 +796,30 @@ export function CatalogPage() {
           </div>
         </form>
 
+        {rows.length > 0 ? (
+          <section className="mt-8" aria-label="Серии оборудования">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-2xl font-semibold">Серии {profile.brand}</h2>
+              <p className="text-sm text-muted tabular-nums">{rows.length} серий · {models.length} типоразмеров</p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {rows.map((series, index) => (
+                <SeriesCard key={series.id} series={series} eager={index < 3}
+                  onOpen={() => openSeries(series.id)}
+                  onConsult={() => setLead({ intent: "kp", seriesId: series.id, categoryId: series.categoryId })}
+                  onAnalogs={() => setAnalogsFor(series)}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         {profile.series.length === 0 ? (
           <MissingSeries brand={profile.brand} openInitially={search.ask === "1"} />
         ) : models.length === 0 ? (
           <div className="mt-6 rounded-2xl border border-line bg-surface p-6">
-            <p className="font-semibold">По этим условиям моделей нет</p>
+            <p className="font-semibold">{rows.length > 0 ? "Типоразмеры для этих серий ещё не внесены" : "По заданным условиям серии не найдены"}</p>
+            <p className="mt-2 text-sm text-muted">Неизвестные исполнения не считаются моделями и не проходят как подтверждённые аналоги.</p>
             <button type="button" className="mt-4 inline-flex h-11 items-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent" onClick={() => patch({ type: undefined, q: undefined, fuel: undefined, power: undefined, steam: undefined })}>
               Сбросить фильтры
             </button>
@@ -808,7 +827,7 @@ export function CatalogPage() {
         ) : (
           <section className="mt-8">
             <div className="mb-3 flex items-end justify-between gap-3">
-              <h2 className="text-2xl font-semibold">Модели {profile.brand}</h2>
+              <h2 className="text-2xl font-semibold">Модели и исполнения {profile.brand}</h2>
               <p className="text-sm text-muted tabular-nums">{models.length}</p>
             </div>
             <ul className="overflow-hidden rounded-2xl border border-line bg-surface">
@@ -825,8 +844,8 @@ export function CatalogPage() {
                     <span className="block font-semibold tabular-nums">{row.main}</span>
                     <span className="text-xs text-muted">{row.sub}</span>
                   </p>
-                  <p className="text-sm text-muted">{row.series.feature}</p>
-                  <p className="text-sm">{row.series.fuels.length ? row.series.fuels.map(fuelTitle).join(" / ") : "Не указано"}</p>
+                  <p className="text-sm text-muted">{row.execution ?? row.series.feature}</p>
+                  <p className="text-sm">{row.modelFuels?.length ? row.modelFuels.map(fuelTitle).join(" / ") : "Топливо модели не подтверждено"}</p>
                   <div className="flex items-center gap-3">
                     <button type="button" className="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover" onClick={() => setLead({ intent: "kp", seriesId: row.series.id, sizeId: row.sizeId, categoryId: row.series.categoryId })}>
                       Подобрать
@@ -935,19 +954,41 @@ export function CatalogPage() {
   );
 }
 
-function flattenModels(list: Series[]) {
+function flattenModels(list: Series[], query: CatalogQuery) {
+  const needle = query.q ? norm(query.q) : "";
   return list.flatMap((series) => {
-    if (series.sizes.length === 0) {
-      return [{ key: series.id, series, sizeId: undefined as string | undefined, title: series.name, main: primarySpec(series).value, sub: series.kind }];
-    }
-    return series.sizes.map((size) => ({
-      key: size.id,
-      series,
-      sizeId: size.id,
-      title: size.name,
-      main: size.powerKw != null ? formatKw(size.powerKw) : size.steamKgH != null ? formatSteam(size.steamKgH) : "Не указано",
-      sub: size.powerKw != null && size.powerKw >= 1000 ? `${size.powerKw.toLocaleString("ru-RU")} кВт` : series.kind,
-    }));
+    const seriesMatch = !needle || norm([series.name, series.kind, series.summary, series.feature, ...series.aliases].join(" ")).includes(needle);
+    return series.sizes
+      .filter((size) => {
+        if (needle && !seriesMatch && !norm([size.name, ...(size.aliases ?? [])].join(" ")).includes(needle)) return false;
+        if (query.fuel && !(size.fuels ?? series.fuels).includes(query.fuel)) return false;
+        if (query.power) {
+          const kw = size.powerKw;
+          if (kw == null) return false;
+          if (query.power === "u1" && kw > 1000) return false;
+          if (query.power === "m1to5" && (kw <= 1000 || kw > 5000)) return false;
+          if (query.power === "m5to15" && (kw <= 5000 || kw > 15000)) return false;
+          if (query.power === "o15" && kw <= 15000) return false;
+        }
+        if (query.steam) {
+          const kg = size.steamKgH;
+          if (kg == null) return false;
+          if (query.steam === "u5" && kg > 5000) return false;
+          if (query.steam === "t5to15" && (kg <= 5000 || kg > 15000)) return false;
+          if (query.steam === "o15" && kg <= 15000) return false;
+        }
+        return true;
+      })
+      .map((size) => ({
+        key: `${series.id}/${size.id}`,
+        series,
+        sizeId: size.id,
+        title: size.name,
+        execution: size.execution,
+        modelFuels: size.fuels ?? series.fuels,
+        main: size.powerKw != null ? formatKw(size.powerKw) : size.steamKgH != null ? formatSteam(size.steamKgH) : "Не указано",
+        sub: size.powerKw != null && size.powerKw >= 1000 ? `${size.powerKw.toLocaleString("ru-RU")} кВт` : series.kind,
+      }));
   });
 }
 
