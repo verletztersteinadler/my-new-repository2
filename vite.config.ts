@@ -1,4 +1,7 @@
 import { readdirSync } from "node:fs";
+
+// Static export is built by CI, not by the shared REG.RU hosting.
+const STATIC_EXPORT = process.env.KOTLY_STATIC_EXPORT === "1";
 import { join } from "node:path";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
@@ -166,12 +169,16 @@ export default defineConfig(({ command, isPreview }) => ({
     // PWA head + ?install=1 tutorial page; runs before Start/Nitro.
     grokPwaPlugin(),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart(
+      STATIC_EXPORT
+        ? { spa: { enabled: true, prerender: { outputPath: "/_shell.html", crawlLinks: false } } }
+        : {},
+    ),
     ...(command === "build" || isPreview
       ? [
           nitro({
             // Keep Vercel production output by default; Render runs a standalone Node server.
-            preset: process.env.NITRO_PRESET === "node_server" ? "node_server" : "vercel",
+            preset: STATIC_EXPORT ? "static" : process.env.NITRO_PRESET === "node_server" ? "node_server" : "vercel",
             // Auto-registers server/middleware/* (the PWA install page +
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
