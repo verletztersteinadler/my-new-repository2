@@ -56,6 +56,9 @@ jobs:
           htaccess = root / ".htaccess"
           assert index.is_file() and index.stat().st_size > 250, "No static index.html"
           assert htaccess.is_file(), "No routing .htaccess"
+          boiler_house_page = root / "kotelnaya" / "index.html"
+          assert boiler_house_page.is_file(), "Missing prerendered /kotelnaya page"
+          assert "конфигурацию котельной" in boiler_house_page.read_text(encoding="utf-8").lower(), "Boiler-house page content not prerendered"
           data = index.read_text(encoding="utf-8")
           assert "<html" in data.lower() and "</html>" in data.lower(), "Invalid SPA shell"
           files = [p for p in root.rglob("*") if p.is_file()]
