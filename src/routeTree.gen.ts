@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KotelnayaRouteImport } from './routes/kotelnaya'
+import { Route as NasosyRouteImport } from './routes/nasosy'
 import { Route as PolitikaRouteImport } from './routes/politika'
 import { Route as SoglasieRouteImport } from './routes/soglasie'
 import { Route as ManufacturersSlugRouteImport } from './routes/manufacturers/$slug'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const KotelnayaRoute = KotelnayaRouteImport.update({
   id: '/kotelnaya',
   path: '/kotelnaya',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NasosyRoute = NasosyRouteImport.update({
+  id: '/nasosy',
+  path: '/nasosy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PolitikaRoute = PolitikaRouteImport.update({
@@ -50,6 +56,7 @@ const ApiV1LeadsRoute = ApiV1LeadsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/kotelnaya': typeof KotelnayaRoute
+  '/nasosy': typeof NasosyRoute
   '/politika': typeof PolitikaRoute
   '/soglasie': typeof SoglasieRoute
   '/manufacturers/$slug': typeof ManufacturersSlugRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/kotelnaya': typeof KotelnayaRoute
+  '/nasosy': typeof NasosyRoute
   '/politika': typeof PolitikaRoute
   '/soglasie': typeof SoglasieRoute
   '/manufacturers/$slug': typeof ManufacturersSlugRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/kotelnaya': typeof KotelnayaRoute
+  '/nasosy': typeof NasosyRoute
   '/politika': typeof PolitikaRoute
   '/soglasie': typeof SoglasieRoute
   '/manufacturers/$slug': typeof ManufacturersSlugRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/kotelnaya'
+    | '/nasosy'
     | '/politika'
     | '/soglasie'
     | '/manufacturers/$slug'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/kotelnaya'
+    | '/nasosy'
     | '/politika'
     | '/soglasie'
     | '/manufacturers/$slug'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/kotelnaya'
+    | '/nasosy'
     | '/politika'
     | '/soglasie'
     | '/manufacturers/$slug'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   KotelnayaRoute: typeof KotelnayaRoute
+  NasosyRoute: typeof NasosyRoute
   PolitikaRoute: typeof PolitikaRoute
   SoglasieRoute: typeof SoglasieRoute
   ManufacturersSlugRoute: typeof ManufacturersSlugRoute
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/kotelnaya'
       fullPath: '/kotelnaya'
       preLoaderRoute: typeof KotelnayaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nasosy': {
+      id: '/nasosy'
+      path: '/nasosy'
+      fullPath: '/nasosy'
+      preLoaderRoute: typeof NasosyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/politika': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   KotelnayaRoute: KotelnayaRoute,
+  NasosyRoute: NasosyRoute,
   PolitikaRoute: PolitikaRoute,
   SoglasieRoute: SoglasieRoute,
   ManufacturersSlugRoute: ManufacturersSlugRoute,
