@@ -142,15 +142,30 @@ export const dkmSeries: Series[] = [
     steamMaxKgH: null,
     tempMaxC: null,
     pressureNote: null,
-    fuels: ["gas", "diesel", "heavy"] as FuelId[],
-    feature: "Газ, у компактных на карточке только газ",
-    extra: `${checked} Карточка Смоленск-4,65-95К: 4,65 МВт, 95 °C, 1 МПа, газ. Остальные ступени из имён каталога не открывались.`,
+    fuels: [] as FuelId[],
+    feature: "Топливо зависит от конкретного исполнения; документирован газ у Смоленск-4,65-95К",
+    extra: `${checked} Официальная карточка Смоленск-4,65-95К: 4,65 МВт, 95 °C, 1 МПа, только газ. Для остальных моделей топливо, температурный режим и давление не подтверждены.`,
+    sourceUrl: "https://dkm.ru/production/vodotrubnye-kotly/smolensk/kompaktnye/smolensk-4-65-95k-kv-g-4-65-95n/",
+    sourceChecked: "2026-11-23",
     sizes: [
       ["4,65-95К", 4.65], ["4,65-115К", 4.65], ["7,56-95К", 7.56], ["7,56-115К", 7.56], ["14-150К", 14],
       ["1,16-95", 1.16], ["1,16-115", 1.16], ["2,32-95", 2.32], ["2,32-115", 2.32], ["3,48-95", 3.48], ["3,48-115", 3.48], ["4,65-115", 4.65], ["4,65-150", 4.65],
       ["5-115ТМ", 5], ["5,5-115ТМ", 5.5], ["6-115ТМ", 6], ["7,56-115ТМ", 7.56], ["7,56-150ТМ", 7.56], ["11,63-115ТМ", 11.63], ["11,63-150ТМ", 11.63], ["14-115ТМ", 14], ["14-150ТМ", 14], ["15-115ТМ", 15], ["15-150ТМ", 15], ["17,44-115ТМ", 17.44], ["17,44-150ТМ", 17.44], ["23,26-115ТМ", 23.26],
       ["20-115L", 20], ["20-150L", 20], ["23,26-115L", 23.26], ["23,26-150L", 23.26], ["25-115L", 25], ["25-150L", 25], ["35-115L", 35], ["35-150L", 35], ["58,2-115L", 58.2], ["58,2-150L", 58.2],
-    ].map(([name, mw]) => water(`sm-${name}`, `Смоленск-${name}`, mw as number)),
+    ].map(([name, mw]) => {
+      const model = water(`sm-${name}`, `Смоленск-${name}`, mw as number);
+      const verified = name === "4,65-95К";
+      return {
+        ...model,
+        // Never inherit multi-fuel series claims from unverified models.
+        fuels: verified ? (["gas"] as FuelId[]) : ([] as FuelId[]),
+        ...(verified ? {
+          tempMaxC: 95,
+          workingPressureBar: 10,
+          sourceUrl: "https://dkm.ru/production/vodotrubnye-kotly/smolensk/kompaktnye/smolensk-4-65-95k-kv-g-4-65-95n/",
+        } : {}),
+      };
+    }),
   }),
   series({
     id: "dkm-burn",
