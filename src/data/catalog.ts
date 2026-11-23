@@ -487,41 +487,38 @@ export function filterSeries(query: CatalogQuery, list: Series[] = seriesList) {
   const needle = query.q ? norm(query.q) : "";
   const rows = list.filter((series) => {
     if (query.type && series.categoryId !== query.type) return false;
-    if (query.fuel) {
-      // Verified model-specific fuel overrides generic series capabilities.
-      const modelsWithFuel = series.sizes.filter((size) => size.fuels !== undefined);
-      if (modelsWithFuel.length) {
-        if (!modelsWithFuel.some((size) => size.fuels?.includes(query.fuel!))) return false;
-      } else if (!series.fuels.includes(query.fuel)) return false;
+    const familyMatches = !needle || norm(
+      [series.name, series.kind, series.summary, series.feature, ...series.aliases].join(" "),
+    ).includes(needle);
+
+    if (series.sizes.length > 0) {
+      // All active criteria must match ONE and the same model execution.
+      // A gas-only 4.65 MW model must not make a 58 MW model appear gas-capable.
+      const hasModelFuelEvidence = series.sizes.some((size) => size.fuels !== undefined);
+      return series.sizes.some((size) => {
+        const fuelsForModel = size.fuels ?? (hasModelFuelEvidence ? [] : series.fuels);
+        if (query.fuel && !fuelsForModel.includes(query.fuel)) return false;
+        if (needle && !familyMatches &&
+          !norm([size.name, ...(size.aliases ?? [])].join(" ")).includes(needle)) return false;
+        if (query.power && (size.powerKw == null || !inPowerBand(size.powerKw, query.power))) return false;
+        if (query.steam && (size.steamKgH == null || !inSteamBand(size.steamKgH, query.steam))) return false;
+        return true;
+      });
     }
-    if (needle) {
-      const hay = norm(
-        [series.name, series.kind, series.summary, series.feature, ...series.aliases,
-          ...series.sizes.flatMap((size) => [size.name, ...(size.aliases ?? [])])].join(" "),
-      );
-      if (!hay.includes(needle)) return false;
-    }
+
+    // No listed models: only show a catalogued FAMILY, never a verified model.
+    if (!familyMatches) return false;
+    if (query.fuel && !series.fuels.includes(query.fuel)) return false;
     if (query.power) {
-      if (series.sizes.length > 0) {
-        const hit = series.sizes.some((size) => size.powerKw != null && inPowerBand(size.powerKw, query.power!));
-        if (!hit) return false;
-      } else if (series.powerMinKw == null && series.powerMaxKw == null) {
-        return false;
-      } else if (series.powerMinKw == null && series.powerMaxKw != null) {
-        if (!inPowerBand(series.powerMaxKw, query.power)) return false;
-      } else if (series.powerMaxKw == null || series.powerMinKw == null) {
-        return false;
-      } else if (!rangeHitsPower(series.powerMinKw, series.powerMaxKw, query.power)) {
-        return false;
-      }
+      if (series.powerMinKw == null || series.powerMaxKw == null ||
+        !rangeHitsPower(series.powerMinKw, series.powerMaxKw, query.power)) return false;
     }
     if (query.steam) {
-      if (series.steamMinKgH == null || series.steamMaxKgH == null) return false;
-      if (!rangeHitsSteam(series.steamMinKgH, series.steamMaxKgH, query.steam)) return false;
+      if (series.steamMinKgH == null || series.steamMaxKgH == null ||
+        !rangeHitsSteam(series.steamMinKgH, series.steamMaxKgH, query.steam)) return false;
     }
     return true;
   });
-
   const sorted = [...rows];
   if (query.sort === "param") {
     sorted.sort((a, b) => {
