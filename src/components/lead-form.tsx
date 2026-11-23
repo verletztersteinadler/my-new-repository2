@@ -8,6 +8,7 @@ export type LeadContext = {
   seriesId?: string;
   sizeId?: string;
   categoryId?: string;
+  manufacturerSlug?: string;
 };
 
 const titles: Record<LeadContext["intent"], string> = {
@@ -114,6 +115,9 @@ export function LeadForm({
           series_id: context.seriesId ?? "",
           size_id: String(data.get("size_id") ?? ""),
           category_id: context.categoryId ?? series?.categoryId ?? "",
+          manufacturer_slug: context.manufacturerSlug ?? "",
+          model_name: size?.name ?? "",
+          model_execution: size?.execution ?? "",
           page_url: window.location.href,
           consent: data.get("consent") === "on",
           consent_version: CONSENT_VERSION,
@@ -143,6 +147,7 @@ export function LeadForm({
       <input type="hidden" name="submission_id" value={submissionId.current} />
       <input type="hidden" name="series_id" value={context.seriesId ?? ""} />
       <input type="hidden" name="category_id" value={context.categoryId ?? series?.categoryId ?? ""} />
+      <input type="hidden" name="manufacturer_slug" value={context.manufacturerSlug ?? ""} />
       <input type="hidden" name="consent_version" value={CONSENT_VERSION} />
       <input type="hidden" name="page_url" value="" />
       <p className="absolute -left-[9999px] h-0 overflow-hidden" aria-hidden="true">
