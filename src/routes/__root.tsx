@@ -9,7 +9,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "KOTLY.SU — справочник промышленных котлов" },
+      { title: "kotly.pro — справочник промышленных котлов" },
       { name: "description", content: "Независимый справочник открытых серий. Не сайт производителя и не предложение о продаже." },
       { name: "theme-color", content: "#161616" },
       { property: "og:title", content: "Котлы.pro — справочник промышленных котлов" },
