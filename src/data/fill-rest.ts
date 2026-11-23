@@ -30,7 +30,8 @@ function row(id: string, name: string, categoryId: CategoryId, image: string, su
     id, name, categoryId, kind: feature, image, summary,
     powerMinKw: minKw, powerMaxKw: maxKw, steamMinKgH: minSteam, steamMaxKgH: maxSteam,
     tempMaxC: null, pressureNote: null, fuels: [], feature, extra: `${checked} ${extra}`,
-    sizes: [], sizesNote: null, aliases: [],
+    sizes: [], sizesNote: "Каталог моделей не заполнен. Данные о серии/исполнении требуют паспортной проверки.", aliases: [],
+    recordStatus: (minKw == null && maxKw == null && minSteam == null && maxSteam == null) ? "not-filled" : "catalogued",
   };
 }
 
@@ -61,7 +62,7 @@ export const fills: Fill[] = [
     row("bkstroy", "Бийский котлостроительный", "steam", "/catalog/steam.jpg", "1–25 т/ч", null, null, 1000, 25000, "1–25 т/ч", "Отдельные карточки моделей не открывались. Рядом указаны БМК на этих котлах."),
   ]),
   one("bzkeo", "ООО «Бийский завод котельно-энергетического оборудования»", "ООО «Бийский завод котельно-энергетического оборудования» / БЗКЭО", "не указано", "Открытая страница даёт теплообменники 5–40 т/ч, не ряд котлов.", [
-    row("bzkeo", "БЗКЭО", "water", "/catalog/firetube.jpg", "ряд котлов не снят", null, null, null, null, "ряд котлов не снят", "На странице теплообменники Q=5–40 т/ч."),
+    row("bzkeo", "БЗКЭО — модельный каталог не заполнен", "water", "/catalog/firetube.jpg", "Серия котлов не подтверждена. Данные теплообменника не относятся к паропроизводительности котла.", null, null, null, null, "Не является подтверждённой модельной серией", "Проверить официальный раздел котлов перед публикацией числовых характеристик."),
   ]),
   one("carlieuklima", "Carlieuklima", "Carlieuklima", "не указано", "На открытой странице числовой ряд не найден.", [
     row("carlieuklima", "Carlieuklima", "air", "/catalog/web-air.jpg", "На открытой странице числовой ряд не найден.", null, null, null, null, "Цифры ряда не сняты", "На открытой странице числовой ряд не найден."),
@@ -73,7 +74,7 @@ export const fills: Fill[] = [
     row("dieffenbacher-energy-bertschenergy", "Dieffenbacher Energy (BERTSCHenergy)", "water", "/catalog/firetube.jpg", "На открытой странице числовой ряд не найден.", null, null, null, null, "Цифры ряда не сняты", "На открытой странице числовой ряд не найден."),
   ]),
   one("easco", "EASCO", "Supreme Boilers / EASCO", "не указано", "Leading Industrial Steam Boilers Manufacturer | Supreme Boilers", [
-    row("easco", "EASCO", "water", "/catalog/firetube.jpg", "Leading Industrial Steam Boilers Manufacturer | Supreme Boilers", null, null, null, null, "Цифры ряда не сняты", "Leading Industrial Steam Boilers Manufacturer | Supreme Boilers"),
+    row("easco", "EASCO — модельный каталог не заполнен", "steam", "/catalog/steam.jpg", "Производитель Supreme Boilers; линейка SM4 указана как ориентир для проверки.", null, null, null, null, "Не является серией под названием EASCO", "Нужно перенести паспортные параметры SM4 и разделить паровые и водогрейные исполнения."),
   ]),
   one("eco-par", "ECO-PAR", "КЗКЭО «Когенерация» / ECO-PAR", "не указано", "Краснодарский котельный завод", [
     row("eco-par", "ECO-PAR", "water", "/catalog/firetube.jpg", "Краснодарский котельный завод", null, null, null, null, "Цифры ряда не сняты", "Краснодарский котельный завод"),
@@ -86,7 +87,7 @@ export const fills: Fill[] = [
     row("eko-prom-energo-2-2", "ЭКО ПРОМ, паровые", "steam", "/catalog/steam.jpg", "4–25 т/ч", null, null, 4000, 25000, "4–25 т/ч", "Топливо ряда на странице не разделено."),
   ]),
   one("eriksen", "Eriksen", "Nooter/Eriksen", "не указано", "Heat Recovery Steam Generators – HRSGs", [
-    row("eriksen", "Eriksen", "water", "/catalog/firetube.jpg", "Heat Recovery Steam Generators – HRSGs", null, null, null, null, "Цифры ряда не сняты", "Heat Recovery Steam Generators – HRSGs"),
+    row("eriksen", "Nooter/Eriksen — HRSG (проектное оборудование)", "steam", "/catalog/steam.jpg", "Парогенераторы-утилизаторы HRSG; паровые характеристики зависят от проекта.", null, null, null, null, "Парогенератор-утилизатор, не водогрейная серия", "Номер конкретной линейки и паспортные данные не опубликованы."),
   ]),
   one("flucal-caldeiras", "Flucal Caldeiras", "Flucal Caldeiras", "не указано", "Mais de 300.000.000 Kcal/h instalados provenientes de biomassa", [
     row("flucal-caldeiras", "Flucal Caldeiras", "water", "/catalog/firetube.jpg", "Mais de 300.000.000 Kcal/h instalados provenientes de biomassa", null, null, null, null, "Цифры ряда не сняты", "Mais de 300.000.000 Kcal/h instalados provenientes de biomassa"),
@@ -241,13 +242,13 @@ export const fills: Fill[] = [
     row("standardkessel-baumgarte", "Standardkessel Baumgarte", "water", "/catalog/firetube.jpg", "На открытой странице числовой ряд не найден.", null, null, null, null, "Цифры ряда не сняты", "На открытой странице числовой ряд не найден."),
   ]),
   one("stankoterm", "Станкотерм", "Станкотерм", "не указано", "Электропарогенератор ЭЭП", [
-    row("stankoterm", "Станкотерм", "water", "/catalog/firetube.jpg", "Электропарогенератор ЭЭП", null, null, null, null, "Цифры ряда не сняты", "Электропарогенератор ЭЭП"),
+    row("stankoterm", "Станкотерм ЭЭП — тип электрического парогенератора", "steam", "/catalog/cabinet.jpg", "Электропарогенератор ЭЭП, без списка подтверждённых исполнений.", null, null, null, null, "Электропарогенератор; типоразмеры не внесены", "Нужна таблица серии ЭЭП по официальной документации."),
   ]),
   one("steam-technologies", "Steam Technologies", "Паровые технологии / Steam Technologies", "не указано", "Компания-производитель «Steam Technologies» - газовые и дизельные парогенераторы", [
     row("steam-technologies", "Steam Technologies", "water", "/catalog/firetube.jpg", "Компания-производитель «Steam Technologies» - газовые и дизельные парогенераторы", null, null, null, null, "Цифры ряда не сняты", "Компания-производитель «Steam Technologies» - газовые и дизельные парогенераторы"),
   ]),
   one("steampressor-hybrid", "STEAMPRESSOR HYBRID", "ТЕХНОПАР / STEAMPRESSOR HYBRID", "не указано", "Завод мобильных парогенераторов ТЕХНОПАР", [
-    row("steampressor-hybrid", "STEAMPRESSOR HYBRID", "water", "/catalog/firetube.jpg", "Завод мобильных парогенераторов ТЕХНОПАР", null, null, null, null, "Цифры ряда не сняты", "Завод мобильных парогенераторов ТЕХНОПАР"),
+    row("steampressor-hybrid", "ТЕХНОПАР STEAMPRESSOR HYBRID", "steam", "/catalog/steam.jpg", "Мобильные парогенераторы, исполнение и параметры уточняются.", null, null, null, null, "Парогенератор, не водогрейная серия", "Конкретный типоразмер и паспорт необходимо подтвердить."),
   ]),
   one("sugimat", "Sugimat", "Sugimat", "не указано", "Potencia: De 0.35 a 30 MW", [
     row("sugimat", "Sugimat", "water", "/catalog/firetube.jpg", "Potencia: De 0.35 a 30 MW", null, null, null, null, "Цифры ряда не сняты", "Potencia: De 0.35 a 30 MW"),
@@ -329,10 +330,10 @@ export const fills: Fill[] = [
     row("vapor-power", "Vapor Power", "water", "/catalog/firetube.jpg", "Сайт не открылся в сверке 18.11.2026.", null, null, null, null, "Цифры ряда не сняты", "Сайт не открылся в сверке 18.11.2026."),
   ]),
   one("vkk-standardkessel-k-then", "VKK STANDARDKESSEL Köthen", "VKK STANDARDKESSEL Köthen", "не указано", "Elektrokessel 8MW – Nordrhein-Westfalen", [
-    row("vkk-standardkessel-k-then", "VKK STANDARDKESSEL Köthen", "water", "/catalog/firetube.jpg", "Elektrokessel 8MW – Nordrhein-Westfalen", null, null, null, null, "Цифры ряда не сняты", "Elektrokessel 8MW – Nordrhein-Westfalen"),
+    row("vkk-standardkessel-k-then", "VKK STANDARDKESSEL — каталог серий не заполнен", "water", "/catalog/firetube.jpg", "Отдельный проект электрокотла 8 МВт не является модельным рядом.", null, null, null, null, "Проектная поставка — не серия", "Официальный ассортимент: https://vkkstandardkessel.de/en/our-products/"),
   ]),
   one("vkkgroup", "VKK Power (технологии KPA Unicon)", "VKK Power (технологии KPA Unicon)", "не указано", "На открытой странице числовой ряд не найден.", [
-    row("vkkgroup", "VKK Power (технологии KPA Unicon)", "water", "/catalog/firetube.jpg", "На открытой странице числовой ряд не найден.", null, null, null, null, "Цифры ряда не сняты", "На открытой странице числовой ряд не найден."),
+    row("vkkgroup", "VKK Power — модельный каталог не заполнен", "water", "/catalog/firetube.jpg", "Официально названы Biograte, Renefluid и Fire Tube Boilers; параметры не перенесены.", null, null, null, null, "Не считать названием компании серию", "Проверить точные параметры по https://vkkgroup.fi/en/solution/biograte/"),
   ]),
   one("vmex-turaz-group", "VMEX TURAZ GROUP", "VMEX / VMEX TURAZ GROUP", "не указано", "На главной несколько диапазонов кВт, имена серий не сняты.", [
     row("vmex-turaz-group", "VMEX", "water", "/catalog/firetube.jpg", "29–22 791 кВт", 29, 22791, null, null, "29–22 791 кВт", "Полосы со страницы: 93–5800, 93–4060, 59–1162, 326–22791, 65–3256, 93–4070, 698–14535, 1000–20000, 29–4999 кВт. К каким изделиям какая полоса — не подписано."),
