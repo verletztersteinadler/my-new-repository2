@@ -207,12 +207,18 @@ export function LeadForm({
       <label className="sm:col-span-2 flex items-start gap-3 text-sm">
         <input name="consent" type="checkbox" className="mt-1 size-5 accent-accent" required />
         <span>
-          Согласен с{" "}
-          <a className="font-medium text-ink underline-offset-2 hover:underline" href="/politika">
-            политикой конфиденциальности
+          Даю{" "}
+          <a className="font-semibold text-ink underline underline-offset-2 hover:text-accent" href="/soglasie" target="_blank" rel="noopener noreferrer">
+            отдельное согласие на обработку персональных данных
           </a>
+          {" "}для ответа на мой запрос.
         </span>
       </label>
+      <p className="sm:col-span-2 text-xs text-muted">
+        Ознакомьтесь с{" "}
+        <a href="/politika" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink">Политикой обработки персональных данных</a>.
+        Данные используются для ответа на обращение; согласие на рекламу не запрашивается.
+      </p>
       {errors.consent ? <p className="sm:col-span-2 text-sm text-danger">{errors.consent}</p> : null}
       {errors.form ? (
         <p className="sm:col-span-2 text-sm text-danger" role="alert">
