@@ -16,6 +16,12 @@ on:
       - src/components/boiler-house-builder.tsx
       - src/routes/kotelnaya.tsx
       - src/components/home-page.tsx
+      - src/data/pumps.ts
+      - src/lib/pump-engineering.ts
+      - src/lib/pump-engineering.test.ts
+      - src/components/pump-directory.tsx
+      - src/routes/nasosy.tsx
+      - src/components/pump-groups-editor.tsx
   workflow_dispatch:
 
 permissions:
@@ -107,6 +113,9 @@ jobs:
 
       - name: Test boiler-house engineering model
         run: node --experimental-strip-types --test src/lib/boiler-house.test.ts
+
+      - name: Verify pump registry and hydraulic model
+        run: node --experimental-strip-types --test src/lib/pump-engineering.test.ts
 
       - name: Build
         run: npm run build:dev --if-present
