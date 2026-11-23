@@ -143,6 +143,9 @@ $phone = field($data, 'phone', 250);
 $email = field($data, 'email', 300);
 $comment = field($data, 'comment', 18000);
 $category = field($data, 'category_id', 90);
+$manufacturerSlug = field($data, 'manufacturer_slug', 100);
+$modelName = field($data, 'model_name', 250);
+$modelExecution = field($data, 'model_execution', 200);
 $series = field($data, 'series_id', 120);
 $size = field($data, 'size_id', 120);
 $pageUrl = field($data, 'page_url', 1500);
@@ -180,6 +183,9 @@ $record = [
     'series_id' => $series,
     'size_id' => $size,
     'category_id' => $category,
+    'manufacturer_slug' => $manufacturerSlug,
+    'model_name' => $modelName,
+    'model_execution' => $modelExecution,
     'page_path' => $path,
     'consent_at_utc' => gmdate('c'),
     'consent_version' => $consentVersion,
@@ -194,7 +200,7 @@ if ($saved['replay']) answer(200, ['lead_id' => $saved['id'], 'status' => 'accep
 // only means accepted by the local mail agent, not proof of delivery.
 $subject = '=?UTF-8?B?' . base64_encode('Заявка kotly.pro ' . $record['id']) . '?=';
 $message = "Новая заявка kotly.pro\n\n";
-foreach (['id','created_at_utc','name','phone','email','category_id','series_id','size_id','page_path','comment','consent_version'] as $key) {
+foreach (['id','created_at_utc','name','phone','email','manufacturer_slug','category_id','series_id','size_id','model_name','model_execution','page_path','comment','consent_version'] as $key) {
     $message .= $key . ": " . str_replace(["\r", "\0"], '', (string)$record[$key]) . "\n";
 }
 $headers = ['MIME-Version: 1.0', 'Content-type: text/plain; charset=UTF-8', 'From: ' . $config['sender']];
