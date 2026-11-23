@@ -85,11 +85,12 @@ jobs:
             'enabled' => true,
             'privacy_approved' => true,
             'operator_name' => 'Test Operator (CI only)',
+            'operator_postal_address' => 'Test postal address (CI only)',
             'operator_contact' => 'privacy@example.org',
             'recipient' => 'test@example.org',
             'sender' => 'no-reply@kotly.pro',
             'notify_by_email' => false,
-            'policy_version' => 'kotly-consent-draft-2026-11-15',
+            'policy_version' => 'kotly-consent-draft-2026-11-23',
             'rate_secret' => '0123456789abcdef0123456789abcdef0123456789abcdef',
           ];
           PHP
@@ -105,7 +106,7 @@ jobs:
               "email":"tester@example.org",
               "comment":"Паровая котельная: 1 т/ч",
               "consent":True,
-              "consent_version":"kotly-consent-draft-2026-11-15",
+              "consent_version":"kotly-consent-draft-2026-11-23",
               "page_url":"https://kotly.pro/kotelnaya/?email=must-not-be-stored",
               "website":"",
           }
