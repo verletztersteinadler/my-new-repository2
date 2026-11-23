@@ -1138,7 +1138,7 @@ function SeriesCard({
         />
         <div className="p-4 pb-3">
           <p className="text-xs font-semibold text-ink uppercase">
-            Серия{series.sizes.length ? ` · ${series.sizes.length}` : ""}
+            {series.recordStatus === "not-filled" ? "Карточка производителя · модельный каталог не заполнен" : series.recordStatus === "project" ? "Проектное оборудование" : `Серия${series.sizes.length ? ` · ${series.sizes.length} типоразмеров` : " · типоразмеры не указаны"}`}
           </p>
           <h2 className="mt-1 font-display text-3xl leading-[0.92] font-extrabold tracking-[-0.04em] text-balance">{series.name}</h2>
           <p className="mt-1 text-sm leading-snug text-muted">{series.kind}</p>
