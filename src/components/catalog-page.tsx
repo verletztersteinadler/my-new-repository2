@@ -1240,6 +1240,7 @@ function SeriesDialog({
                 <Spec label="Мощность" value={formatPowerRange(series.powerMinKw, series.powerMaxKw)} />
                 <Spec label="Пар" value={formatSteamRange(series.steamMinKgH, series.steamMaxKgH)} />
                 <Spec label="Температура" value={formatTemp(series.tempMaxC)} />
+                 {series.tempSafetyMaxC != null ? <Spec label="Предельная защитная температура (не подача)" value={formatTemp(series.tempSafetyMaxC)} /> : null}
                 <Spec label="Давление" value={series.pressureNote ?? "Уточняется"} />
                 <Spec label="Топливо" value={series.fuels.length ? series.fuels.map(fuelTitle).join(", ") : "Уточняется"} />
                 <Spec label="Исполнение" value={series.feature} />
