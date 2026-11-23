@@ -12,7 +12,7 @@ return [
     // Keep OFF until the operator and published privacy/consent text are approved.
     'enabled' => false,
     'privacy_approved' => false,
-    'operator_name' => '',       // Legal entity or individual acting as data controller
+    'operator_name' => '',       // ФИО физического лица — оператора персональных данных
     'operator_contact' => '',    // Valid privacy contact e-mail
     'recipient' => 'info@kotly.pro', // Destination provided for lead notifications
     'sender' => 'no-reply@kotly.pro', // Must be a real/authorized mailbox on this domain
