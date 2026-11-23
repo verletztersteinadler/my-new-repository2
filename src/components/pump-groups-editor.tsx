@@ -60,8 +60,11 @@ export function PumpGroupsEditor({mode,groups,onChange}:{
     const n=parsePumpValue(g.totalFlow);
     patch(g.id,{flowUnit:next,totalFlow:n==null?g.totalFlow:fmt(m3sToFlow(flowToM3S(n,g.flowUnit),next),10)});
   }
-  const updateRole=(g:PumpGroup,id:PumpRoleId)=>
-    patch(g.id,{role:id,fluid:g.fluid===pumpRoles.find(r=>r.id===g.role)?.name?"":g.fluid});
+  const updateRole=(g:PumpGroup,id:PumpRoleId)=>{
+    const previousDefault=newPumpGroup(g.role,g.id).fluid;
+    const newDefault=newPumpGroup(id,g.id).fluid;
+    patch(g.id,{role:id,fluid:g.fluid===previousDefault?newDefault:g.fluid});
+  };
 
   return <section className="mt-7 rounded-2xl border border-line bg-bg/30 p-4 sm:p-5">
     <div className="flex flex-wrap items-start justify-between gap-3">
