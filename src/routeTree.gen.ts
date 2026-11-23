@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KotelnayaRouteImport } from './routes/kotelnaya'
 import { Route as PolitikaRouteImport } from './routes/politika'
 import { Route as SoglasieRouteImport } from './routes/soglasie'
 import { Route as ManufacturersSlugRouteImport } from './routes/manufacturers/$slug'
@@ -18,6 +19,11 @@ import { Route as ApiV1LeadsRouteImport } from './routes/api/v1/leads'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KotelnayaRoute = KotelnayaRouteImport.update({
+  id: '/kotelnaya',
+  path: '/kotelnaya',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PolitikaRoute = PolitikaRouteImport.update({
@@ -43,6 +49,7 @@ const ApiV1LeadsRoute = ApiV1LeadsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/kotelnaya': typeof KotelnayaRoute
   '/politika': typeof PolitikaRoute
   '/soglasie': typeof SoglasieRoute
   '/manufacturers/$slug': typeof ManufacturersSlugRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/kotelnaya': typeof KotelnayaRoute
   '/politika': typeof PolitikaRoute
   '/soglasie': typeof SoglasieRoute
   '/manufacturers/$slug': typeof ManufacturersSlugRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/kotelnaya': typeof KotelnayaRoute
   '/politika': typeof PolitikaRoute
   '/soglasie': typeof SoglasieRoute
   '/manufacturers/$slug': typeof ManufacturersSlugRoute
@@ -66,12 +75,24 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/politika' | '/soglasie' | '/manufacturers/$slug' | '/api/v1/leads'
+    | '/'
+    | '/kotelnaya'
+    | '/politika'
+    | '/soglasie'
+    | '/manufacturers/$slug'
+    | '/api/v1/leads'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/politika' | '/soglasie' | '/manufacturers/$slug' | '/api/v1/leads'
+  to:
+    | '/'
+    | '/kotelnaya'
+    | '/politika'
+    | '/soglasie'
+    | '/manufacturers/$slug'
+    | '/api/v1/leads'
   id:
     | '__root__'
     | '/'
+    | '/kotelnaya'
     | '/politika'
     | '/soglasie'
     | '/manufacturers/$slug'
@@ -80,6 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  KotelnayaRoute: typeof KotelnayaRoute
   PolitikaRoute: typeof PolitikaRoute
   SoglasieRoute: typeof SoglasieRoute
   ManufacturersSlugRoute: typeof ManufacturersSlugRoute
@@ -93,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kotelnaya': {
+      id: '/kotelnaya'
+      path: '/kotelnaya'
+      fullPath: '/kotelnaya'
+      preLoaderRoute: typeof KotelnayaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/politika': {
@@ -128,6 +157,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  KotelnayaRoute: KotelnayaRoute,
   PolitikaRoute: PolitikaRoute,
   SoglasieRoute: SoglasieRoute,
   ManufacturersSlugRoute: ManufacturersSlugRoute,
