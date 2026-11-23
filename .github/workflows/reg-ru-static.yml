@@ -41,6 +41,9 @@ jobs:
       - name: Validate pump register and SI pump calculations
         run: node --experimental-strip-types --test src/lib/pump-engineering.test.ts
 
+      - name: Audit critical catalog regression cases
+        run: node --experimental-strip-types --test scripts/audit-regression.test.mjs
+
       - name: Build static website
         run: npm run build:static
 
