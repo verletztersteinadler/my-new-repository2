@@ -1,6 +1,6 @@
 export const MANUFACTURER_ID = "lavart";
 export const BRAND = "LAVART";
-export const CONSENT_VERSION = "kotly-consent-draft-2026-11-15";
+export const CONSENT_VERSION = "kotly-consent-draft-2026-11-23";
 export const MANUFACTURER_SITE = "https://omzit.ru/";
 export const SOURCE_CHECKED = "2026-11-15";
 
