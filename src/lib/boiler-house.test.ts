@@ -37,7 +37,7 @@ test("Technical brief preserves distinct heat and steam demands", () => {
   const heat=calculateTrain(3000,2,"none");
   const steam=calculateTrain(3600,2,"n-plus-one");
   const brief=buildTechnicalBrief({object:"Завод",location:"Казань",mode:"combined",purpose:["Отопление","Пар для производства"],heatLoads:{heatingKw:2000,dhwKw:500,processKw:500},steamKgH:3600,waterSupplyC:95,waterReturnC:70,waterPressureMPa:0.6,steamPressureMPa:1.2,steamCondition:"насыщенный",condensateReturnPct:50,mainFuel:"газ",reserveFuel:"дизель",operation:"continuous",placement:"modular",circuit:"independent",automation:"dispatch",heatTrain:heat,steamTrain:steam,chosenSystems:["ХВО"],notes:""});
-  assert.match(brief,/3000 кВт/);
+  assert.match(brief,/3\s000 кВт/);
   assert.match(brief,/1 кг\/с/);
   assert.match(brief,/резервных 1/);
   assert.match(brief,/не проектная документация/);
