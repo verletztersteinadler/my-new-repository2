@@ -171,7 +171,15 @@ export default defineConfig(({ command, isPreview }) => ({
     tailwindcss(),
     tanstackStart(
       STATIC_EXPORT
-        ? { spa: { enabled: true, prerender: { outputPath: "/_shell.html", crawlLinks: false } } }
+        ? {
+            prerender: {
+              enabled: true,
+              autoStaticPathsDiscovery: true,
+              crawlLinks: true,
+              concurrency: 8,
+              failOnError: true,
+            },
+          }
         : {},
     ),
     ...(command === "build" || isPreview
