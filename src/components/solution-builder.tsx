@@ -147,7 +147,9 @@ export function SolutionBuilder() {
           ? "Нижняя граница мощности не может быть больше верхней."
           : isPopulated(temperature) && (targetC == null || targetC < -273.15)
             ? "Укажите действительную температуру не ниже абсолютного нуля."
-            : null
+            : isPopulated(pressure) && (targetMPa == null || targetMPa < 0)
+              ? "Укажите неотрицательное давление в выбранных единицах."
+              : null
   );
 
   const hits = useMemo(() => {
@@ -155,7 +157,12 @@ export function SolutionBuilder() {
     const matching = allEntries.filter((entry) => {
       const series = entry.series;
       if (!matchesTask(entry, task)) return false;
-      if (fuel !== "any" && !series.fuels.includes(fuel)) return false;
+      if (fuel !== "any") {
+        const modelsWithFuel = series.sizes.filter((size) => size.fuels !== undefined);
+        if (modelsWithFuel.length) {
+          if (!modelsWithFuel.some((size) => size.fuels?.includes(fuel))) return false;
+        } else if (!series.fuels.includes(fuel)) return false;
+      }
       if (showSteam && (steamMinKgH != null || steamMaxKgH != null)) {
         const r = knownRange(series, "steam");
         if (!r || !rangeIntersects(r.min, r.max, steamMinKgH, steamMaxKgH)) return false;
@@ -166,6 +173,17 @@ export function SolutionBuilder() {
       }
       // A missing technical value must not silently pass a specified threshold.
       if (targetC != null && (series.tempMaxC == null || series.tempMaxC < targetC)) return false;
+      if (targetMPa != null) {
+        // A family-level pressureNote is NOT proof for any particular execution.
+        // Unknown model pressure must never satisfy a specified numeric requirement.
+        const pressureBar = targetMPa * 10;
+        if (!series.sizes.some((size) =>
+          size.workingPressureBar != null
+          && size.workingPressureBar >= pressureBar
+          && (fuel === "any" || (size.fuels ?? series.fuels).includes(fuel))
+          && (targetC == null || (size.tempMaxC ?? series.tempMaxC ?? -Infinity) >= targetC)
+        )) return false;
+      }
       return true;
     });
     if (sort === "manufacturer") matching.sort((a, b) => a.maker.localeCompare(b.maker, "ru") || a.series.name.localeCompare(b.series.name, "ru"));
@@ -177,7 +195,7 @@ export function SolutionBuilder() {
       });
     }
     return matching;
-  }, [task, fuel, showSteam, powerMinKw, powerMaxKw, steamMinKgH, steamMaxKgH, targetC, sort, error]);
+  }, [task, fuel, showSteam, powerMinKw, powerMaxKw, steamMinKgH, steamMaxKgH, targetC, targetMPa, sort, error]);
 
   function changeTask(next: Task) {
     setTask(next);
@@ -412,13 +430,13 @@ export function SolutionBuilder() {
 
         {hasNumericalFilter ? (
           <p className="mt-2 text-xs leading-relaxed text-muted">
-            Отбор показывает серии, чей опубликованный диапазон пересекается с заданным. Это не гарантия наличия отдельного типоразмера. Серии с неизвестными числовыми параметрами при активном числовом фильтре исключаются.
+            Отбор показывает опубликованные серии с пересечением параметров; это не подтверждённая взаимозаменяемость. При заданном давлении допускаются только исполнения с численно подтверждённым пределом. Неизвестное давление не считается совпадением.
           </p>
         ) : null}
 
         {hits.length === 0 ? (
           <div className="mt-4 rounded-xl border border-line bg-bg/50 p-4 text-sm">
-            Подтверждённых совпадений нет. Попробуйте снять числовое ограничение или уточнить вид оборудования.
+            Кандидатов с подтверждёнными необходимыми параметрами нет. Попробуйте снять ограничение или уточнить исходные данные.
           </div>
         ) : (
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
