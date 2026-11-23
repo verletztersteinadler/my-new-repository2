@@ -99,12 +99,26 @@ export function findBoilerCandidates(args: {
     if (entry.line === "burner" || entry.line === "air") continue;
     if (kind === "water" && !["water", "hw115", "hw170"].includes(s.categoryId)) continue;
     if (kind === "steam" && s.categoryId !== "steam") continue;
-    if (mainFuel && !s.fuels.includes(mainFuel)) continue;
-    if (reserveFuel && reserveFuel !== mainFuel && !s.fuels.includes(reserveFuel)) continue;
-    if (kind === "water" && minimumTempC != null && (s.tempMaxC == null || s.tempMaxC < minimumTempC)) continue;
+    const modelFuelEvidence = s.sizes.some((size) => size.fuels !== undefined);
+    const hasFuel = (fuel: FuelId) => modelFuelEvidence
+      ? s.sizes.some((size) => (size.fuels ?? []).includes(fuel))
+      : s.fuels.includes(fuel);
+    if (mainFuel && !hasFuel(mainFuel)) continue;
+    if (reserveFuel && reserveFuel !== mainFuel && !hasFuel(reserveFuel)) continue;
+    if (kind === "water" && minimumTempC != null
+        && (s.tempMaxC == null || s.tempMaxC < minimumTempC)
+        && !s.sizes.some((size) => size.tempMaxC != null && size.tempMaxC >= minimumTempC)) continue;
     const range = capacityRange(s, kind);
     if (!range || !rangeIntersects(range.min, range.max, dutyPerUnit, dutyPerUnit)) continue;
     const matching = s.sizes
+      .filter((size) => {
+        const fuels = size.fuels ?? (modelFuelEvidence ? [] : s.fuels);
+        if (mainFuel && !fuels.includes(mainFuel)) return false;
+        if (reserveFuel && reserveFuel !== mainFuel && !fuels.includes(reserveFuel)) return false;
+        if (kind === "water" && minimumTempC != null
+          && (size.tempMaxC ?? s.tempMaxC ?? -Infinity) < minimumTempC) return false;
+        return true;
+      })
       .map((size) => ({
         name: size.name,
         value: kind === "water" ? size.powerKw : size.steamKgH,
