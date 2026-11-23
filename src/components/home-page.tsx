@@ -50,6 +50,7 @@ export function HomePage() {
               Подбор
             </a>
             <Link to="/kotelnaya" className="font-semibold text-accent hover:text-ink">Котельная под ключ</Link>
+            <Link to="/nasosy" className="hover:text-ink">Насосы</Link>
             <a href="#manufacturers" className="hover:text-ink">
               Производители
             </a>
@@ -99,6 +100,23 @@ export function HomePage() {
                 Конструктор котельной →
               </Link>
             </div>
+          </div>
+        </section>
+
+        <section className="mx-auto mt-5 max-w-6xl px-4">
+          <div className="flex flex-col justify-between gap-4 rounded-3xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:p-6">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-accent">Новый раздел · На проверке</p>
+              <h2 className="mt-2 font-display text-2xl font-extrabold">Насосное оборудование для котельных</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+                Сетевые, котловые, питательные, подпиточные, конденсатные и другие насосы.
+                Пилотный реестр 25 производителей из предоставленного списка;
+                параметры моделей и гидравлические характеристики ещё требуют подтверждения.
+              </p>
+            </div>
+            <Link to="/nasosy" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl border border-line px-5 text-sm font-bold text-ink hover:bg-chip">
+              Изучить насосы →
+            </Link>
           </div>
         </section>
 
