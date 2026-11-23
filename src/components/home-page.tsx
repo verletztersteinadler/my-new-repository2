@@ -197,7 +197,7 @@ export function HomePage() {
                     <p className="mt-2 text-sm leading-relaxed text-ink">Информация на сайте производителя не предоставлена.</p>
                   )}
                   <Link
-                    to="/manufacturers/$slug"
+                    to="/$slug"
                     params={{ slug: item.slug }}
                     search={hasSeries ? {} : { ask: "1" }}
                     className={
