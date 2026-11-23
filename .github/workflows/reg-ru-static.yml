@@ -44,6 +44,9 @@ jobs:
       - name: Audit critical catalog regression cases
         run: node --experimental-strip-types --test scripts/audit-regression.test.mjs
 
+      - name: Verify short manufacturer routes and permanent redirects
+        run: node --test scripts/manufacturer-short-urls.test.mjs
+
       - name: Build static website
         run: npm run build:static
 
