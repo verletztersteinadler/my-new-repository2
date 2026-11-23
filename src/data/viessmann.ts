@@ -33,9 +33,17 @@ export const viessmannCategories: Category[] = [
 ];
 export const viessmannDocuments = [{ title: "Vitomax" }];
 export const viessmannSeries: Series[] = [
-  water("v-lw", "Viessmann Vitomax LW", 650, 22000, "Низкое давление. Водород до 100% назван отдельно"),
-  water("v-hw", "Viessmann Vitomax HW", 350, 20000, "Подача выше 110 °C"),
-  water("v-m60", "Viessmann Vitomax LW M60A", 700, 1950, "Масло или газ"),
+  { ...water("v-lw", "Viessmann Vitomax LW", 650, 22000, "Низкое давление. Водород до 100% назван отдельно"),
+    tempMaxC: 110, pressureNote: "6 / 10 / 16 бар — варианты рабочего давления, не общий предел каждого исполнения",
+    sourceUrl: "https://www.viessmann.co.uk/en/products/large-boiler/vitomax-lw.html",
+    sourceChecked: "2026-11-23", sourceRevision: "Vitomax LW, официальный каталог" },
+  { ...water("v-hw", "Viessmann Vitomax HW", 350, 20000, "Подача выше 110 °C; рабочую температуру уточнять по конкретной конфигурации"),
+    tempSafetyMaxC: 210, pressureNote: "Давление зависит от исполнения; конкретное значение не подтверждено",
+    sourceUrl: "https://www.viessmann.co.uk/en/products/large-boiler/vitomax-hw.html",
+    sourceChecked: "2026-11-23", sourceRevision: "Vitomax HW: 210 °C — защитный предел, НЕ температура подачи" },
+  { ...water("v-m60", "Viessmann Vitomax LW M60A", 700, 1950, "Масло или газ"),
+    sourceUrl: "https://www.viessmann.co.uk/en/products/large-boiler/vitomax-lw-m60a.html",
+    sourceChecked: "2026-11-23", sourceRevision: "Vitomax LW M60A — 700–1950 кВт" },
   {
     id: "v-hs",
     name: "Viessmann Vitomax HS",
