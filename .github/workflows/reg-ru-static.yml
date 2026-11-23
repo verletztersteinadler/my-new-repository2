@@ -38,6 +38,9 @@ jobs:
       - name: Test boiler-house sizing and catalog matching
         run: node --experimental-strip-types --test src/lib/boiler-house.test.ts
 
+      - name: Validate pump register and SI pump calculations
+        run: node --experimental-strip-types --test src/lib/pump-engineering.test.ts
+
       - name: Build static website
         run: npm run build:static
 
@@ -59,6 +62,9 @@ jobs:
           boiler_house_page = root / "kotelnaya" / "index.html"
           assert boiler_house_page.is_file(), "Missing prerendered /kotelnaya page"
           assert "конфигурацию котельной" in boiler_house_page.read_text(encoding="utf-8").lower(), "Boiler-house page content not prerendered"
+          pumps_page = root / "nasosy" / "index.html"
+          assert pumps_page.is_file(), "Missing prerendered /nasosy page"
+          assert "промышленные насосы для котельных" in pumps_page.read_text(encoding="utf-8").lower(), "Pump page content missing"
           data = index.read_text(encoding="utf-8")
           assert "<html" in data.lower() and "</html>" in data.lower(), "Invalid SPA shell"
           files = [p for p in root.rglob("*") if p.is_file()]
