@@ -74,6 +74,9 @@ test("Smolensk gas evidence applies only to documented exact execution, not the 
   assert.ok(item.sizes.some(s=>s!==documented && s.fuels.length===0));
   assert.ok(!filterSeries({fuel:"diesel"},[item]).length);
   assert.ok(filterSeries({fuel:"gas"},[item]).length);
+  assert.deepEqual(filterSeries({fuel:"gas",power:"o15"},[item]),[],
+    "The 4.65 MW gas model must not establish fuel for a different >15 MW model");
+  assert.equal(filterSeries({fuel:"gas",power:"m1to5"},[item]).length,1);
 });
 
 test("Viessmann safety protection temperature is not the supply temperature", () => {
@@ -87,6 +90,17 @@ test("Significant decimal precision remains intact", () => {
   assert.equal(formatKw(1950),"1,95 МВт");
   assert.equal(formatKw(1395),"1,395 МВт");
   assert.equal(formatSteam(1250),"1,25 т/ч");
+});
+
+test("Alternative Altai Energomash KV-GM model names resolve to the same documented size", async () => {
+  const { pkaemSeries } = await import("../src/data/pkaem.ts");
+  const item = series(pkaemSeries, "pkaem-kvgm");
+  const four = item.sizes.find(s => s.name === "КВ-ГМ-4,65-150");
+  const ten = item.sizes.find(s => s.name === "КВ-ГМ-11,63-150");
+  assert.deepEqual(four?.aliases, ["КВ-ГМ-4-150"]);
+  assert.deepEqual(ten?.aliases, ["КВ-ГМ-10-150"]);
+  assert.equal(filterSeries({ q: "КВ-ГМ-4-150" }, [item]).length,1);
+  assert.equal(filterSeries({ q: "КВ-ГМ-10-150" }, [item]).length,1);
 });
 
 test("ALLWEILER does not claim NETZSCH NEMO series", () => {
