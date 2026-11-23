@@ -239,7 +239,7 @@ import { Logo } from "@/components/logo";
 import { FactoryCard } from "@/components/factory-card";
 import { manufacturerBySlug } from "@/data/manufacturers";
 
-const routeApi = getRouteApi("/manufacturers/$slug");
+const routeApi = getRouteApi("/$slug");
 
 const lavartProfile = {
   brand: BRAND,
@@ -629,7 +629,7 @@ export function CatalogPage() {
   const maker = manufacturerBySlug(slug);
   const profile = profileFor(slug);
   const search = routeApi.useSearch();
-  const navigate = useNavigate({ from: "/manufacturers/$slug" });
+  const navigate = useNavigate({ from: "/$slug" });
   const [shown, setShown] = useState(PAGE);
   const [lead, setLead] = useState<LeadContext | null>(null);
   const [analogsFor, setAnalogsFor] = useState<Series | null>(null);
@@ -1096,7 +1096,7 @@ function MissingSeries({ brand, openInitially }: { brand: string; openInitially:
                       {primarySpec(item.series).label}: {primarySpec(item.series).value}
                     </p>
                     <p className="mt-1 text-xs text-muted">{item.note}</p>
-                    <Link to="/manufacturers/$slug" params={{ slug: item.slug }} search={{ series: item.series.id }} className="mt-2 inline-flex text-sm font-semibold">
+                    <Link to="/$slug" params={{ slug: item.slug }} search={{ series: item.series.id }} className="mt-2 inline-flex text-sm font-semibold">
                       Открыть серию
                     </Link>
                   </li>
@@ -1335,7 +1335,7 @@ function AnalogsDialog({ series, sourceSlug, onClose }: { series: Series | null;
                   </p>
                   <p className="mt-1 text-xs text-muted">{item.note}</p>
                   <Link
-                    to="/manufacturers/$slug"
+                    to="/$slug"
                     params={{ slug: item.slug }}
                     search={{ series: item.series.id }}
                     className="mt-2 inline-flex text-sm font-semibold text-ink"
