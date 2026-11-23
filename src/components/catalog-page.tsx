@@ -450,7 +450,7 @@ function profileFor(slug: string) {
   if (slug === "f-b-r-bruciatori") return pack("F.B.R.", fbrCategories, fbrSeries, fbrDocuments);
   if (slug === "fako") return pack("FAKO", fakoCategories, fakoSeries, fakoDocuments);
   if (slug === "fbm-hudson-italiana") return pack("FBM Hudson", fbmCategories, fbmSeries, fbmDocuments);
-  if (slug === "komforts") return pack("FERGY", fergyCategories, fergySeries, fergyDocuments);
+  if (slug === "komforts") return pack("KOMFORTS / FERGY", fergyCategories, fergySeries, fergyDocuments);
   if (slug === "ferroli-industrial-solutions") return pack("Ferroli", ferroliCategories, ferroliSeries, ferroliDocuments);
   if (slug === "fives-north-american-combustion") return pack("Fives", fivesCategories, fivesSeries, fivesDocuments);
   if (slug === "flowair") return pack("FLOWAIR", flowairCategories, flowairSeries, flowairDocuments);
@@ -470,7 +470,7 @@ function profileFor(slug: string) {
   if (slug === "hurst-boiler-welding") return pack("Hurst", hurstCategories, hurstSeries, hurstDocuments);
   if (slug === "ici-caldaie-lcz") return pack("ICI Caldaie", iciCategories, iciSeries, iciDocuments);
   if (slug === "indeck-group") return pack("Indeck", indeckCategories, indeckSeries, indeckDocuments);
-  if (slug === "eratic") return pack("INNERGY", innergyCategories, innergySeries, innergyDocuments);
+  if (slug === "eratic") return pack("ERATIC / INNERGY", innergyCategories, innergySeries, innergyDocuments);
   if (slug === "isimek") return pack("ISIMEK", isimekCategories, isimekSeries, isimekDocuments);
   if (slug === "istal") return pack("ISTAL", istalCategories, istalSeries, istalDocuments);
   if (slug === "john-thompson") return pack("John Thompson", johnthompsonCategories, johnthompsonSeries, johnthompsonDocuments);
