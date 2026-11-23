@@ -731,7 +731,7 @@ export function CatalogPage() {
         </p>
         <p className="mt-3 text-sm">
           {maker ? <span className="mr-4">{maker.place}</span> : null}
-          <span>Взято с оф. сайта производителя</span>
+          <span>Данные карточки требуют проверки по первоисточникам</span>
         </p>
 
         <form
@@ -888,11 +888,18 @@ export function CatalogPage() {
             {profile.documents.length ? (
               <ul className="mt-4 grid gap-1 text-sm">
                 {profile.documents.map((doc) => (
-                  <li key={doc.title}>{doc.title}</li>
+                  <li key={doc.title}>{"href" in doc && typeof doc.href === "string" && doc.href.startsWith("https://")
+                      ? <a href={doc.href} target="_blank" rel="noopener noreferrer" className="underline decoration-white/50 hover:text-white">{doc.title} ↗</a>
+                      : doc.title}</li>
                 ))}
               </ul>
             ) : null}
-            <p className="mt-4 text-sm text-[#f0c4cc]">Сайт производителя в справочнике не открывается.</p>
+            {maker?.site?.startsWith("https://") ? (
+               <a href={maker.site} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex text-sm font-semibold text-[#f0c4cc] underline underline-offset-4">
+                 Сайт производителя ↗
+               </a>
+             ) : <p className="mt-4 text-sm text-[#f0c4cc]">Адрес официального сайта требует подтверждения.</p>}
+             <p className="mt-3 text-xs text-white/60">Ссылка на главную производителя не подтверждает параметры конкретной модели.</p>
           </aside>
         </section>
 
@@ -1220,7 +1227,14 @@ function SeriesDialog({
               <img src={series.image} alt="" width={1600} height={1200} className="mt-4 aspect-video w-full rounded-xl object-cover" />
               <p className="mt-2 text-xs text-muted">Иллюстрация серии; внешний вид и комплектация уточняются. Визуализация не является обмером.</p>
               <p className="mt-4 text-pretty">{series.summary}</p>
-              {maker ? <FactoryCard maker={maker} /> : null}
+              {series.sourceUrl?.startsWith("https://") ? (
+                 <p className="mt-3 text-sm">
+                   <a href={series.sourceUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent underline underline-offset-4">Официальный каталог/карточка серии ↗</a>
+                   {series.sourceRevision ? <span className="ml-2 text-muted">{series.sourceRevision}</span> : null}
+                   {series.sourceChecked ? <span className="ml-2 text-muted">Сверка: {series.sourceChecked}</span> : null}
+                 </p>
+               ) : null}
+               {maker ? <FactoryCard maker={maker} /> : null}
               <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
                 <Spec label="Мощность" value={formatPowerRange(series.powerMinKw, series.powerMaxKw)} />
                 <Spec label="Пар" value={formatSteamRange(series.steamMinKgH, series.steamMaxKgH)} />
@@ -1236,7 +1250,7 @@ function SeriesDialog({
               ) : null}
               <h3 className="mt-6 text-lg font-semibold">Типоразмеры</h3>
               {series.sizes.length === 0 ? (
-                <p className="mt-2 text-sm text-muted">{series.sizesNote ?? "Перечень типоразмеров в открытом источнике не разложен. Справочник модель не назначает."}</p>
+                <p className="mt-2 text-sm text-muted">{series.recordStatus === "project" ? "Проектное исполнение: фиксированный ряд не подтверждён." : series.sizesNote ?? "Модельный каталог не заполнен. Типоразмеры и параметры не подтверждены; справочник не назначает модель."}</p>
               ) : (
                 <div className="mt-2 overflow-x-auto rounded-xl border border-line">
                   <table className="w-full min-w-[36rem] text-left text-sm">
@@ -1250,7 +1264,14 @@ function SeriesDialog({
                     <tbody>
                       {series.sizes.map((size) => (
                         <tr key={size.id} className="border-t border-line">
-                          <td className="px-3 py-2 font-medium">{size.name}</td>
+                          <td className="px-3 py-2 font-medium">
+                             {size.name}
+                             {size.execution ? <span className="mt-1 block text-xs text-muted">{size.execution}</span> : null}
+                             {size.fuels ? <span className="mt-1 block text-xs text-muted">Топливо: {size.fuels.length ? size.fuels.map(fuelTitle).join(", ") : "не подтверждено"}</span> : null}
+                             {size.tempMaxC != null ? <span className="mt-1 block text-xs text-muted">Температура: до {size.tempMaxC} °C</span> : null}
+                             {size.workingPressureBar != null ? <span className="mt-1 block text-xs text-muted">Давление отопления: до {size.workingPressureBar} бар</span> : null}
+                             {size.sourceUrl?.startsWith("https://") ? <a href={size.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-1 block text-xs font-semibold text-accent underline">Источник модели ↗</a> : null}
+                           </td>
                           <td className="px-3 py-2 tabular-nums">
                             {size.powerKw != null ? formatKw(size.powerKw) : size.steamKgH != null ? formatSteam(size.steamKgH) : "Уточняется"}
                           </td>
