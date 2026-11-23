@@ -29,6 +29,12 @@ if (shellStat?.isFile()) {
 
 await copyFile(resolve(root, "scripts/reg-ru/.htaccess"), resolve(target, ".htaccess"));
 
+// Keep the executable PHP receiver within the public API path.
+// Private configuration and stored leads must NOT be bundled in webroot.
+const phpFolder = resolve(target, "api/v1/leads");
+await mkdir(phpFolder, { recursive: true });
+await copyFile(resolve(root, "scripts/reg-ru/api/v1/leads/index.php"), resolve(phpFolder, "index.php"));
+
 const entries = await readdir(target);
 if (!entries.some((item) => item === "_build" || item === "assets")) {
   throw new Error("Missing compiled client assets in static output");
@@ -38,7 +44,7 @@ await writeFile(resolve(root, "dist-reg-ru-manifest.json"), JSON.stringify({
   mode: "static",
   files: entries,
   source: "deploy/reg-ru-static",
-  warning: "Server/API routes are not shipped; contact form disabled until configured",
+  warning: "PHP receiver included but disabled until approved policy, operator and private config outside document root are configured",
 }, null, 2) + "\n");
 
 console.log("Static website ready in dist-reg-ru/. Transfer its CONTENTS into /www/kotly.pro/");
