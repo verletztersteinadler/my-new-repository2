@@ -474,7 +474,8 @@ function profileFor(slug: string) {
   if (slug === "istal") return pack("ISTAL", istalCategories, istalSeries, istalDocuments);
   if (slug === "john-thompson") return pack("John Thompson", johnthompsonCategories, johnthompsonSeries, johnthompsonDocuments);
   if (slug === "johnston-boiler") return pack("Johnston", johnstonCategories, johnstonSeries, johnstonDocuments);
-  if (slug === "schneider-kessel-berlin") return pack("JUMAG", jumagCategories, jumagSeries, jumagDocuments);
+  if (slug === "schneider-kessel-berlin") return pack("SCHNEIDER-KESSEL Berlin", [], [], []);
+  if (slug === "jumag") return pack("JUMAG", jumagCategories, jumagSeries, jumagDocuments);
   if (slug === "justsen-energiteknik-euro-therm") return pack("Justsen", justsenCategories, justsenSeries, justsenDocuments);
   if (slug === "kalvis") return pack("Kalvis", kalvisCategories, kalvisSeries, kalvisDocuments);
   if (slug === "kohlbach-energieanlagen") return pack("Kohlbach", kohlbachCategories, kohlbachSeries, kohlbachDocuments);
@@ -510,7 +511,8 @@ function profileFor(slug: string) {
   if (slug === "weishaupt") return pack("Weishaupt", weishauptCategories, weishauptSeries, weishauptDocuments);
   if (slug === "webster-combustion") return pack("Webster", websterCategories, websterSeries, websterDocuments);
   if (slug === "victory-energy") return pack("Victory Energy", victoryCategories, victorySeries, victoryDocuments);
-  if (slug === "wiesberg") return pack("Unical", unicalCategories, unicalSeries, unicalDocuments);
+  if (slug === "wiesberg") return pack("Wiesberg", [], [], []);
+  if (slug === "unical") return pack("Unical", unicalCategories, unicalSeries, unicalDocuments);
   if (slug === "dht") return pack("Sussman", sussmanCategories, sussmanSeries, sussmanDocuments);
   if (slug === "steamrator") return pack("Steamrator", steamratorCategories, steamratorSeries, steamratorDocuments);
   if (slug === "ait-stein") return pack("AIT-STEIN", aitsteinCategories, aitsteinSeries, aitsteinDocuments);
