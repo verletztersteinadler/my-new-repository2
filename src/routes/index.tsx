@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
   head: () => ({
     meta: [
-      { title: "KOTLY.SU — справочник промышленных котлов" },
+      { title: "kotly.pro — справочник промышленных котлов" },
       {
         name: "description",
         content: "Независимый справочник открытых серий. Не сайт производителя и не предложение о продаже.",
