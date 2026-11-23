@@ -9,3 +9,5 @@ artifacts
 .env
 .env.*
 dist
+.output
+coverage
