@@ -16,6 +16,7 @@ return [
     'operator_contact' => '',    // Valid privacy contact e-mail
     'recipient' => '',           // Where lead notifications should be sent
     'sender' => 'no-reply@kotly.pro', // Must be a real/authorized mailbox on this domain
+    'notify_by_email' => false,  // Switch to true ONLY after testing mail delivery
     'policy_version' => 'kotly-consent-draft-2026-11-15', // Update in site + backend after approval
     'rate_secret' => '',         // Generate >=32 random characters; never publish
 ];
