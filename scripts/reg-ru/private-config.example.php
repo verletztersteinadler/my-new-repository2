@@ -12,11 +12,12 @@ return [
     // Keep OFF until the operator and published privacy/consent text are approved.
     'enabled' => false,
     'privacy_approved' => false,
-    'operator_name' => '',       // ФИО физического лица — оператора персональных данных
-    'operator_contact' => '',    // Valid privacy contact e-mail
+    'operator_name' => 'Малыгина Арина Дмитриевна', // физическое лицо — оператор
+    'operator_contact' => 'info@kotly.pro', // по вопросам персональных данных
+    'operator_postal_address' => '', // получить у оператора до утверждения
     'recipient' => 'info@kotly.pro', // Destination provided for lead notifications
-    'sender' => 'no-reply@kotly.pro', // Must be a real/authorized mailbox on this domain
+    'sender' => 'info@kotly.pro',  // действующий ящик домена
     'notify_by_email' => false,  // Switch to true ONLY after testing mail delivery
-    'policy_version' => 'kotly-consent-draft-2026-11-15', // Update in site + backend after approval
+    'policy_version' => 'kotly-consent-draft-2026-11-23', // final version before approval
     'rate_secret' => '',         // Generate >=32 random characters; never publish
 ];
