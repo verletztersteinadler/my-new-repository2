@@ -93,11 +93,12 @@ function saveLead(string $path, array $record): array|false {
     $encoded = json_encode($record, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     if ($encoded === false) { flock($fp, LOCK_UN); fclose($fp); return false; }
     fseek($fp, 0, SEEK_END);
-    $written = fwrite($fp, $encoded . "\n");
+    $fullLine = $encoded . "\n";
+    $written = fwrite($fp, $fullLine);
     fflush($fp);
     flock($fp, LOCK_UN);
     fclose($fp);
-    return $written === false ? false : ['id' => $record['id'], 'same' => true, 'replay' => false];
+    return $written !== strlen($fullLine) ? false : ['id' => $record['id'], 'same' => true, 'replay' => false];
 }
 
 $private = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'kotly-pro-private';
@@ -197,7 +198,9 @@ foreach (['id','created_at_utc','name','phone','email','category_id','series_id'
 }
 $headers = ['MIME-Version: 1.0', 'Content-type: text/plain; charset=UTF-8', 'From: ' . $config['sender']];
 if ($email !== '') $headers[] = 'Reply-To: ' . $email;
-$sent = @mail((string)$config['recipient'], $subject, $message, implode("\r\n", $headers));
+$sent = ($config['notify_by_email'] ?? false) === true
+    ? @mail((string)$config['recipient'], $subject, $message, implode("\r\n", $headers))
+    : false;
 // Never claim email was delivered. Keep a separate minimal notification status log.
 @file_put_contents($private . '/notifications-' . gmdate('Y-m') . '.jsonl',
     json_encode(['id' => $record['id'], 'mail_accepted' => (bool)$sent, 'at_utc' => gmdate('c')]) . "\n",
