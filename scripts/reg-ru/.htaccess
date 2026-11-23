@@ -1,0 +1,18 @@
+# kotly.pro - static client-side routing on REG.RU (Apache)
+# Upload this file with the generated index.html and _build assets.
+Options -Indexes
+DirectoryIndex index.html
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# There is no live Node.js API in this hosting package.
+RewriteRule ^(api|_serverFn)(/|$) - [R=404,L]
+
+# Existing assets are served directly.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Dynamic manufacturer URLs are handled by the browser router.
+RewriteRule ^ index.html [L]
+</IfModule>
