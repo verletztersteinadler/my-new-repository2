@@ -5,6 +5,11 @@ DirectoryIndex index.html
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
+# Permanent redirects: preserve inbound links, search rankings and query parameters.
+# Must appear BEFORE checks for existing directories: old /manufacturers/<slug>/
+# folders may still exist on ISPmanager after an in-place update.
+RewriteRule ^manufacturers/([^/]+)/?$ /$1 [R=301,L,NE]
+
 # Allow ONLY the dedicated PHP lead receiver; no Node.js routes are served.
 RewriteRule ^api/v1/leads/index\.php$ - [L]
 RewriteRule ^(api|_serverFn)(/|$) - [R=404,L]
@@ -14,6 +19,6 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Dynamic manufacturer URLs are handled by the browser router.
+# Short root-level manufacturer URLs are handled by the browser router.
 RewriteRule ^ index.html [L]
 </IfModule>
