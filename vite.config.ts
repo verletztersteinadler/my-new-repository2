@@ -178,7 +178,7 @@ export default defineConfig(({ command, isPreview }) => ({
       ? [
           nitro({
             // Keep Vercel production output by default; Render runs a standalone Node server.
-            preset: STATIC_EXPORT ? "static" : process.env.NITRO_PRESET === "node_server" ? "node_server" : "vercel",
+            preset: STATIC_EXPORT || process.env.NITRO_PRESET === "node_server" ? "node_server" : "vercel",
             // Auto-registers server/middleware/* (the PWA install page +
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
