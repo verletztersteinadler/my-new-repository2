@@ -6,6 +6,8 @@
  */
 import type { FuelId, Series } from "@/data/catalog";
 import { rangeIntersects } from "./engineering-units.ts";
+import { pumpGroupBrief, type PumpGroup } from "./pump-engineering.ts";
+import { pumpRoles } from "../data/pumps.ts";
 
 export type PlantMode = "water" | "steam" | "combined";
 export type DutyKind = "water" | "steam";
@@ -148,6 +150,7 @@ export type PlantDraft = {
   steamTrain: TrainCalculation | null;
   chosenSystems: string[];
   preferredEquipment?: string[];
+  pumpGroups?: PumpGroup[];
   notes: string;
 };
 
@@ -203,5 +206,14 @@ export function buildTechnicalBrief(x: PlantDraft): string {
     "Важно: подбор не учитывает гидравлический расчёт, КПД, качество воды, допустимые выбросы, теплопотери здания,"
       + " надёжность электроснабжения и обязательные требования безопасности; их нужно проверить проектировщику.",
   );
+  if (x.pumpGroups?.length) {
+    lines.push("Насосные группы — исходные требования, а не подбор паспортных моделей:");
+    for (const group of x.pumpGroups) {
+      const role = pumpRoles.find((item) => item.id === group.role);
+      lines.push(pumpGroupBrief(group, role?.name ?? "Насосная группа"));
+    }
+  } else {
+    lines.push("Насосные группы: не заданы; состав и параметры уточнить.");
+  }
   return lines.join("\n");
 }
