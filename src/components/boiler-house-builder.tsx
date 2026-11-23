@@ -498,7 +498,7 @@ export function BoilerHouseBuilder() {
                 <h3 className="text-xl font-bold">Отправить инженерный запрос</h3>
                 <p className="mt-2 text-sm text-muted">Та же форма, что в подборщике котлов. К запросу прилагаются введённые характеристики и выбранные системы.</p>
                 {import.meta.env.VITE_STATIC_EXPORT==="1"&&
-                  <p className="mt-3 rounded-lg bg-chip p-3 text-sm">Для REG.RU форма пока не подключена к безопасному обработчику заявок. Полное ТЗ можно скопировать; персональные данные не отправляются.</p>}
+                  <p className="mt-3 rounded-lg bg-chip p-3 text-sm">Приём заявок на REG.RU включается только после настройки PHP-обработчика и утверждения политики. Доступность формы проверяется автоматически ниже. Полное ТЗ можно скачать отдельно.</p>}
                 {brief.length>2900&&<p className="mt-2 text-xs text-muted">В форму помещаются первые 2 900 символов; скопируйте полное ТЗ отдельно.</p>}
                 <div className="mt-4"><LeadForm key={brief.slice(0,2900)} context={{intent:"pick"}}
                   initialComment={brief.slice(0,2900)} submitLabel="Запросить котельную под ключ"/></div>
