@@ -1,7 +1,7 @@
 import type { Category, FuelId, Series } from "@/data/catalog";
 
 const checked =
-  "Сверка 16.11.2026. Каталог котлов на teplofor.pro, на него ведёт teploros.org. На страницах указано ООО «НТ», завод в Ростове-на-Дону. Типоразмеры поимённо не расписаны.";
+  "Каталог производителя TEPLOFOR. Сверка параметров отдельных моделей требуется по паспортам; отсутствие типоразмера не заменяется общим диапазоном.";
 
 const none: Series["sizes"] = [];
 const unnamed = "Отдельные типоразмеры на странице не названы.";
@@ -116,10 +116,19 @@ export const teploforSeries: Series[] = [
     tempMaxC: 115,
     pressureNote: "до 5 бар",
     fuels: wide,
-    feature: "12 типоразмеров не названы",
+    feature: "12 номинальных типоразмеров по официальной таблице",
     extra: `${checked} Источник: https://teplofor.pro/product/lexender-uv2-d/.`,
-    sizes: none,
-    sizesNote: unnamed,
+    sizes: [400,500,600,700,800,1000,1300,1500,1700,2000,2200,2500].map((powerKw) => ({
+      id: `tf-lexender-uv2-d-${powerKw}`,
+      name: `Lexender UV2-D ${powerKw}`,
+      powerKw, steamKgH: null,
+      tempMaxC: 115, workingPressureBar: 5,
+      sourceUrl: "https://teplofor.pro/product/lexender-uv2-d/",
+    })),
+    sizesNote: "12 обозначений и мощности по таблице Lexender UV2-D. Поля 115 °C и 5 бар относятся к заявленным пределам серии; исполнение следует уточнять по паспорту.",
+    sourceUrl: "https://teplofor.pro/product/lexender-uv2-d/",
+    sourceRevision: "Таблица Lexender UV2-D на сайте производителя",
+    sourceChecked: "2026-11-23",
     aliases: ["lexender", "uv2"],
   }),
   row({
