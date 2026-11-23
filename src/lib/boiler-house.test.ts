@@ -25,7 +25,7 @@ test("Mixed plant keeps heat in kW and steam in kg/h as separate groups", () => 
   assert.equal(res.steam?.minimumPerDutyUnit,1800);
 });
 test("Catalog matches require same category, fuels, known capacity and temperature", () => {
-  const base={id:"x",name:"Sample",categoryId:"hw115" as const,kind:"",image:"",summary:"",powerMinKw:100,powerMaxKw:2000,steamMinKgH:null,steamMaxKgH:null,tempMaxC:115,pressureNote:null,fuels:["gas","diesel"],feature:"",extra:null,sizes:[{id:"x1",name:"X-1000",powerKw:1000,steamKgH:null}],sizesNote:null,aliases:[]};
+  const base={id:"x",name:"Sample",categoryId:"hw115" as const,kind:"",image:"",summary:"",powerMinKw:100,powerMaxKw:2000,steamMinKgH:null,steamMaxKgH:null,tempMaxC:115,pressureNote:null,fuels:["gas","diesel"] as ("gas" | "diesel")[],feature:"",extra:null,sizes:[{id:"x1",name:"X-1000",powerKw:1000,steamKgH:null}],sizesNote:null,aliases:[]};
   const entries=[{slug:"a",maker:"Factory A",line:"boiler",series:base}];
   assert.equal(findBoilerCandidates({entries,kind:"water",dutyPerUnit:900,mainFuel:"gas",reserveFuel:"diesel",minimumTempC:110}).length,1);
   assert.equal(findBoilerCandidates({entries,kind:"water",dutyPerUnit:2100,mainFuel:"gas",reserveFuel:"",minimumTempC:110}).length,0);
