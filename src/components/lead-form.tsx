@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent, type InputHTMLAttributes } from "react";
+import { useEffect, useRef, useState, type FormEvent, type InputHTMLAttributes } from "react";
 import { CONSENT_VERSION, sizeById } from "@/data/catalog";
 import { findSeries } from "@/data/series-index";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,11 @@ export function LeadForm({
   onDone?: (leadId: string) => void;
 }) {
   const submissionId = useRef(crypto.randomUUID());
+  const staticWebsite = import.meta.env.VITE_STATIC_EXPORT === "1";
+  const endpoint = staticWebsite ? "/api/v1/leads/index.php" : "/api/v1/leads";
+  const [availability, setAvailability] = useState<"checking" | "ready" | "disabled">(
+    staticWebsite ? "checking" : "ready",
+  );
   const [pending, setPending] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [leadId, setLeadId] = useState<string | null>(null);
@@ -39,16 +44,28 @@ export function LeadForm({
   const series = findSeries(context.seriesId);
   const size = sizeById(series, sizeId);
 
-  // Shared hosting serves only HTML/JS/CSS; it has no /api/v1/leads server route.
-  // Never collect contact details or claim that a lead was accepted there.
-  if (import.meta.env.VITE_STATIC_EXPORT === "1") {
+  // Static deployment uses a PHP 8.3 endpoint. It will report ready ONLY after
+  // private configuration, approved privacy policy and writable storage exist.
+  useEffect(() => {
+    if (!staticWebsite) return;
+    const controller = new AbortController();
+    fetch(endpoint, { method: "GET", cache: "no-store", signal: controller.signal })
+      .then(async (res) => res.ok ? (await res.json()) as { enabled?: boolean } : { enabled: false })
+      .then((result) => { if (!controller.signal.aborted) setAvailability(result.enabled ? "ready" : "disabled"); })
+      .catch(() => { if (!controller.signal.aborted) setAvailability("disabled"); });
+    return () => controller.abort();
+  }, [endpoint, staticWebsite]);
+
+  if (staticWebsite && availability !== "ready") {
     return (
       <div className="rounded-xl border border-line bg-chip p-5" role="status">
-        <p className="text-base font-semibold">Приём заявок пока не подключён</p>
+        <p className="text-base font-semibold">
+          {availability === "checking" ? "Проверяем подключение формы…" : "Приём заявок пока не активирован"}
+        </p>
         <p className="mt-2 text-sm text-muted">
-          Каталог и подбор работают, но отправка обращений из этой статической версии отключена:
-          обработчик заявок и защищённое хранение персональных данных ещё не настроены.
-          Контакты здесь не собираются и не отправляются.
+          Конфигурацию можно сохранить, но контактные данные сейчас не принимаются.
+          Оператор сайта должен сначала настроить защищённое хранение обращений,
+          уведомления и утвердить политику обработки данных.
         </p>
         {series ? (
           <p className="mt-3 text-sm">
@@ -71,7 +88,8 @@ export function LeadForm({
       <div className="rounded-xl border border-line bg-chip p-4" role="status">
         <p className="text-base font-semibold">Обращение {leadId} принято</p>
         <p className="mt-2 text-sm text-muted">
-          Номер выдан после записи на сервере. Обращение остаётся в справочнике. Это инженерная консультация на добровольных началах, не заказ и не покупка.
+          Обращение сохранено сервером. Номер поможет уточнить его статус у оператора сайта.
+          Подтверждение получения заявки не является подтверждением заказа или поставки.
         </p>
       </div>
     );
@@ -84,7 +102,7 @@ export function LeadForm({
     setPending(true);
     setErrors({});
     try {
-      const response = await fetch("/api/v1/leads", {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { accept: "application/json", "content-type": "application/json" },
         body: JSON.stringify({
@@ -121,7 +139,7 @@ export function LeadForm({
   }
 
   return (
-    <form className="grid gap-3 sm:grid-cols-2" action="/api/v1/leads" method="post" onSubmit={onSubmit} noValidate>
+    <form className="grid gap-3 sm:grid-cols-2" action={endpoint} method="post" onSubmit={onSubmit} noValidate>
       <input type="hidden" name="submission_id" value={submissionId.current} />
       <input type="hidden" name="series_id" value={context.seriesId ?? ""} />
       <input type="hidden" name="category_id" value={context.categoryId ?? series?.categoryId ?? ""} />
@@ -134,7 +152,7 @@ export function LeadForm({
         </label>
       </p>
       <p className="sm:col-span-2 text-sm text-muted">
-        Обращение остаётся в справочнике. Завод эту форму не получает. Это инженерная консультация на добровольных началах, не заказ и не покупка.
+        Запрос на инженерную консультацию. Данные передаются оператору сайта и не направляются изготовителю без отдельного согласования. Подача заявки не означает оформления заказа.
       </p>
       {series ? (
         <p className="sm:col-span-2 rounded-sm bg-chip px-3 py-2 text-sm">
