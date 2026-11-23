@@ -5,7 +5,8 @@ DirectoryIndex index.html
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
-# There is no live Node.js API in this hosting package.
+# Allow ONLY the dedicated PHP lead receiver; no Node.js routes are served.
+RewriteRule ^api/v1/leads/index\.php$ - [L]
 RewriteRule ^(api|_serverFn)(/|$) - [R=404,L]
 
 # Existing assets are served directly.
