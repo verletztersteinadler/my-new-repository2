@@ -9,6 +9,7 @@ import {
   categories,
   documents,
   filterSeries,
+  norm,
   formatKw,
   formatPowerRange,
   formatSteam,
