@@ -6,6 +6,11 @@ on:
       - work/catalog-completion-2026-11-20
     paths:
       - .github/workflows/publish-source.yml
+      - src/components/solution-builder.tsx
+      - src/lib/engineering-units.ts
+      - src/lib/engineering-units.test.ts
+      - package.json
+      - package-lock.json
   workflow_dispatch:
 
 permissions:
@@ -21,6 +26,7 @@ jobs:
           persist-credentials: true
 
       - name: Extract existing project archive safely
+        if: ${{ hashFiles('package.json') == '' }}
         shell: bash
         run: |
           python3 - <<'PY'
@@ -93,6 +99,9 @@ jobs:
 
       - name: Test catalog
         run: npm run test:catalog --if-present
+
+      - name: Verify engineering unit conversions
+        run: npm run test:units
 
       - name: Build
         run: npm run build:dev --if-present
