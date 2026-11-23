@@ -185,7 +185,54 @@ export function SolutionBuilder() {
     setPowerTo("");
     setSteamFrom("");
     setSteamTo("");
+    setSort("catalog");
     setShown(8);
+  }
+
+  function changePowerUnit(next: PowerUnit) {
+    if (next === powerUnit) return;
+    const convert = (raw: string) => {
+      const number = parseEngineeringNumber(raw);
+      if (number == null) return raw;
+      const kw = powerToKw(number, powerUnit);
+      return fmt(next === "MW" ? kw / 1000 : kw, 10);
+    };
+    setPowerFrom(convert(powerFrom));
+    setPowerTo(convert(powerTo));
+    setPowerUnit(next);
+  }
+
+  function changeSteamUnit(next: SteamUnit) {
+    if (next === steamUnit) return;
+    const convert = (raw: string) => {
+      const number = parseEngineeringNumber(raw);
+      if (number == null) return raw;
+      const kgH = steamToKgH(number, steamUnit);
+      return fmt(next === "kg/s" ? kgH / 3600 : next === "t/h" ? kgH / 1000 : kgH, 10);
+    };
+    setSteamFrom(convert(steamFrom));
+    setSteamTo(convert(steamTo));
+    setSteamUnit(next);
+  }
+
+  function changeTemperatureUnit(next: TemperatureUnit) {
+    if (next === temperatureUnit) return;
+    const number = parseEngineeringNumber(temperature, true);
+    if (number != null) {
+      const c = temperatureToC(number, temperatureUnit);
+      setTemperature(fmt(next === "K" ? temperatureCToK(c) : c, 8));
+    }
+    setTemperatureUnit(next);
+  }
+
+  function changePressureUnit(next: PressureUnit) {
+    if (next === pressureUnit) return;
+    const number = parseEngineeringNumber(pressure);
+    if (number != null) {
+      const mpa = pressureToMPa(number, pressureUnit);
+      setPressure(fmt(next === "bar" ? mpa * 10 : next === "kPa" ? mpa * 1000 : mpa, 10));
+    }
+    setPressureUnit(next);
   }
 
   function toggleKit(id: KitId) {
@@ -275,13 +322,13 @@ export function SolutionBuilder() {
                 <label className="grid gap-1 text-xs font-medium text-muted">
                   Ед.
                   {showSteam ? (
-                    <select aria-label="Единицы паропроизводительности" value={steamUnit} onChange={(event) => setSteamUnit(event.target.value as SteamUnit)} className="h-11 rounded-xl border border-line bg-surface px-2 text-sm text-ink">
+                    <select aria-label="Единицы паропроизводительности" value={steamUnit} onChange={(event) => changeSteamUnit(event.target.value as SteamUnit)} className="h-11 rounded-xl border border-line bg-surface px-2 text-sm text-ink">
                       <option value="kg/s">кг/с</option>
                       <option value="t/h">т/ч</option>
                       <option value="kg/h">кг/ч</option>
                     </select>
                   ) : (
-                    <select aria-label="Единицы мощности" value={powerUnit} onChange={(event) => setPowerUnit(event.target.value as PowerUnit)} className="h-11 rounded-xl border border-line bg-surface px-2 text-sm text-ink">
+                    <select aria-label="Единицы мощности" value={powerUnit} onChange={(event) => changePowerUnit(event.target.value as PowerUnit)} className="h-11 rounded-xl border border-line bg-surface px-2 text-sm text-ink">
                       <option value="MW">МВт</option>
                       <option value="kW">кВт</option>
                     </select>
@@ -301,7 +348,7 @@ export function SolutionBuilder() {
                 <NumberField label="Не ниже" value={temperature} onChange={setTemperature} placeholder="115" />
                 <label className="grid gap-1 text-xs font-medium text-muted">
                   Ед.
-                  <select aria-label="Единицы температуры" value={temperatureUnit} onChange={(event) => setTemperatureUnit(event.target.value as TemperatureUnit)} className="h-11 rounded-xl border border-line bg-surface px-3 text-sm text-ink">
+                  <select aria-label="Единицы температуры" value={temperatureUnit} onChange={(event) => changeTemperatureUnit(event.target.value as TemperatureUnit)} className="h-11 rounded-xl border border-line bg-surface px-3 text-sm text-ink">
                     <option value="C">°C</option>
                     <option value="K">K</option>
                   </select>
@@ -322,7 +369,7 @@ export function SolutionBuilder() {
               <NumberField label="Давление" value={pressure} onChange={setPressure} placeholder="10" />
               <label className="grid gap-1 text-xs font-medium text-muted">
                 Ед.
-                <select aria-label="Единицы давления" value={pressureUnit} onChange={(event) => setPressureUnit(event.target.value as PressureUnit)} className="h-11 rounded-xl border border-line bg-surface px-3 text-sm text-ink">
+                <select aria-label="Единицы давления" value={pressureUnit} onChange={(event) => changePressureUnit(event.target.value as PressureUnit)} className="h-11 rounded-xl border border-line bg-surface px-3 text-sm text-ink">
                   <option value="bar">бар</option>
                   <option value="MPa">МПа</option>
                   <option value="kPa">кПа</option>
