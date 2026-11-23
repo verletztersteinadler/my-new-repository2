@@ -966,10 +966,11 @@ function flattenModels(list: Series[], query: CatalogQuery) {
   const needle = query.q ? norm(query.q) : "";
   return list.flatMap((series) => {
     const seriesMatch = !needle || norm([series.name, series.kind, series.summary, series.feature, ...series.aliases].join(" ")).includes(needle);
+    const hasModelFuelEvidence = series.sizes.some((size) => size.fuels !== undefined);
     return series.sizes
       .filter((size) => {
         if (needle && !seriesMatch && !norm([size.name, ...(size.aliases ?? [])].join(" ")).includes(needle)) return false;
-        if (query.fuel && !(size.fuels ?? series.fuels).includes(query.fuel)) return false;
+        if (query.fuel && !(size.fuels ?? (hasModelFuelEvidence ? [] : series.fuels)).includes(query.fuel)) return false;
         if (query.power) {
           const kw = size.powerKw;
           if (kw == null) return false;
@@ -993,7 +994,7 @@ function flattenModels(list: Series[], query: CatalogQuery) {
         sizeId: size.id,
         title: size.name,
         execution: size.execution,
-        modelFuels: size.fuels ?? series.fuels,
+        modelFuels: size.fuels ?? (hasModelFuelEvidence ? [] : series.fuels),
         main: size.powerKw != null ? formatKw(size.powerKw) : size.steamKgH != null ? formatSteam(size.steamKgH) : "Не указано",
         sub: size.powerKw != null && size.powerKw >= 1000 ? `${size.powerKw.toLocaleString("ru-RU")} кВт` : series.kind,
       }));
