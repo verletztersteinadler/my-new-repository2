@@ -14,6 +14,7 @@ on:
       - scripts/generate-seo-files.mjs
       - scripts/check-no-external-links.mjs
       - scripts/image-audit.mjs
+      - server/php/**
   workflow_dispatch:
 
 permissions:
@@ -41,6 +42,22 @@ jobs:
           name: kotly-pro-image-audit
           path: reports/images/
           retention-days: 30
+      - name: Install PHP runtime for server-side email handler
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, openssl
+          tools: composer:v2
+          coverage: none
+      - name: Validate and install secure SMTP mailer
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --no-check-publish --working-dir=server/php
+          composer install --working-dir=server/php --no-dev --no-interaction --prefer-dist --optimize-autoloader
+          php -l server/php/leads.php
+          php -l server/php/notify.php
+          php -l server/php/retry.php
       - name: Build static prerendered site and regenerate route typings
         env:
           KOTLY_STATIC_EXPORT: '1'
@@ -67,6 +84,18 @@ jobs:
         run: node scripts/generate-seo-files.mjs .vercel/output/static
       - name: Audit generated pages for external outbound links
         run: node scripts/check-no-external-links.mjs .vercel/output/static
+      - name: Copy PHP endpoint into static publication directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .vercel/output/static/api/v1/_server
+          cp server/php/leads.php .vercel/output/static/api/v1/leads.php
+          cp server/php/notify.php server/php/retry.php .vercel/output/static/api/v1/_server/
+          cp -r server/php/vendor .vercel/output/static/api/v1/_server/vendor
+          cat > .vercel/output/static/api/v1/_server/.htaccess <<'PRIVATE'
+          Require all denied
+          PRIVATE
+          test -f .vercel/output/static/api/v1/_server/vendor/autoload.php
       - name: Prepare Apache/ISPmanager package
         shell: bash
         run: |
@@ -76,6 +105,7 @@ jobs:
           DirectoryIndex index.html
           <IfModule mod_rewrite.c>
           RewriteEngine On
+          RewriteRule ^api/v1/leads/?$ api/v1/leads.php [L,END]
           RewriteRule ^manufacturers/([^/]+)/?$ /$1 [R=301,L,NE]
           RewriteCond %{REQUEST_FILENAME} -f [OR]
           RewriteCond %{REQUEST_FILENAME} -d
@@ -85,6 +115,7 @@ jobs:
           <IfModule mod_headers.c>
           Header always set X-Content-Type-Options "nosniff"
           Header always set Referrer-Policy "strict-origin-when-cross-origin"
+          Header always set X-Robots-Tag "noindex" "expr=%{REQUEST_URI} =~ m#^/api/#"
           </IfModule>
           APACHE
           printf 'kotly.pro static export from commit %s\n' "$GITHUB_SHA" > .vercel/output/static/BUILD-INFO.txt
@@ -92,6 +123,12 @@ jobs:
           zip -q -r "$GITHUB_WORKSPACE/kotly-pro-ISPmanager-2026-11-24.zip" .
           cd "$GITHUB_WORKSPACE"
           unzip -tq kotly-pro-ISPmanager-2026-11-24.zip
+          unzip -Z1 kotly-pro-ISPmanager-2026-11-24.zip | grep -q 'api/v1/leads.php'
+          unzip -Z1 kotly-pro-ISPmanager-2026-11-24.zip | grep -q 'api/v1/_server/vendor/autoload.php'
+          if unzip -Z1 kotly-pro-ISPmanager-2026-11-24.zip | grep -q 'mail-config.php'; then
+            echo 'ERROR: private mail credentials accidentally packed'
+            exit 1
+          fi
       - name: Upload downloadable ZIP artifact
         uses: actions/upload-artifact@v4
         with:
