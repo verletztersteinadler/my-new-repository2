@@ -16,7 +16,9 @@ on:
       - scripts/image-audit.mjs
       - scripts/series-name-audit.mjs
       - scripts/series-names.test.mjs
+      - scripts/release-copy-check.mjs
       - server/php/**
+      - server/deploy/**
   workflow_dispatch:
 
 permissions:
@@ -68,6 +70,9 @@ jobs:
           php -l server/php/leads.php
           php -l server/php/notify.php
           php -l server/php/retry.php
+          php -l server/php/smtp-diagnose.php
+          bash -n server/deploy/setup-mail.sh
+          bash -n server/deploy/install.sh
       - name: Build static prerendered site and regenerate route typings
         env:
           KOTLY_STATIC_EXPORT: '1'
@@ -92,6 +97,8 @@ jobs:
           du -sh .vercel/output/static
       - name: Generate and verify SEO sitemap and robots.txt
         run: node scripts/generate-seo-files.mjs .vercel/output/static
+      - name: Block internal editorial notes in published pages
+        run: node scripts/release-copy-check.mjs .vercel/output/static
       - name: Audit generated pages for external outbound links
         run: node scripts/check-no-external-links.mjs .vercel/output/static
       - name: Copy PHP endpoint into static publication directory
@@ -106,6 +113,20 @@ jobs:
           Require all denied
           PRIVATE
           test -f .vercel/output/static/api/v1/_server/vendor/autoload.php
+      - name: Smoke-test PHP endpoint without sending mail
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -S 127.0.0.1:18971 -t .vercel/output/static > /tmp/kotly-php-local.log 2>&1 &
+          TEST_PID=$!
+          trap 'kill "$TEST_PID" 2>/dev/null || true' EXIT
+          sleep 1
+          URL=http://127.0.0.1:18971/api/v1/leads.php
+          GET_STATUS="$(curl --silent --output /tmp/kotly-get.json --write-out '%{http_code}' "$URL")"
+          test "$GET_STATUS" = 405
+          BAD_STATUS="$(curl --silent --output /tmp/kotly-bad.json --write-out '%{http_code}' -H 'Content-Type: application/json' -d '{"name":"","phone":"","consent":false}' "$URL")"
+          test "$BAD_STATUS" = 422
+          echo "PHP endpoint: GET 405, invalid POST 422; no SMTP credentials or message sent"
       - name: Prepare Apache/ISPmanager package
         shell: bash
         run: |
@@ -139,6 +160,33 @@ jobs:
             echo 'ERROR: private mail credentials accidentally packed'
             exit 1
           fi
+      - name: Build secret-free complete deployment kit
+        shell: bash
+        run: |
+          set -euo pipefail
+          KIT="$RUNNER_TEMP/kotly-publish-kit"
+          mkdir -p "$KIT"
+          cp kotly-pro-ISPmanager-2026-11-24.zip "$KIT/site.zip"
+          cp server/deploy/install.sh server/deploy/setup-mail.sh server/deploy/INSTALL.md "$KIT/"
+          cp server/php/smtp-diagnose.php server/php/mail-config.example.php "$KIT/"
+          if grep -l 'smtp_password.*[^R]EAL' "$KIT"/*.php > /dev/null; then
+            echo 'Inspect SMTP template before publication'
+          fi
+          cd "$KIT"
+          zip -q -r "$GITHUB_WORKSPACE/kotly-pro-PUBLISH-READY-2026-11-24.zip" .
+          cd "$GITHUB_WORKSPACE"
+          unzip -tq kotly-pro-PUBLISH-READY-2026-11-24.zip
+          test "$(unzip -Z1 kotly-pro-PUBLISH-READY-2026-11-24.zip | grep -Fc mail-config.example.php)" -eq 1
+          if unzip -Z1 kotly-pro-PUBLISH-READY-2026-11-24.zip | grep -Fx mail-config.php; then
+            echo 'ERROR: private credential file included'
+            exit 1
+          fi
+      - name: Upload complete deployment kit
+        uses: actions/upload-artifact@v4
+        with:
+          name: kotly-pro-PUBLISH-READY-2026-11-24
+          path: kotly-pro-PUBLISH-READY-2026-11-24.zip
+          retention-days: 30
       - name: Upload downloadable ZIP artifact
         uses: actions/upload-artifact@v4
         with:
