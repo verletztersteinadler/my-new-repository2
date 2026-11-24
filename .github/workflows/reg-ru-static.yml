@@ -171,7 +171,13 @@ jobs:
           assert "конфигурацию котельной" in boiler_house_page.read_text(encoding="utf-8").lower(), "Boiler-house page content not prerendered"
           calc_index = root / "calculators" / "index.html"
           assert calc_index.is_file(), "Missing prerendered calculator directory"
-          assert "инженерные калькуляторы" in calc_index.read_text(encoding="utf-8").lower(), "Calculator directory not indexable"
+          calc_html = calc_index.read_text(encoding="utf-8")
+          assert "инженерные калькуляторы онлайн" in calc_html.lower(), "SEO landing heading not prerendered"
+          assert "52 бесплатных инженерных калькулятора" in calc_html.lower(), "Keyword-relevant landing content missing"
+          assert "https://kotly.pro/calculators/" in calc_html, "Canonical calculator page URL missing"
+          assert "index, follow" in calc_html.lower(), "Search robots directive missing"
+          assert "noindex" not in calc_html.lower(), "SEO landing marked noindex"
+          assert "расчёт мощности котла" in calc_html.lower(), "Popular search intent omitted from landing"
           core = Path("src/lib/calculators.ts").read_text(encoding="utf-8")
           extra = Path("src/lib/calculators-secondary-definitions.ts").read_text(encoding="utf-8")
           original_tools = re.findall(r'\{id:"([a-z0-9-]+)",group:', core)
@@ -183,7 +189,11 @@ jobs:
               assert page.is_file(), f"Missing prerendered /calculators/{name}"
               data_text = page.read_text(encoding="utf-8").lower()
               assert "инженерные калькуляторы" in data_text or "исходные данные" in data_text, f"Unrendered calculator page: {name}"
-          print("Verified", len(tool_paths), "indexable calculator pages")
+          for name in ["water-power", "steam-capacity", "pipe-loss"]:
+              detail_html = (root / "calculators" / name / "index.html").read_text(encoding="utf-8")
+              assert "https://kotly.pro/calculators/" + name + "/" in detail_html, f"Noncanonical tool page {name}"
+              assert "формула" in detail_html.lower(), f"Missing visible formula context for {name}"
+          print("Verified", len(tool_paths), "indexable calculator pages with canonical SEO and natural search content")
           conf = root / "configurators" / "index.html"
           assert conf.is_file(), "Missing configurator hub"
           for name in ["water","steam","oil","modular"]:
@@ -196,6 +206,8 @@ jobs:
           xml = sitemap.read_text(encoding="utf-8")
           assert xml.count("<url>") >= 300, "Incomplete sitemap"
           assert "<loc>https://kotly.pro/calculators/steam-properties/</loc>" in xml, "Missing steam calculator canonical"
+          assert "<loc>https://kotly.pro/calculators/</loc>" in xml, "Generic engineering calculator hub missing from sitemap"
+          assert sum("<loc>https://kotly.pro/calculators/" in item for item in xml.split("<url>")) >= 53, "Some of the 52 calculator pages are missing from sitemap"
           assert "<loc>https://kotly.pro/configurators/oil/</loc>" in xml, "Missing thermal-oil configurator canonical"
           assert "https://kotly.pro/nasosy/" not in xml, "Noindex pump register must not enter sitemap"
           robots = root / "robots.txt"
