@@ -2,6 +2,7 @@ import { useMemo, useState, type FormEvent } from "react";
 import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
+import { SeriesImage } from "@/components/series-image";
 import {
   BRAND,
   SOURCE_CHECKED,
@@ -785,7 +786,7 @@ export function CatalogPage() {
               {visibleModels.map((row) => (
                 <li key={row.key} className="grid items-center gap-3 border-b border-line px-3 py-3 last:border-b-0 md:grid-cols-[1.5fr_0.7fr_0.8fr_0.7fr_auto] md:px-4">
                   <div className="flex min-w-0 items-center gap-3">
-                    <img src={row.series.image} alt="" width={80} height={60} className="size-14 shrink-0 rounded-lg object-cover" />
+                    <SeriesImage manufacturerSlug={slug} series={row.series} compact />
                     <div className="min-w-0">
                       <button type="button" className="max-w-full text-left font-semibold break-words hover:text-accent" onClick={() => openSeries(row.series.id)}>{row.title}</button>
                       <p className="text-xs text-muted break-words">{row.series.kind} · {row.series.name}</p>
@@ -808,7 +809,7 @@ export function CatalogPage() {
                 </li>
               ))}
             </ul>
-            <p className="mt-3 text-xs text-muted">Иллюстрация условная и не воспроизводит геометрию конкретного типоразмера. Взято с оф. сайта производителя.</p>
+            <p className="mt-3 text-xs text-muted">Изображения серий публикуются только после проверки происхождения и права использования; иначе выводится заглушка.</p>
           </section>
         )}
         {shown < models.length ? (
@@ -870,7 +871,7 @@ export function CatalogPage() {
                     <span key={item.id} className="rounded-full bg-chip px-3 py-1 text-sm">{item.title}</span>
                   ))}
                 </div>
-                <p className="mt-4 text-xs text-muted">Взято с оф. сайта производителя. Сверка: {profile.checked}.</p>
+                <p className="mt-4 text-xs text-muted">Сверка описаний и характеристик: {profile.checked}. Происхождение изображений проверяется отдельно.</p>
               </div>
               <aside className="rounded-2xl bg-[#161616] p-5 text-white">
                 <p className="text-xs font-semibold tracking-[0.14em] text-[#f0c4cc] uppercase">Полезная информация</p>
@@ -913,6 +914,7 @@ export function CatalogPage() {
 
       <SeriesDialog
         series={activeSeries}
+        manufacturerSlug={slug}
         maker={maker}
         onClose={closeSeries}
         onConsult={(sizeId) => {
@@ -1071,12 +1073,14 @@ function MissingSeries({ brand, slug, openInitially }: { brand: string; slug: st
 
 function SeriesCard({
   series,
+  manufacturerSlug,
   eager,
   onOpen,
   onConsult,
   onAnalogs,
 }: {
   series: Series;
+  manufacturerSlug: string;
   eager: boolean;
   onOpen: () => void;
   onConsult: () => void;
@@ -1087,15 +1091,7 @@ function SeriesCard({
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-surface">
       <button type="button" onClick={onOpen} className="block w-full text-left">
-        <img
-          src={series.image}
-          alt={`Иллюстрация серии ${series.name}. Внешний вид и комплектация уточняются.`}
-          width={1600}
-          height={1200}
-          loading={eager ? "eager" : "lazy"}
-          decoding="async"
-          className="aspect-video w-full object-cover"
-        />
+        <SeriesImage manufacturerSlug={manufacturerSlug} series={series} eager={eager} />
         <div className="p-4 pb-3">
           <p className="text-xs font-semibold text-ink uppercase">
             Серия{series.sizes.length ? ` · ${series.sizes.length}` : ""}
@@ -1123,7 +1119,7 @@ function SeriesCard({
               <dd className="max-w-[65%] text-right font-medium">{series.fuels.length ? series.fuels.map(fuelTitle).join(", ") : "Уточняется"}</dd>
             </div>
           </dl>
-          <p className="mt-3 text-xs leading-relaxed text-muted">Иллюстрация серии. Внешний вид на странице завода может отличаться. Стоимость здесь не указывается.</p>
+          <p className="mt-3 text-xs leading-relaxed text-muted">Изображение отображается только при подтверждённом источнике. Стоимость здесь не указывается.</p>
         </div>
       </button>
       <div className="mt-auto flex shrink-0 flex-col gap-2 border-t border-line p-4">
@@ -1158,12 +1154,14 @@ function hideManufacturerSites(text: string) {
 
 function SeriesDialog({
   series,
+  manufacturerSlug,
   maker,
   onClose,
   onConsult,
   onAnalogs,
 }: {
   series: Series | undefined;
+  manufacturerSlug: string;
   maker: ReturnType<typeof manufacturerBySlug>;
   onClose: () => void;
   onConsult: (sizeId?: string) => void;
@@ -1185,8 +1183,9 @@ function SeriesDialog({
                   <X className="size-5" />
                 </Dialog.Close>
               </div>
-              <img src={series.image} alt="" width={1600} height={1200} className="mt-4 aspect-video w-full rounded-xl object-cover" />
-              <p className="mt-2 text-xs text-muted">Иллюстрация серии; внешний вид и комплектация уточняются. Визуализация не является обмером.</p>
+              <div className="mt-4 overflow-hidden rounded-xl border border-line">
+                <SeriesImage manufacturerSlug={manufacturerSlug} series={series} />
+              </div>
               <p className="mt-4 text-pretty">{series.summary}</p>
               {maker ? <FactoryCard maker={maker} /> : null}
               <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
@@ -1199,7 +1198,7 @@ function SeriesDialog({
               </dl>
               {series.extra ? (
                 <p className="mt-3 text-sm text-muted">
-                  {[hideManufacturerSites(series.extra), "Взято с оф. сайта производителя."].filter(Boolean).join(" ")}
+                  {hideManufacturerSites(series.extra)}
                 </p>
               ) : null}
               <h3 className="mt-6 text-lg font-semibold">Типоразмеры</h3>
