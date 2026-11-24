@@ -1,0 +1,88 @@
+name: Package static kotly.pro for ISPmanager
+
+on:
+  push:
+    branches:
+      - work/catalog-completion-2026-11-20
+    paths:
+      - .github/workflows/ispmanager-static-zip.yml
+      - src/**
+      - public/**
+      - vite.config.ts
+      - package.json
+      - package-lock.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  static-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install project dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Verify TypeScript
+        run: npm run typecheck
+      - name: Build static prerendered site
+        env:
+          KOTLY_STATIC_EXPORT: '1'
+        run: npm run build:dev
+      - name: Inspect public export
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .output/public/index.html
+          test -d .output/public/_build || test -d .output/public/assets || test -d .output/public/_tanstack
+          echo "Prerendered HTML count:"
+          find .output/public -name '*.html' | tee /tmp/kotly-html-pages.txt | wc -l
+          test "$(wc -l </tmp/kotly-html-pages.txt)" -gt 5
+          echo "Output size:"
+          du -sh .output/public
+      - name: Prepare Apache/ISPmanager package
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .output/public/.htaccess <<'APACHE'
+          Options -MultiViews
+          DirectoryIndex index.html
+          <IfModule mod_rewrite.c>
+          RewriteEngine On
+          RewriteCond %{REQUEST_FILENAME} -f [OR]
+          RewriteCond %{REQUEST_FILENAME} -d
+          RewriteRule ^ - [L]
+          RewriteRule ^(.+?)/?$ $1/index.html [L]
+          </IfModule>
+          <IfModule mod_headers.c>
+          Header always set X-Content-Type-Options "nosniff"
+          Header always set Referrer-Policy "strict-origin-when-cross-origin"
+          </IfModule>
+          APACHE
+          printf 'kotly.pro static export from commit %s\n' "$GITHUB_SHA" > .output/public/BUILD-INFO.txt
+          cd .output/public
+          zip -q -r "$GITHUB_WORKSPACE/kotly-pro-ISPmanager-2026-11-24.zip" .
+          cd "$GITHUB_WORKSPACE"
+          unzip -tq kotly-pro-ISPmanager-2026-11-24.zip
+      - name: Upload downloadable ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kotly-pro-ISPmanager-2026-11-24
+          path: kotly-pro-ISPmanager-2026-11-24.zip
+          retention-days: 30
+      - name: Publish ZIP in GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "ispmanager-static-${GITHUB_RUN_NUMBER}" \
+            "kotly-pro-ISPmanager-2026-11-24.zip" \
+            --title "kotly.pro static ISPmanager package ${GITHUB_RUN_NUMBER}" \
+            --notes "Validated static export. Upload the ZIP contents to /www/kotly.pro/ in ISPmanager. Server-side lead endpoints are not included in a static archive." \
+            --target "$GITHUB_SHA"
