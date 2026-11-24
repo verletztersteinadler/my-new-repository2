@@ -23,7 +23,6 @@ import {
 
 type Task = "any" | "water" | "steam" | "oil" | "air" | "block" | "burner" | "auto";
 type KitId = "burner" | "auto" | "pumps" | "economizer" | "water" | "other";
-type Sort = "catalog" | "manufacturer" | "capacity";
 
 const tasks: { id: Task; label: string }[] = [
   { id: "any", label: "Все типы" },
@@ -116,7 +115,6 @@ export function SolutionBuilder() {
   const [pressureUnit, setPressureUnit] = useState<PressureUnit>("bar");
   const [pressure, setPressure] = useState("");
   const [kit, setKit] = useState<KitId[]>([]);
-  const [sort, setSort] = useState<Sort>("catalog");
   const [shown, setShown] = useState(8);
   const [done, setDone] = useState(false);
 
@@ -170,16 +168,13 @@ export function SolutionBuilder() {
       if (targetC != null && (series.tempMaxC == null || series.tempMaxC < targetC)) return false;
       return true;
     });
-    if (sort === "manufacturer") matching.sort((a, b) => a.maker.localeCompare(b.maker, "ru") || a.series.name.localeCompare(b.series.name, "ru"));
-    if (sort === "capacity" && task !== "any") {
-      matching.sort((a, b) => {
-        const aVal = knownRange(a.series, showSteam ? "steam" : "power")?.min ?? Infinity;
-        const bVal = knownRange(b.series, showSteam ? "steam" : "power")?.min ?? Infinity;
-        return aVal - bVal || a.series.name.localeCompare(b.series.name, "ru");
-      });
-    }
-    return matching;
-  }, [task, fuel, showSteam, powerMinKw, powerMaxKw, steamMinKgH, steamMaxKgH, targetC, sort, error]);
+    // Always group and order the results by manufacturer. There are no alternate sorts.
+    return matching.sort((a, b) =>
+      a.maker.localeCompare(b.maker, "ru") ||
+      a.series.name.localeCompare(b.series.name, "ru") ||
+      a.series.id.localeCompare(b.series.id, "ru"),
+    );
+  }, [task, fuel, showSteam, powerMinKw, powerMaxKw, steamMinKgH, steamMaxKgH, targetC, error]);
 
   function changeTask(next: Task) {
     setTask(next);
@@ -187,7 +182,6 @@ export function SolutionBuilder() {
     setPowerTo("");
     setSteamFrom("");
     setSteamTo("");
-    setSort("catalog");
     setShown(8);
   }
 
@@ -251,7 +245,6 @@ export function SolutionBuilder() {
     setTemperature("");
     setPressure("");
     setKit([]);
-    setSort("catalog");
     setShown(8);
     setDone(false);
   }
@@ -402,14 +395,12 @@ export function SolutionBuilder() {
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">Результат по открытым сериям</p>
             <p className="mt-1 font-display text-3xl font-extrabold tabular-nums">{hits.length} <span className="text-sm font-medium text-muted">из {allEntries.length}</span></p>
           </div>
-          <label className="grid gap-1 text-xs font-medium text-muted">
-            Сортировка
-            <select value={sort} onChange={(event) => setSort(event.target.value as Sort)} className="h-11 rounded-xl border border-line bg-surface px-3 text-sm text-ink">
-              <option value="catalog">По порядку справочника</option>
-              <option value="manufacturer">По производителю</option>
-              {task !== "any" ? <option value="capacity">По возрастанию параметра</option> : null}
-            </select>
-          </label>
+          <div className="grid gap-1 text-xs font-medium text-muted">
+            <span>Сортировка</span>
+            <span className="inline-flex h-11 items-center rounded-xl border border-line bg-chip px-4 text-sm font-medium text-ink">
+              По производителю
+            </span>
+          </div>
         </div>
 
         {hasNumericalFilter ? (
