@@ -1,3 +1,4 @@
+import { displaySeriesName } from "@/lib/series-names";
 import { manufacturers } from "@/data/manufacturers";
 import { publishedCatalogs } from "@/data/series-index";
 import { catalogMatchScore, normalizeCatalogText } from "@/lib/catalog-search-core";
@@ -27,7 +28,7 @@ const items: CatalogHit[] = [
         kind: "series",
         slug: catalog.slug,
         seriesId: series.id,
-        title: series.name,
+        title: displaySeriesName(catalog.title, series.name),
         subtitle: catalog.title + " · Серия",
         searchText: [catalog.title, series.name, series.id, series.kind, ...series.aliases].join(" "),
       };
