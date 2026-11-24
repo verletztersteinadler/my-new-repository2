@@ -24,7 +24,7 @@ export function displaySeriesName(brand: string, sourceName: string): string {
   const marks = alternativeProductMarks[maker.toLocaleLowerCase("ru")] ?? [];
   if (marks.some((mark) =>
     same(title.slice(0, mark.length), mark) &&
-    (title.length === mark.length || /[\\s,;:()\\u2013\\u2014/-]/u.test(title[mark.length]))
+    (title.length === mark.length || /[\s,;:()\u2013\u2014/-]/u.test(title[mark.length]))
   )) return title;
 
   const startsWithMaker = same(title.slice(0, maker.length), maker) &&
