@@ -316,7 +316,7 @@ export function SolutionBuilder() {
           <div className="mt-4 grid gap-5 lg:grid-cols-2">
             <fieldset>
               <legend className="text-sm font-semibold">{showSteam ? "Номинальная паропроизводительность" : "Номинальная мощность по каталогу"}</legend>
-              <div className="mt-2 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2">
+              <div className="mt-2 grid grid-cols-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2">
                 <NumberField label="От" value={showSteam ? steamFrom : powerFrom} onChange={showSteam ? setSteamFrom : setPowerFrom} placeholder="0,5" />
                 <NumberField label="До" value={showSteam ? steamTo : powerTo} onChange={showSteam ? setSteamTo : setPowerTo} placeholder="10" />
                 <label className="grid gap-1 text-xs font-medium text-muted">
