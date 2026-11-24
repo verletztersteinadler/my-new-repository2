@@ -123,7 +123,7 @@ export function LeadForm({
             name="size_id"
             value={sizeId}
             onChange={(event) => setSizeId(event.target.value)}
-            className="h-11 rounded-sm border border-line bg-surface px-3 font-normal"
+            className="h-11 w-full min-w-0 rounded-sm border border-line bg-surface px-3 font-normal"
           >
             <option value="">Не указан</option>
             {series.sizes.map((item) => (
@@ -156,7 +156,7 @@ export function LeadForm({
           rows={compact ? 3 : 4}
           defaultValue={initialComment}
           placeholder="Необязательно"
-          className="rounded-sm border border-line bg-surface px-3 py-2 font-normal"
+          className="w-full min-w-0 rounded-sm border border-line bg-surface px-3 py-2 font-normal"
         />
       </label>
       <label className="sm:col-span-2 flex items-start gap-3 text-sm">
