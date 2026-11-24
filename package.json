@@ -22,7 +22,9 @@
     "format": "prettier --write .",
     "test:units": "node --experimental-strip-types --test src/lib/engineering-units.test.ts",
     "check:images": "node scripts/image-audit.mjs",
-    "audit:images": "node scripts/image-audit.mjs --report ./reports/images"
+    "audit:images": "node scripts/image-audit.mjs --report ./reports/images",
+    "audit:series-names": "node scripts/series-name-audit.mjs",
+    "test:series-names": "node --experimental-strip-types --test scripts/series-names.test.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",
