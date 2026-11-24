@@ -4,6 +4,7 @@ import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { SeriesImage } from "@/components/series-image";
+import { displaySeriesName } from "@/lib/series-names";
 import {
   BRAND,
   SOURCE_CHECKED,
@@ -614,7 +615,7 @@ export function CatalogPage() {
     [search, profile],
   );
   const rows = useMemo(() => filterSeries(query, profile.series), [query, profile.series]);
-  const models = useMemo(() => flattenModels(rows), [rows]);
+  const models = useMemo(() => flattenModels(rows, profile.brand), [rows, profile.brand]);
   const visibleModels = models.slice(0, shown);
   const activeSeries = seriesById(search.series, profile.series);
   const category = profile.categories.find((item) => item.id === query.type);
@@ -692,7 +693,7 @@ export function CatalogPage() {
           </h1>
           {models[0] ? (
             <p className="text-right text-sm text-muted">
-              <span className="block font-display text-2xl font-extrabold tracking-[-0.04em] text-ink">{models[0].series.name}</span>
+              <span className="block font-display text-2xl font-extrabold tracking-[-0.04em] text-ink">{displaySeriesName(profile.brand, models[0].series.name)}</span>
               Серия в демонстрационной выборке
             </p>
           ) : null}
@@ -791,7 +792,7 @@ export function CatalogPage() {
                     <SeriesImage manufacturerSlug={slug} series={row.series} compact />
                     <div className="min-w-0">
                       <button type="button" className="max-w-full text-left font-semibold break-words hover:text-accent" onClick={() => openSeries(row.series.id)}>{row.title}</button>
-                      <p className="text-xs text-muted break-words">{row.series.kind} · {row.series.name}</p>
+                      <p className="text-xs text-muted break-words">{row.series.kind} · {displaySeriesName(profile.brand, row.series.name)}</p>
                     </div>
                   </div>
                   <p className="text-sm">
@@ -947,10 +948,10 @@ export function CatalogPage() {
   );
 }
 
-function flattenModels(list: Series[]) {
+function flattenModels(list: Series[], brand: string) {
   return list.flatMap((series) => {
     if (series.sizes.length === 0) {
-      return [{ key: series.id, series, sizeId: undefined as string | undefined, title: series.name, main: primarySpec(series).value, sub: series.kind }];
+      return [{ key: series.id, series, sizeId: undefined as string | undefined, title: displaySeriesName(brand, series.name), main: primarySpec(series).value, sub: series.kind }];
     }
     return series.sizes.map((size) => ({
       key: size.id,
@@ -1054,7 +1055,7 @@ function MissingSeries({ brand, slug, openInitially }: { brand: string; slug: st
                 {hits.map((item) => (
                   <li key={`${item.slug}-${item.series.id}`} className="rounded-2xl border border-line px-3 py-3">
                     <p className="text-xs font-semibold uppercase">{item.maker}</p>
-                    <p className="mt-1 font-display text-xl leading-none font-extrabold tracking-[-0.04em]">{item.series.name}</p>
+                    <p className="mt-1 font-display text-xl leading-none font-extrabold tracking-[-0.04em]">{displaySeriesName(item.maker, item.series.name)}</p>
                     <p className="mt-2 text-sm text-muted">
                       {primarySpec(item.series).label}: {primarySpec(item.series).value}
                     </p>
@@ -1098,7 +1099,7 @@ function SeriesCard({
           <p className="text-xs font-semibold text-ink uppercase">
             Серия{series.sizes.length ? ` · ${series.sizes.length}` : ""}
           </p>
-          <h2 className="mt-1 font-display text-3xl leading-[0.92] font-extrabold tracking-[-0.04em] text-balance">{series.name}</h2>
+          <h2 className="mt-1 font-display text-3xl leading-[0.92] font-extrabold tracking-[-0.04em] text-balance">{displaySeriesName(manufacturerBySlug(manufacturerSlug)?.title ?? "", series.name)}</h2>
           <p className="mt-1 text-sm leading-snug text-muted">{series.kind}</p>
           <dl className="mt-3 grid gap-2 text-sm">
             <div className="flex items-start justify-between gap-3">
@@ -1178,7 +1179,7 @@ function SeriesDialog({
             <>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <Dialog.Title className="text-2xl font-semibold">{series.name}</Dialog.Title>
+                  <Dialog.Title className="text-2xl font-semibold">{displaySeriesName(maker?.title ?? "", series.name)}</Dialog.Title>
                   <Dialog.Description className="mt-1 text-sm text-muted">{series.kind}. Серия, не один типоразмер.</Dialog.Description>
                 </div>
                 <Dialog.Close className="inline-flex size-11 items-center justify-center rounded-lg bg-chip" aria-label="Закрыть">
@@ -1274,7 +1275,7 @@ function AnalogsDialog({ series, sourceSlug, onClose }: { series: Series | null;
               {hits.map((item) => (
                 <li key={`${item.slug}-${item.series.id}`} className="rounded-2xl border border-line px-3 py-3">
                   <p className="text-xs font-semibold text-ink uppercase">{item.maker}</p>
-                  <p className="mt-1 font-display text-xl leading-none font-extrabold tracking-[-0.04em]">{item.series.name}</p>
+                  <p className="mt-1 font-display text-xl leading-none font-extrabold tracking-[-0.04em]">{displaySeriesName(item.maker, item.series.name)}</p>
                   <p className="mt-2 text-sm text-muted">
                     {primarySpec(item.series).label}: {primarySpec(item.series).value}
                   </p>
