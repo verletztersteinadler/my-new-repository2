@@ -1,4 +1,5 @@
 import { displaySeriesName } from "@/lib/series-names";
+import { estimateBoilerHouse, formatRubleAmount } from "@/lib/boiler-house-pricing";
 import { CatalogHeaderSearch } from "@/components/catalog-header-search";
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
@@ -30,6 +31,9 @@ const stageNames = ["Назначение и нагрузка", "Теплово�
 const systemChoices = [
   { id: "fuel-supply", title: "Топливоподготовка и подача топлива", mode: "both", hint: "Рампы, редуцирование, хранение при необходимости" },
   { id: "circulation", title: "Сетевые и циркуляционные насосы", mode: "water", hint: "Расходы, напоры, резервирование по гидравлическому расчёту" },
+  { id: "oil-expansion", title: "Расширительный бак термомасляного контура", mode: "oil", hint: "Защита и компенсация теплового расширения масла" },
+  { id: "oil-reserve-pump", title: "Резервный насос термомасла", mode: "oil", hint: "Подбор по температуре и вязкости теплоносителя" },
+  { id: "oil-fill", title: "Заполнение и слив теплоносителя", mode: "oil", hint: "Ёмкости, насосы и арматура" },
   { id: "heat-exchanger", title: "Теплообменники и разделение контуров", mode: "water", hint: "Только при соответствующей гидравлической схеме" },
   { id: "makeup", title: "Подпитка, расширение и поддержание давления", mode: "water", hint: "Расширительные ёмкости, подпиточные насосы" },
   { id: "feedwater", title: "Питательные насосы и ёмкости", mode: "steam", hint: "Резервирование и регулируемое питание паровых котлов" },
@@ -51,6 +55,7 @@ const systemChoices = [
 const sharedSystems = ["fuel-supply", "treatment", "flues", "ventilation", "electrical", "automation", "metering"];
 const waterSystems = ["circulation", "makeup"];
 const steamSystems = ["feedwater", "deaerator", "condensate", "blowdown"];
+const oilSystems = ["oil-expansion"];
 const catalogEntries = publishedCatalogs.flatMap((maker) => maker.series.map((series) => ({
   slug: maker.slug, maker: maker.title, series,
   line: manufacturers.find((v) => v.slug === maker.slug)?.line,
@@ -84,7 +89,7 @@ const initial: State = {
 };
 const purposeChoices = ["Отопление и вентиляция", "Горячее водоснабжение", "Технологическое тепло", "Технологический пар", "Резерв существующего объекта"];
 const labels = {
-  mode: { water:"Водогрейная", steam:"Паровая", combined:"Комбинированная" },
+  mode: { water:"Водогрейная", steam:"Паровая", combined:"Комбинированная", oil:"Термомасляная" },
   placement: { modular:"Блочно-модульная", standalone:"Отдельно стоящая", "built-in":"Встроенная / пристроенная", existing:"Реконструкция" },
   operation: { continuous:"Круглогодичный", seasonal:"Сезонный", variable:"Переменная нагрузка" },
 };
@@ -180,8 +185,10 @@ export function BoilerHouseBuilder() {
     newPumpGroup("makeup","pump-2"),
   ]);
   const patch = (x: Partial<State>) => setS((prev)=>({...prev,...x}));
-  const hasWater=s.mode!=="steam";
-  const hasSteam=s.mode!=="water";
+  const hasOil=s.mode==="oil";
+  const hasWater=s.mode==="water"||s.mode==="combined";
+  const hasHeat=hasWater||hasOil;
+  const hasSteam=s.mode==="steam"||s.mode==="combined";
   const valid = (text:string, allowNegative=false)=>!text.trim() || parse(text,allowNegative)!=null;
   const number = (text:string)=>parse(text)??0;
   const heatItems=[s.heating,s.dhw,s.process].map((v)=>powerToKw(number(v),s.powerUnit));
@@ -194,7 +201,7 @@ export function BoilerHouseBuilder() {
   const condensate=s.condensate.trim()?parse(s.condensate):null;
   const plant=calculatePlant({mode:s.mode,heatKw,steamKgH,heatUnitCount:s.heatCount,steamUnitCount:s.steamCount,
     heatReserve:s.heatReserve,steamReserve:s.steamReserve});
-  const availableSystems=systemChoices.filter((v)=>v.mode==="both"||(v.mode==="water"&&hasWater)||(v.mode==="steam"&&hasSteam));
+  const availableSystems=systemChoices.filter((v)=>(v.mode==="both"&&!(hasOil&&v.id==="treatment"))||(v.mode==="water"&&hasWater)||(v.mode==="steam"&&hasSteam)||(v.mode==="oil"&&hasOil));
   const selectedSystems=availableSystems.filter((v)=>s.systems.includes(v.id));
   const fuelName=(id:FuelId|"")=>fuels.find((v)=>v.id===id)?.title??"";
   const allowedPumpRoles = new Set(validPumpRoles(s.mode).map((p)=>p.id));
@@ -207,6 +214,7 @@ export function BoilerHouseBuilder() {
   const steamCandidates = useMemo(()=>findBoilerCandidates({entries:catalogEntries,kind:"steam",
     dutyPerUnit:plant.steam?.minimumPerDutyUnit??0,mainFuel:s.mainFuel,reserveFuel:s.alternateFuel,
     limit:5}),[plant.steam?.minimumPerDutyUnit,s.mainFuel,s.alternateFuel]);
+  const priceEstimate = estimateBoilerHouse({ mode:s.mode, heat:plant.heat, steam:plant.steam, fuel:s.mainFuel, alternateFuel:s.alternateFuel, placement:s.placement });
   const preferredEquipment = [
     ...(hasWater ? waterCandidates.filter((v)=>v.slug+"/"+v.series.id===s.preferredWater)
       .map((v)=>"Водогрейная группа: "+displaySeriesName(v.maker, v.series.name)) : []),
@@ -233,7 +241,7 @@ export function BoilerHouseBuilder() {
     if(v===s.mode)return;
     patch({mode:v,systems:[...new Set([
       ...s.systems.filter((id)=>systemChoices.find((x)=>x.id===id)?.mode==="both"),
-      ...(v!=="steam"?waterSystems:[]),...(v!=="water"?steamSystems:[])])]});
+      ...(v==="water"||v==="combined"?waterSystems:[]),...(v==="steam"||v==="combined"?steamSystems:[]),...(v==="oil"?oilSystems:[])])]});
     setPumpGroups((previous)=>{
       const available=new Set(validPumpRoles(v).map((role)=>role.id));
       const kept=previous.filter((group)=>available.has(group.role));
@@ -319,6 +327,7 @@ export function BoilerHouseBuilder() {
             <ToggleSet value={s.mode} set={changeMode} options={[
               {value:"water",title:"Водогрейная",detail:"Отопление, ГВС, технологическое тепло"},
               {value:"steam",title:"Паровая",detail:"Пар для технологии"},
+              {value:"oil",title:"Термомасляная",detail:"Нагрев технологического теплоносителя"},
               {value:"combined",title:"Комбинированная",detail:"Две независимые группы котлов"},
             ]}/>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
