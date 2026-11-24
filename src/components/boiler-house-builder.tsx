@@ -294,6 +294,14 @@ export function BoilerHouseBuilder() {
     heatTrain:plant.heat,steamTrain:plant.steam,chosenSystems:selectedSystems.map((v)=>v.title),
     preferredEquipment,pumpGroups:activePumps,notes:s.notes,
   });
+  const briefForConsultation = [
+    "Запрос на расширенную консультацию и расчёт котельной.",
+    priceEstimate
+      ? "Ориентировочная стоимость: " + formatRubleAmount(priceEstimate.lowRUB) + " — " + formatRubleAmount(priceEstimate.highRUB) + "."
+      : "Расчёт стоимости: требуется индивидуальное предложение.",
+    "",
+    brief,
+  ].join("\n");
   const toNext=()=>{if(errs[step])return;setStep((v)=>Math.min(v+1,4));setFurthest((v)=>Math.max(v,step+1));setCopied(false);};
 
   return <div className="min-h-dvh bg-bg text-ink">
@@ -366,7 +374,7 @@ export function BoilerHouseBuilder() {
                   options={[{value:"kg/s",title:"кг/с"},{value:"t/h",title:"т/ч"},{value:"kg/h",title:"кг/ч"}]}/>
               </div>
               <p className="mt-2 text-sm font-bold">{fmt(steamKgH/3600,6)} кг/с · {fmt(steamKgH)} кг/ч</p>
-              <p className="mt-1 text-xs text-muted">Паровой расход не переводится в тепловую мощность без данных об энтальпиях.</p>
+              <p className="mt-1 text-xs text-muted">Для инженерного расчёта нужны параметры пара и питательной воды. Ценовая оценка использует приближённый тепловой эквивалент.</p>
             </div>}
             <div className="mt-5"><Select title="Режим работы" value={s.operation} set={(v)=>patch({operation:v})}
               options={[{value:"continuous",title:"Круглогодично"},{value:"seasonal",title:"Сезонно"},{value:"variable",title:"Переменная / пиковая нагрузка"}]}/></div>
@@ -476,6 +484,22 @@ export function BoilerHouseBuilder() {
                 {hasHeat&&<TrainBox name={hasOil?"Термомасляная группа":"Водогрейная группа"} train={plant.heat} unit="кВт"/>}
                 {hasSteam&&<TrainBox name="Паровая группа" train={plant.steam} unit="кг/ч"/>}
               </div>
+              <section aria-labelledby="price-estimate-title" className="mt-5 rounded-2xl border border-[#d3123b]/30 bg-bg p-5">
+                <p className="text-xs font-bold uppercase tracking-wide text-accent">Расчёт бюджета</p>
+                <h3 id="price-estimate-title" className="mt-2 text-xl font-extrabold">Предварительная стоимость котельной</h3>
+                {priceEstimate ? <>
+                  <p className="mt-3 font-display text-2xl font-extrabold tracking-tight sm:text-3xl">
+                    {formatRubleAmount(priceEstimate.lowRUB)} — {formatRubleAmount(priceEstimate.highRUB)}
+                  </p>
+                  <p className="mt-2 text-sm text-muted">Ориентировочный диапазон в рублях для стандартной комплектации. Это не коммерческое предложение.</p>
+                  <ul className="mt-3 list-inside list-disc space-y-1 text-xs leading-relaxed text-muted">
+                    {priceEstimate.assumptions.map((note)=><li key={note}>{note}</li>)}
+                  </ul>
+                </> : <>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">Для выбранной мощности, числа котлов или вида топлива недостаточно сопоставимых ценовых данных. Стоимость уточнит специалист.</p>
+                </>}
+                <a href="#extended-consultation" className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-accent px-5 py-3 text-center text-sm font-bold text-on-accent hover:bg-accent-hover">Получить расширенную консультацию</a>
+              </section>
               <div className="mt-4 grid gap-3">
                 {hasWater&&<Matches kind="water" train={plant.heat} mainFuel={s.mainFuel} alternateFuel={s.alternateFuel}
                   temp={waterSupplyC} selected={s.preferredWater} setSelected={(v)=>patch({preferredWater:v})}/>}
@@ -519,14 +543,12 @@ export function BoilerHouseBuilder() {
                   Скачать полное ТЗ (.txt)
                 </button>
               </div>
-              <div className="mt-7 rounded-2xl border border-line p-4">
-                <h3 className="text-xl font-bold">Отправить инженерный запрос</h3>
+              <div id="extended-consultation" className="mt-7 scroll-mt-24 rounded-2xl border border-line p-4">
+                <h3 className="text-xl font-bold">Получить расширенную консультацию</h3>
                 <p className="mt-2 text-sm text-muted">Та же форма, что в подборщике котлов. К запросу прилагаются введённые характеристики и выбранные системы.</p>
-                {import.meta.env.VITE_STATIC_EXPORT==="1"&&
-                  <p className="mt-3 rounded-lg bg-chip p-3 text-sm">Для REG.RU форма пока не подключена к безопасному обработчику заявок. Полное ТЗ можно скопировать; персональные данные не отправляются.</p>}
-                {brief.length>2900&&<p className="mt-2 text-xs text-muted">В форму помещаются первые 2 900 символов; скопируйте полное ТЗ отдельно.</p>}
-                <div className="mt-4"><LeadForm key={brief.slice(0,2900)} context={{intent:"pick"}}
-                  initialComment={brief.slice(0,2900)} submitLabel="Запросить котельную под ключ"/></div>
+                {briefForConsultation.length>2900&&<p className="mt-2 text-xs text-muted">В форму помещаются первые 2 900 символов; скопируйте полное ТЗ отдельно.</p>}
+                <div className="mt-4"><LeadForm key={briefForConsultation.slice(0,2900)} context={{intent:"pick"}}
+                  initialComment={briefForConsultation.slice(0,2900)} submitLabel="Получить расширенную консультацию"/></div>
               </div>
             </>}
           </>}
@@ -554,6 +576,11 @@ export function BoilerHouseBuilder() {
             <p className="text-sm">Систем в запросе: {selectedSystems.length}</p>
             <p className="text-sm">Насосных групп: {activePumps.length}</p>
           </div>
+          {priceEstimate && allValid ? <div className="mt-5 border-t border-white/20 pt-4">
+            <p className="text-xs font-semibold text-white/75">Предварительная стоимость</p>
+            <p className="mt-2 font-display text-xl font-extrabold">{formatRubleAmount(priceEstimate.lowRUB)} — {formatRubleAmount(priceEstimate.highRUB)}</p>
+            <p className="mt-2 text-xs text-white/65">Окончательная комплектация и цена уточняются после консультации.</p>
+          </div> : null}
           <p className="mt-5 border-t border-white/20 pt-4 text-xs leading-relaxed text-white/65">
             Не выполняет теплогидравлический расчёт, расчёт выбросов, определение категории надёжности и проверку требований безопасности.
           </p>
