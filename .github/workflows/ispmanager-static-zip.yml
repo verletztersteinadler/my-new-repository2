@@ -16,6 +16,7 @@ on:
       - scripts/image-audit.mjs
       - scripts/series-name-audit.mjs
       - scripts/series-names.test.mjs
+      - scripts/catalog-brand-search.test.mjs
       - scripts/release-copy-check.mjs
       - server/php/**
       - server/deploy/**
@@ -40,6 +41,8 @@ jobs:
         run: node --test scripts/image-audit.test.mjs
       - name: Test production-safe series copy
         run: node --experimental-strip-types --test scripts/public-series-text.test.mjs
+      - name: Verify Russian and Latin manufacturer search
+        run: node --test scripts/catalog-brand-search.test.mjs
       - name: Verify consistent catalog naming
         run: npm run test:series-names && npm run audit:series-names
       - name: Upload full series naming audit
