@@ -862,7 +862,7 @@ export function CatalogPage() {
           <div className="mt-6 max-w-3xl">
             <LeadForm
               context={{ intent: "pick", categoryId: query.type }}
-              initialComment={`Нужна консультация по оборудованию ${profile.brand}.`}
+              initialComment={`Интересует подбор ${profile.brand} для закупки. Прошу уточнить параметры, комплектацию и условия коммерческого предложения.`}
               submitLabel="Запросить подбор и КП"
             />
           </div>
@@ -921,7 +921,7 @@ export function CatalogPage() {
               <div className="min-w-0">
                 <p className="text-xs font-semibold tracking-[0.14em] text-[#f0c4cc] uppercase">Подбор по параметрам</p>
                 <h2 className="mt-2 font-display text-xl font-extrabold leading-tight tracking-tight sm:text-2xl">Нужно подобрать модель под задачу?</h2>
-                <p className="mt-2 text-sm text-white/70">Запрос получает справочник, не завод. Это не покупка.</p>
+                <p className="mt-2 text-sm text-white/70">Запрос получает оператор kotly.pro. Наличие, стоимость и сроки поставки подтверждаются отдельно.</p>
               </div>
               <a href="#consult" className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-on-accent hover:bg-accent-hover">
                 Перейти к форме связи
@@ -965,7 +965,7 @@ export function CatalogPage() {
                 <X className="size-5" />
               </Dialog.Close>
             </div>
-            <Dialog.Description className="sr-only">Форма инженерной консультации. Не заказ и не покупка.</Dialog.Description>
+            <Dialog.Description className="sr-only">Форма запроса по техническим характеристикам и коммерческим условиям.</Dialog.Description>
             {lead ? <LeadForm key={`${lead.seriesId ?? ""}-${lead.sizeId ?? ""}`} context={lead} submitLabel="Получить консультацию" /> : null}
           </Dialog.Content>
         </Dialog.Portal>
