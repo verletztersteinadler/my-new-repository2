@@ -21,8 +21,9 @@ php -r 'if (PHP_VERSION_ID < 80200 || !extension_loaded("openssl") || !extension
 }
 php -l "$PRIVATE/mail-config.php" >/dev/null
 unzip -tq "$BUNDLE_DIR/site.zip" >/dev/null
+ARCHIVE_LIST="$(unzip -Z1 "$BUNDLE_DIR/site.zip")"
 for f in index.html .htaccess api/v1/leads.php api/v1/_server/notify.php api/v1/_server/vendor/autoload.php; do
-  unzip -Z1 "$BUNDLE_DIR/site.zip" | grep -Fx "$f" >/dev/null || { echo "Missing: $f" >&2; exit 1; }
+  grep -Fx "$f" <<< "$ARCHIVE_LIST" >/dev/null || { echo "Missing: $f" >&2; exit 1; }
 done
 mkdir -p "$PRIVATE" "$PRIVATE/backups" "$PRIVATE/leads"
 chmod 700 "$PRIVATE" "$PRIVATE/backups" "$PRIVATE/leads"
