@@ -38,6 +38,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Test image audit validation rules
         run: node --test scripts/image-audit.test.mjs
+      - name: Test production-safe series copy
+        run: node --experimental-strip-types --test scripts/public-series-text.test.mjs
       - name: Verify consistent catalog naming
         run: npm run test:series-names && npm run audit:series-names
       - name: Upload full series naming audit
@@ -169,9 +171,6 @@ jobs:
           cp kotly-pro-ISPmanager-2026-11-24.zip "$KIT/site.zip"
           cp server/deploy/install.sh server/deploy/setup-mail.sh server/deploy/INSTALL.md "$KIT/"
           cp server/php/smtp-diagnose.php server/php/mail-config.example.php "$KIT/"
-          if grep -l 'smtp_password.*[^R]EAL' "$KIT"/*.php > /dev/null; then
-            echo 'Inspect SMTP template before publication'
-          fi
           cd "$KIT"
           zip -q -r "$GITHUB_WORKSPACE/kotly-pro-PUBLISH-READY-2026-11-24.zip" .
           cd "$GITHUB_WORKSPACE"
