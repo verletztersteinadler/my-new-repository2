@@ -16,6 +16,11 @@ on:
       - src/components/boiler-house-builder.tsx
       - src/routes/kotelnaya.tsx
       - src/components/home-page.tsx
+      - src/components/catalog-page.tsx
+      - src/components/series-image.tsx
+      - src/data/image-evidence.ts
+      - src/data/image-manifest.json
+      - scripts/image-audit.mjs
       - src/data/pumps.ts
       - src/lib/pump-engineering.ts
       - src/lib/pump-engineering.test.ts
@@ -101,6 +106,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
+
+      - name: Verify published image provenance
+        run: npm run check:images
 
       - name: Validate catalog
         run: npm run check:catalog --if-present
