@@ -1,4 +1,5 @@
 import { displaySeriesName } from "@/lib/series-names";
+import { manufacturerSearchAliases } from "@/lib/catalog-brand-aliases";
 import { manufacturers } from "@/data/manufacturers";
 import { publishedCatalogs } from "@/data/series-index";
 import { catalogMatchScore, normalizeCatalogText } from "@/lib/catalog-search-core";
@@ -20,7 +21,7 @@ const items: CatalogHit[] = [
     slug: maker.slug,
     title: maker.title,
     subtitle: "Производитель",
-    searchText: [maker.title, maker.name, maker.slug, maker.place].join(" "),
+    searchText: [maker.title, maker.name, maker.slug, maker.place, ...manufacturerSearchAliases(maker.slug)].join(" "),
   })),
   ...publishedCatalogs.flatMap((catalog) =>
     catalog.series.flatMap((series): CatalogHit[] => {
@@ -30,7 +31,7 @@ const items: CatalogHit[] = [
         seriesId: series.id,
         title: displaySeriesName(catalog.title, series.name),
         subtitle: catalog.title + " · Серия",
-        searchText: [catalog.title, series.name, series.id, series.kind, ...series.aliases].join(" "),
+        searchText: [catalog.title, ...manufacturerSearchAliases(catalog.slug), series.name, series.id, series.kind, ...series.aliases].join(" "),
       };
       const sizes: CatalogHit[] = series.sizes.map((size) => ({
         kind: "model",
@@ -38,7 +39,7 @@ const items: CatalogHit[] = [
         seriesId: series.id,
         title: size.name,
         subtitle: catalog.title + " · " + series.name + " · Типоразмер",
-        searchText: [catalog.title, series.name, series.id, size.name, size.id, ...series.aliases].join(" "),
+        searchText: [catalog.title, ...manufacturerSearchAliases(catalog.slug), series.name, series.id, size.name, size.id, ...series.aliases].join(" "),
       }));
       return [main, ...sizes];
     }),
