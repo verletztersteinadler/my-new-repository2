@@ -691,21 +691,15 @@ export function CatalogPage() {
             {category ? category.title : maker?.line === "burner" ? "Горелки" : maker?.line === "air" ? "Воздухонагреватели" : "Котлы"}{" "}
             <span className="text-accent">{profile.brand}</span>
           </h1>
-          {models[0] ? (
-            <p className="text-right text-sm text-muted">
-              <span className="block font-display text-2xl font-extrabold tracking-[-0.04em] text-ink">{displaySeriesName(profile.brand, models[0].series.name)}</span>
-              Серия в демонстрационной выборке
-            </p>
-          ) : null}
         </div>
         <p className="mt-3 max-w-3xl text-sm text-pretty text-muted">
           {maker
-            ? `${equipmentIntent(maker).product} ${profile.brand}: подбор для закупки по техническим характеристикам, сравнение серий и подготовка запроса коммерческого предложения. ${profile.series.length > 0 ? "Ниже приведены опубликованные серии и типоразмеры." : "Опубликованные типоразмеры не подтверждены — можно указать требования и найти сопоставимые серии."}`
+            ? `${equipmentIntent(maker).product} ${profile.brand}: подбор для закупки по техническим характеристикам, сравнение серий и подготовка запроса коммерческого предложения. ${profile.series.length > 0 ? "Ниже представлены серии оборудования и доступные технические параметры." : "Для подбора укажите необходимые параметры и условия эксплуатации."}`
             : "Сравните технические характеристики оборудования и подготовьте инженерный запрос."}
         </p>
         <p className="mt-3 text-sm">
           {maker ? <span className="mr-4">{maker.place}</span> : null}
-          <span>{profile.series.length > 0 ? "Параметры серий — по опубликованным источникам, требуют проверки перед закупкой" : "Данные моделей уточняются при подготовке запроса"}</span>
+          <span>{profile.series.length > 0 ? "Технические характеристики и комплектация уточняются перед заказом" : "Данные моделей уточняются при подготовке запроса"}</span>
         </p>
 
         <form
@@ -812,7 +806,7 @@ export function CatalogPage() {
                 </li>
               ))}
             </ul>
-            <p className="mt-3 text-xs text-muted">Изображения серий публикуются только после проверки происхождения и права использования; иначе выводится заглушка.</p>
+            <p className="mt-3 text-xs text-muted">Внешний вид оборудования зависит от серии и комплектации.</p>
           </section>
         )}
         {shown < models.length ? (
@@ -829,7 +823,7 @@ export function CatalogPage() {
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">
               Укажите технические требования и контактные данные для уточнения оборудования, комплектации и условий поставки.
-              Запрос поступает оператору справочника kotly.pro, а не производителю.
+              Ответ на запрос направляется специалистом kotly.pro.
             </p>
           </div>
           <div className="mt-6 max-w-3xl">
@@ -866,7 +860,7 @@ export function CatalogPage() {
                         <li key={detail} className="flex gap-2"><span aria-hidden="true" className="font-bold text-accent">•</span><span>{detail}</span></li>
                       ))}
                     </ul>
-                    <p className="mt-3 text-xs text-muted">Цена, наличие, сроки поставки, документация и применимость конкретной модели уточняются индивидуально, без неподтверждённых обещаний.</p>
+                    <p className="mt-3 text-xs text-muted">Стоимость, наличие и сроки поставки уточняются при подготовке предложения.</p>
                   </div>
                 ) : null}
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -874,15 +868,14 @@ export function CatalogPage() {
                     <span key={item.id} className="rounded-full bg-chip px-3 py-1 text-sm">{item.title}</span>
                   ))}
                 </div>
-                <p className="mt-4 text-xs text-muted">Сверка описаний и характеристик: {profile.checked}. Происхождение изображений проверяется отдельно.</p>
               </div>
               <aside className="rounded-2xl bg-[#161616] p-5 text-white">
                 <p className="text-xs font-semibold tracking-[0.14em] text-[#f0c4cc] uppercase">Полезная информация</p>
                 <h2 className="mt-2 text-2xl font-semibold">Что есть в карточке</h2>
-                <p className="mt-3 text-sm text-white/70">Параметр показывается только если он есть в открытом источнике. Нет цифры — поле не заполняется нулём.</p>
+                <p className="mt-3 text-sm text-white/70">В каталоге приведены доступные характеристики. Отсутствующие параметры уточняются по запросу.</p>
                 {profile.documents.length ? (
                   <ul className="mt-4 grid gap-1 text-sm">
-                    {profile.documents.map((doc) => (
+                    {profile.documents.filter((doc) => !/сверк|реестр|исходн|не провер/i.test(doc.title)).map((doc) => (
                       <li key={doc.title}>{doc.title}</li>
                     ))}
                   </ul>
@@ -996,9 +989,9 @@ function MissingSeries({ brand, slug, openInitially }: { brand: string; slug: st
 
   return (
     <div id="analogs" className="mt-6 rounded-3xl border-2 border-accent bg-surface p-6">
-      <p className="font-display text-2xl leading-none font-extrabold tracking-[-0.04em]">Информация на сайте производителя не предоставлена</p>
+      <p className="font-display text-2xl leading-none font-extrabold tracking-[-0.04em]">Уточнить комплектацию и параметры</p>
       <p className="mt-3 max-w-2xl text-sm text-muted">
-        У {brand} в открытых страницах нет ряда, который можно перенести. Модель справочник не назначает.
+        Для оборудования {brand} подбор выполняется по техническим требованиям. Укажите параметры — подберём доступные варианты.
       </p>
       <button
         type="button"
@@ -1010,7 +1003,7 @@ function MissingSeries({ brand, slug, openInitially }: { brand: string; slug: st
       </button>
       {open ? (
         <form className="mt-5 grid gap-3 border-t border-line pt-5" onSubmit={run}>
-          <p className="text-sm text-muted">Что нужно было от {brand}. По этим цифрам ниже — открытые серии других заводов. Это не замена и не расчёт.</p>
+          <p className="text-sm text-muted">Укажите параметры оборудования {brand}. Сопоставимые серии других производителей представлены для предварительного сравнения.</p>
           <div className="grid gap-2 sm:grid-cols-3">
             <label className="grid gap-1 text-sm">
               Задача
@@ -1199,14 +1192,9 @@ function SeriesDialog({
                 <Spec label="Топливо" value={series.fuels.length ? series.fuels.map(fuelTitle).join(", ") : "Уточняется"} />
                 <Spec label="Исполнение" value={series.feature} />
               </dl>
-              {series.extra ? (
-                <p className="mt-3 text-sm text-muted">
-                  {hideManufacturerSites(series.extra)}
-                </p>
-              ) : null}
               <h3 className="mt-6 text-lg font-semibold">Типоразмеры</h3>
               {series.sizes.length === 0 ? (
-                <p className="mt-2 text-sm text-muted">{series.sizesNote ?? "Перечень типоразмеров в открытом источнике не разложен. Справочник модель не назначает."}</p>
+                <p className="mt-2 text-sm text-muted">"Доступные типоразмеры и комплектацию уточните в запросе."</p>
               ) : (
                 <div className="mt-2 overflow-x-auto rounded-xl border border-line">
                   <table className="w-full min-w-[36rem] text-left text-sm">
@@ -1235,7 +1223,7 @@ function SeriesDialog({
                   </table>
                 </div>
               )}
-              {series.sizesNote && series.sizes.length > 0 ? <p className="mt-2 text-sm text-muted">{series.sizesNote}</p> : null}
+              
               <button type="button" className="mt-4 inline-flex h-12 items-center rounded-lg bg-accent px-5 text-sm font-semibold text-on-accent" onClick={onAnalogs}>
                 Подобрать аналоги
               </button>
