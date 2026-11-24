@@ -695,7 +695,7 @@ export function CatalogPage() {
             <Link to="/" hash="manufacturers" className="hover:text-white">Производители</Link>
             <Link to="/politika" className="hover:text-white">О каталоге</Link>
           </nav>
-          <Link to="/" hash="podbor" className="ml-auto inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover">
+          <Link to="/" hash="podbor" className="ml-auto mr-14 hidden h-10 items-center rounded-full lg:mr-0 lg:inline-flex bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover">
             Подобрать модель
           </Link>
         </div>
@@ -806,7 +806,7 @@ export function CatalogPage() {
         ) : (
           <section className="mt-8">
             <div className="mb-3 flex items-end justify-between gap-3">
-              <h2 className="text-2xl font-semibold">Модели {profile.brand}</h2>
+              <h2 className="text-xl font-semibold sm:text-2xl">Модели {profile.brand}</h2>
               <p className="text-sm text-muted tabular-nums">{models.length}</p>
             </div>
             <ul className="overflow-hidden rounded-2xl border border-line bg-surface">
@@ -815,8 +815,8 @@ export function CatalogPage() {
                   <div className="flex min-w-0 items-center gap-3">
                     <img src={row.series.image} alt="" width={80} height={60} className="size-14 shrink-0 rounded-lg object-cover" />
                     <div className="min-w-0">
-                      <button type="button" className="truncate text-left font-semibold hover:text-accent" onClick={() => openSeries(row.series.id)}>{row.title}</button>
-                      <p className="truncate text-xs text-muted">{row.series.kind} · {row.series.name}</p>
+                      <button type="button" className="max-w-full text-left font-semibold break-words hover:text-accent" onClick={() => openSeries(row.series.id)}>{row.title}</button>
+                      <p className="text-xs text-muted break-words">{row.series.kind} · {row.series.name}</p>
                     </div>
                   </div>
                   <p className="text-sm">
@@ -917,7 +917,7 @@ export function CatalogPage() {
       <Dialog.Root open={lead != null} onOpenChange={(open) => !open && setLead(null)}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-40 bg-black/70" />
-          <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 max-h-dvh overflow-y-auto rounded-t-3xl bg-surface p-4 shadow-lg md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
+          <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 max-h-[92dvh] overflow-y-auto overscroll-contain rounded-t-3xl bg-surface p-4 shadow-lg md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
             <div className="mb-3 flex items-start justify-between gap-3">
               <Dialog.Title className="font-display text-3xl leading-none font-extrabold tracking-[-0.04em]">Консультация по серии</Dialog.Title>
               <Dialog.Close className="inline-flex size-11 items-center justify-center rounded-lg bg-chip" aria-label="Закрыть">
