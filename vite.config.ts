@@ -166,7 +166,23 @@ export default defineConfig(({ command, isPreview }) => ({
     // PWA head + ?install=1 tutorial page; runs before Start/Nitro.
     grokPwaPlugin(),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      // Static HTML export for ISPmanager without a Node.js server.
+      // Keep normal server-backed builds unchanged when the flag is absent.
+      ...(process.env.KOTLY_STATIC_EXPORT === "1"
+        ? {
+            prerender: {
+              enabled: true,
+              autoStaticPathsDiscovery: true,
+              crawlLinks: true,
+              concurrency: 4,
+              retryCount: 1,
+              failOnError: true,
+              filter: ({ path }: { path: string }) => !path.startsWith("/api/"),
+            },
+          }
+        : {}),
+    }),
     ...(command === "build" || isPreview
       ? [
           nitro({
