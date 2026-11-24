@@ -48,6 +48,8 @@ jobs:
           test "$(wc -l </tmp/kotly-html-pages.txt)" -gt 5
           echo "Output size:"
           du -sh .vercel/output/static
+      - name: Generate and verify SEO sitemap and robots.txt
+        run: node scripts/generate-seo-files.mjs .vercel/output/static
       - name: Prepare Apache/ISPmanager package
         shell: bash
         run: |
@@ -57,6 +59,7 @@ jobs:
           DirectoryIndex index.html
           <IfModule mod_rewrite.c>
           RewriteEngine On
+          RewriteRule ^manufacturers/([^/]+)/?$ /$1 [R=301,L,NE]
           RewriteCond %{REQUEST_FILENAME} -f [OR]
           RewriteCond %{REQUEST_FILENAME} -d
           RewriteRule ^ - [L]
