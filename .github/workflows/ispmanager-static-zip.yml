@@ -14,6 +14,8 @@ on:
       - scripts/generate-seo-files.mjs
       - scripts/check-no-external-links.mjs
       - scripts/image-audit.mjs
+      - scripts/series-name-audit.mjs
+      - scripts/series-names.test.mjs
       - server/php/**
   workflow_dispatch:
 
@@ -34,6 +36,14 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Test image audit validation rules
         run: node --test scripts/image-audit.test.mjs
+      - name: Verify consistent catalog naming
+        run: npm run test:series-names && npm run audit:series-names
+      - name: Upload full series naming audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: kotly-pro-series-name-audit
+          path: reports/catalog/
+          retention-days: 30
       - name: Gate images and generate provenance report
         run: npm run check:images && npm run audit:images
       - name: Upload image audit report
