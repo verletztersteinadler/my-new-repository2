@@ -296,11 +296,11 @@ export function BoilerHouseBuilder() {
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">Инженерный конструктор · Котельная под ключ</p>
       <h1 className="mt-3 max-w-4xl font-display text-3xl font-extrabold leading-tight sm:text-5xl">Сформировать конфигурацию котельной</h1>
       <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted">Пять этапов: нагрузка, параметры, котлоагрегаты, инженерные системы, техническое задание. Предварительная конфигурация не заменяет проектирование и экспертизу.</p>
-      <nav aria-label="Этапы конструктора" className="mt-7 grid grid-cols-5 gap-1 rounded-2xl border border-line bg-surface p-2">
+      <nav aria-label="Этапы конструктора" className="mt-7 grid grid-cols-5 gap-0.5 rounded-2xl border border-line bg-surface p-2">
         {stageNames.map((n,i)=><button key={n} type="button" disabled={i>furthest}
           aria-current={step===i?"step":undefined} onClick={()=>setStep(i)}
           className={(step===i?"bg-accent text-on-accent":i<=furthest?"text-ink hover:bg-chip":"text-muted/40")+
-            " min-h-16 rounded-xl px-1 py-2 text-center text-xs font-bold disabled:cursor-not-allowed"}>
+            " min-h-16 min-w-0 rounded-xl px-0.5 py-2 text-center text-[10px] font-bold leading-tight sm:px-1 sm:text-xs disabled:cursor-not-allowed"}>
           <span className="block">{i+1}</span><span className="mt-1 hidden sm:block">{n}</span><span className="mt-1 block sm:hidden">{["Нагрузка","Режим","Котлы","Системы","ТЗ"][i]}</span>
         </button>)}
       </nav>
@@ -359,7 +359,7 @@ export function BoilerHouseBuilder() {
             <StepHead n={2} title="Параметры теплоносителя" sub="Точные значения фиксируются в техническом задании. Давление пока не отбирает серии: в каталоге оно часто указано только текстом."/>
             {hasWater&&<div className="rounded-2xl border border-line p-4">
               <h3 className="font-semibold">Температурный график воды</h3>
-              <div className="mt-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2">
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
                 <Num title="Подача" value={s.supply} set={(v)=>patch({supply:v})} placeholder="95"/>
                 <Num title="Обратная" value={s.returnWater} set={(v)=>patch({returnWater:v})} placeholder="70"/>
                 <Select title="Ед." value={s.tempUnit} set={(v)=>changeUnit("tempUnit",v)}
@@ -508,7 +508,7 @@ export function BoilerHouseBuilder() {
           {errs[step]&&<p className="mt-5 rounded-xl border border-accent bg-bg/40 p-3 text-sm text-accent" role="alert">{errs[step]}</p>}
           <div className="mt-7 flex justify-between gap-3 border-t border-line pt-5">
             <button type="button" disabled={step===0} onClick={()=>setStep((v)=>Math.max(0,v-1))}
-              className="h-11 rounded-xl border border-line px-4 text-sm font-semibold disabled:opacity-40">← Назад</button>
+              className="min-h-11 rounded-xl border border-line px-4 text-sm font-semibold disabled:opacity-40">← Назад</button>
             {step<4?<button type="button" disabled={Boolean(errs[step])} onClick={toNext}
               className="h-11 rounded-xl bg-accent px-6 text-sm font-semibold text-on-accent disabled:opacity-40">Далее →</button>:
               <Link to="/" className="self-center text-sm font-semibold text-muted hover:text-ink">К каталогу</Link>}
