@@ -50,6 +50,7 @@ export function HomePage() {
               Подбор
             </a>
             <Link to="/kotelnaya" className="font-semibold text-accent hover:text-ink">Котельная под ключ</Link>
+            <Link to="/calculators" className="hover:text-ink">Калькуляторы</Link>
             <Link to="/nasosy" className="hover:text-ink">Насосы</Link>
             <a href="#manufacturers" className="hover:text-ink">
               Производители
@@ -116,6 +117,22 @@ export function HomePage() {
             </div>
             <Link to="/nasosy" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl border border-line px-5 text-sm font-bold text-ink hover:bg-chip">
               Изучить насосы →
+            </Link>
+          </div>
+        </section>
+
+        <section className="mx-auto mt-5 max-w-6xl px-4">
+          <div className="flex flex-col justify-between gap-5 rounded-3xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:p-7">
+            <div className="max-w-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-accent">Инженерный центр · 16 расчётов</p>
+              <h2 className="mt-2 font-display text-2xl font-extrabold">Калькуляторы воды, пара, топлива и трубопроводов</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted">
+                Пересчёт давления и энергии, тепловые нагрузки и расходы воды, IAPWS-IF97 для пара,
+                потребление топлива и гидравлика. Результаты можно перенести в конструктор котельной.
+              </p>
+            </div>
+            <Link to="/calculators" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-5 text-sm font-bold text-on-accent hover:bg-accent-hover">
+              Инженерные расчёты →
             </Link>
           </div>
         </section>
@@ -217,7 +234,7 @@ export function HomePage() {
 
         <footer className="mx-auto mt-12 max-w-6xl px-4 py-8 text-xs leading-relaxed text-muted">
           <p>
-            KOTLY.SU — независимый справочник. Названия производителей приведены для идентификации оборудования. Сведения о владельце и обработке данных — в правовом разделе.
+            kotly.pro — независимый справочник. Названия производителей приведены для идентификации оборудования. Сведения о владельце и обработке данных — в правовом разделе.
           </p>
           <p className="mt-3 flex flex-wrap gap-4">
             <Link to="/politika" className="underline">
