@@ -20,7 +20,9 @@
     "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/preview-path-prefix.test.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test:units": "node --experimental-strip-types --test src/lib/engineering-units.test.ts"
+    "test:units": "node --experimental-strip-types --test src/lib/engineering-units.test.ts",
+    "check:images": "node scripts/image-audit.mjs",
+    "audit:images": "node scripts/image-audit.mjs --report ./reports/images"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",
