@@ -28,7 +28,7 @@ function kotlyMailConfig(): ?array
     $password = (string) ($value['smtp_password'] ?? '');
     if (
         $password === '' ||
-        $password === 'REPLACE_WITH_PASSWORD_IN_ISPMANAGER_ONLY' ||
+        str_starts_with($password, 'REPLACE_WITH_') ||
         !in_array((int) ($value['smtp_port'] ?? 0), [465, 587], true) ||
         !in_array((string) ($value['smtp_secure'] ?? ''), ['ssl', 'tls'], true) ||
         !filter_var($value['smtp_user'] ?? '', FILTER_VALIDATE_EMAIL) ||
