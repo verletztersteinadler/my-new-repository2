@@ -168,10 +168,14 @@ export function LeadForm({
       <label className="sm:col-span-2 flex items-start gap-3 text-sm">
         <input name="consent" type="checkbox" className="mt-1 size-5 accent-accent" required />
         <span>
-          Согласен с{" "}
+          Даю согласие на{" "}
+          <a className="font-medium text-ink underline-offset-2 hover:underline" href="/soglasie">
+            обработку персональных данных
+          </a>{" "}
+          и ознакомлен с{" "}
           <a className="font-medium text-ink underline-offset-2 hover:underline" href="/politika">
             политикой конфиденциальности
-          </a>
+          </a>.
         </span>
       </label>
       {errors.consent ? <p className="sm:col-span-2 text-sm text-danger">{errors.consent}</p> : null}
