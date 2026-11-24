@@ -23,9 +23,10 @@ const server = await createServer({
 });
 let publishedCatalogs;
 let displaySeriesName;
+let seriesNameHasBrand;
 try {
   ({ publishedCatalogs } = await server.ssrLoadModule("/src/data/series-index.ts"));
-  ({ displaySeriesName } = await server.ssrLoadModule("/src/lib/series-names.ts"));
+  ({ displaySeriesName, seriesNameHasBrand } = await server.ssrLoadModule("/src/lib/series-names.ts"));
 } finally {
   await server.close();
 }
@@ -56,8 +57,7 @@ for (const catalog of publishedCatalogs) {
       else count.normalizedSource++;
     } else count.canonicalSource++;
 
-    if (!normalized.startsWith(brandFolded) ||
-        (normalized.length > brandFolded.length && !/[\s,;:()\u2013\u2014/-]/u.test(normalized[brandFolded.length]))) {
+    if (!seriesNameHasBrand(brand, display)) {
       errors.push(catalog.slug + "/" + series.id + ": formatter did not retain manufacturer prefix");
     }
     if (used.has(normalized)) {
