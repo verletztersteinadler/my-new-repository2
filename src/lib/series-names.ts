@@ -11,7 +11,21 @@ export function displaySeriesName(brand: string, sourceName: string): string {
   if (!maker || !title) return title || maker;
 
   const same = (left: string, right: string) => left.toLocaleLowerCase("ru") === right.toLocaleLowerCase("ru");
-  if (same(title, maker)) return title;
+  // A brand-only entry has no distinct published series designation.
+  // Do not misrepresent the manufacturer name as an invented product line.
+  if (same(title, maker)) return maker + " — серия не указана";
+
+  // Some groups publish equipment under another verified trademark.
+  // Keep an existing official product mark intact instead of coining
+  // double-brand strings such as "METEOR Thermo METEOR C30".
+  const alternativeProductMarks: Record<string, readonly string[]> = {
+    "meteor thermo": ["METEOR", "LaggarTT"],
+  };
+  const marks = alternativeProductMarks[maker.toLocaleLowerCase("ru")] ?? [];
+  if (marks.some((mark) =>
+    same(title.slice(0, mark.length), mark) &&
+    (title.length === mark.length || /[\\s,;:()\\u2013\\u2014/-]/u.test(title[mark.length]))
+  )) return title;
 
   const startsWithMaker = same(title.slice(0, maker.length), maker) &&
     (title.length === maker.length || /[\s,;:()\u2013\u2014/-]/u.test(title[maker.length]));
