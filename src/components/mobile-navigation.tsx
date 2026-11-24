@@ -43,12 +43,11 @@ export function MobileNavigation() {
               <Link to="/" search={{}} onClick={close} className={linkClass}>Главная</Link>
               <Link to="/" hash="podbor" onClick={close} className={linkClass}>Подбор оборудования</Link>
               <Link to="/kotelnaya" onClick={close} className={linkClass}>Конструктор котельной</Link>
-              <Link to="/nasosy" onClick={close} className={linkClass}>Насосы</Link>
               <Link to="/" hash="manufacturers" onClick={close} className={linkClass}>Производители</Link>
               <Link to="/politika" onClick={close} className={linkClass}>О проекте</Link>
             </nav>
             <p className="mt-auto border-t border-line pt-5 text-xs leading-relaxed text-muted">
-              Инженерный запрос можно отправить с любой страницы через кнопку внизу экрана.
+              Для консультации используйте кнопку «Обсудить задачу с инженером».
             </p>
           </Dialog.Content>
         </Dialog.Portal>
