@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/logo";
 import { calculatorDefinitions, calculatorById, calculate, formatCal, initialInputs, type CalDefinition, type CalResult } from "@/lib/calculators";
 
-const groups = ["Конвертеры", "Водогрейные котлы", "Паровые котлы", "Топливо", "Гидравлика"];
+const groups = ["Конвертеры", "Водогрейные котлы", "Паровые котлы", "Топливо", "Гидравлика", "Термомасляные системы", "Дополнительные расчёты"];
 const toolClass = "rounded-2xl border border-line bg-surface p-5 transition hover:border-accent hover:bg-chip";
 const labelClass = "grid content-start gap-2 text-sm font-semibold";
 const inputClass = "h-12 w-full rounded-xl border border-line bg-surface px-3 text-base font-normal tabular-nums text-ink outline-offset-2 focus-visible:outline-2 focus-visible:outline-accent";
@@ -33,8 +33,10 @@ export function CalculatorsIndex() {
         Инженерные калькуляторы и конвертеры
       </h1>
       <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted">
-        Первый набор из 16 рабочих инструментов: единицы измерения, водогрейные и паровые котлы,
-        IAPWS-IF97, топливо и гидравлика. Пересчёт выполняется в браузере и не отправляет ваши исходные данные на сервер.
+        52 расчётных инструмента: конвертеры, тепловые системы, пар IAPWS-IF97,
+        топливо, гидравлика, термомасла и предварительная эксплуатационная экономика.
+        Часть задач требует ручного ввода свойств конкретного топлива или масла.
+        Расчёт выполняется в браузере без отправки исходных данных на сервер.
       </p>
       <div className="mt-7 flex flex-wrap gap-3 text-sm">
         <Link to="/kotelnaya" className="inline-flex min-h-11 items-center rounded-xl bg-accent px-5 font-bold text-on-accent hover:bg-accent-hover">
