@@ -14,7 +14,7 @@ PRIVATE="$PARENT/kotly-private"
 case "$BUNDLE_DIR/" in "$SITE_ROOT/"*) echo "ERROR: Move bundle OUTSIDE public webroot" >&2; exit 1;; esac
 [[ -f "$BUNDLE_DIR/site.zip" ]] || { echo "ERROR: site.zip missing" >&2; exit 1; }
 for exe in php unzip tar; do command -v "$exe" >/dev/null || { echo "$exe missing" >&2; exit 1; }; done
-php -r 'if (PHP_VERSION_ID < 80200 || !extension_loaded("openssl") || !extension_loaded("mbstring")) { fwrite(STDERR, "Requires PHP 8.2+ with openssl and mbstring\n"); exit(1); }'
+php -r 'if (PHP_VERSION_ID < 80200 || !extension_loaded("openssl")) { fwrite(STDERR, "Requires PHP 8.2+ with openssl\n"); exit(1); }'
 [[ -f "$PRIVATE/mail-config.php" ]] || {
   echo "ERROR: SMTP config missing. Run: bash setup-mail.sh $SITE_ROOT" >&2
   exit 2
