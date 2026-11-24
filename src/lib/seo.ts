@@ -67,7 +67,7 @@ export function manufacturerPublicNote(maker: Manufacturer): string | null {
   const note = maker.note.trim().replace(/https?:\/\/\S+/gi, "").replace(/\b(?:www\.)?[a-z0-9-]+\.(?:ru|com|pro|org|net|de|kz|tr|cn)(?:\/\S*)?/gi, "").trim();
   if (
     !note ||
-    /не публиковать|спрос не доказан|спрос|необходимо подтвердить|сверить сайт|исходный реестр|данные не получены/i.test(note)
+    /не публиковать|спрос не доказан|спрос|необходимо подтвердить|сверить сайт|исходный реестр|данные не получены|проверить|на проверке|актуальные модели|в открытом списке|не переносить|редакц|чернов/i.test(note)
   ) return null;
   return note;
 }
