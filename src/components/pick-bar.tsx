@@ -9,17 +9,17 @@ export function PickBar() {
     <>
       <button
         type="button"
-        className="fixed top-1/2 right-0 z-40 -translate-y-1/2 rounded-l-2xl bg-accent px-3 py-5 text-sm font-extrabold tracking-[0.12em] text-on-accent uppercase shadow-lg hover:bg-accent-hover"
+        className="fixed inset-x-0 bottom-0 z-40 flex min-h-16 w-full items-center justify-center border-t border-white/20 bg-accent px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] text-base font-extrabold text-on-accent shadow-[0_-8px_24px_rgba(0,0,0,.16)] hover:bg-accent-hover sm:inset-x-auto sm:right-4 sm:bottom-4 sm:min-h-12 sm:w-auto sm:rounded-2xl sm:border-0 sm:px-6 sm:py-3 sm:shadow-lg"
         onClick={() => setOpen(true)}
       >
-        <span className="block [writing-mode:vertical-rl] rotate-180">Получить готовое решение</span>
+        <span>Оставить инженерную заявку</span>
       </button>
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-40 bg-black/70" />
-          <Dialog.Content className="fixed inset-x-3 top-8 z-50 mx-auto max-h-[85dvh] max-w-lg overflow-y-auto rounded-3xl border border-line bg-surface p-5 shadow-xl">
-            <Dialog.Title className="font-display text-3xl leading-none font-extrabold tracking-[-0.04em]">
-              Получить готовое решение
+          <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 mx-auto max-h-[min(92dvh,52rem)] max-w-lg overflow-y-auto overscroll-contain rounded-t-3xl border border-line bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-xl sm:inset-x-3 sm:top-1/2 sm:bottom-auto sm:max-h-[85dvh] sm:-translate-y-1/2 sm:rounded-3xl">
+            <Dialog.Title className="font-display text-2xl leading-tight font-extrabold tracking-[-0.04em] sm:text-3xl">
+              Оставить инженерную заявку
             </Dialog.Title>
             <Dialog.Description className="mt-2 text-sm text-muted">
               Оператор справочника разберёт задачу по открытым данным. Это инженерная консультация, не заказ и не покупка.
@@ -28,7 +28,7 @@ export function PickBar() {
               <LeadForm
                 context={{ intent: "request" }}
                 initialComment="Запрос готового решения."
-                submitLabel="Получить готовое решение"
+                submitLabel="Отправить заявку"
               />
             </div>
             <Dialog.Close className="mt-3 text-sm text-muted underline">Закрыть</Dialog.Close>
