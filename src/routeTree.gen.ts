@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as KotelnayaRouteImport } from './routes/kotelnaya'
 import { Route as NasosyRouteImport } from './routes/nasosy'
 import { Route as PolitikaRouteImport } from './routes/politika'
@@ -20,6 +21,11 @@ import { Route as ApiV1LeadsRouteImport } from './routes/api/v1/leads'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SlugRoute = SlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KotelnayaRoute = KotelnayaRouteImport.update({
@@ -55,6 +61,7 @@ const ApiV1LeadsRoute = ApiV1LeadsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/kotelnaya': typeof KotelnayaRoute
   '/nasosy': typeof NasosyRoute
   '/politika': typeof PolitikaRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/kotelnaya': typeof KotelnayaRoute
   '/nasosy': typeof NasosyRoute
   '/politika': typeof PolitikaRoute
@@ -74,6 +82,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/kotelnaya': typeof KotelnayaRoute
   '/nasosy': typeof NasosyRoute
   '/politika': typeof PolitikaRoute
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$slug'
     | '/kotelnaya'
     | '/nasosy'
     | '/politika'
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$slug'
     | '/kotelnaya'
     | '/nasosy'
     | '/politika'
@@ -103,6 +114,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$slug'
     | '/kotelnaya'
     | '/nasosy'
     | '/politika'
@@ -113,6 +125,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SlugRoute: typeof SlugRoute
   KotelnayaRoute: typeof KotelnayaRoute
   NasosyRoute: typeof NasosyRoute
   PolitikaRoute: typeof PolitikaRoute
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$slug': {
+      id: '/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof SlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kotelnaya': {
@@ -177,6 +197,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SlugRoute: SlugRoute,
   KotelnayaRoute: KotelnayaRoute,
   NasosyRoute: NasosyRoute,
   PolitikaRoute: PolitikaRoute,
