@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { LeadForm } from "@/components/lead-form";
 import { PumpGroupsEditor, defaultPumpRoles, validPumpRoles } from "@/components/pump-groups-editor";
@@ -178,6 +178,27 @@ export function BoilerHouseBuilder() {
     newPumpGroup("makeup","pump-2"),
   ]);
   const patch = (x: Partial<State>) => setS((prev)=>({...prev,...x}));
+  useEffect(() => {
+    // Transfer a non-personal engineering result from /calculators.
+    // Never trust query values without a finite, bounded range check.
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("calculator")) return;
+    const safe = (name: string) => {
+      const value = Number(params.get(name) ?? "");
+      return params.has(name) && Number.isFinite(value) && value > 0 && value < 1000000000 ? value : null;
+    };
+    const powerKw = safe("calcPowerKw");
+    const steamKgH = safe("calcSteamKgH");
+    const flowM3h = safe("calcFlowM3h");
+    if (!powerKw && !steamKgH && !flowM3h) return;
+    setS((previous) => ({
+      ...previous,
+      ...(steamKgH ? { mode: "steam" as const, steamUnit: "t/h" as const, steam: String(steamKgH / 1000) }
+        : powerKw ? { mode: "water" as const, powerUnit: "kW" as const, heating: String(powerKw) } : {}),
+      notes: [previous.notes, flowM3h ? "Предварительный объёмный расход из калькулятора: " + flowM3h.toFixed(3) + " м³/ч." : ""]
+        .filter(Boolean).join("\n"),
+    }));
+  }, []);
   const hasWater=s.mode!=="steam";
   const hasSteam=s.mode!=="water";
   const valid = (text:string, allowNegative=false)=>!text.trim() || parse(text,allowNegative)!=null;
