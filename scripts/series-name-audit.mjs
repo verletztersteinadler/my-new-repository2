@@ -8,26 +8,27 @@
  * Missing brand prefixes in SOURCE are warnings because the UI normalizes
  * presentation; empty titles or malformed formatter output block CI.
  */
-import { build } from "esbuild";
+import { createServer } from "vite";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 
 const root = resolve(process.cwd());
 const reportDir = resolve(root, "reports/catalog");
-const entry = `
-export { publishedCatalogs } from "./src/data/series-index.ts";
-export { displaySeriesName } from "./src/lib/series-names.ts";
-`;
-const result = await build({
-  stdin: { contents: entry, resolveDir: root, sourcefile: "series-audit-entry.ts", loader: "ts" },
-  bundle: true, platform: "node", format: "esm", write: false, logLevel: "silent",
-  tsconfig: join(root, "tsconfig.json"),
+const server = await createServer({
+  configFile: false,
+  appType: "custom",
+  resolve: { alias: { "@": join(root, "src") } },
+  server: { middlewareMode: true },
+  logLevel: "error",
 });
-const code = result.outputFiles[0]?.text;
-if (!code) throw new Error("Unable to evaluate the published series registry");
-const { publishedCatalogs, displaySeriesName } = await import(
-  "data:text/javascript;base64," + Buffer.from(code).toString("base64")
-);
+let publishedCatalogs;
+let displaySeriesName;
+try {
+  ({ publishedCatalogs } = await server.ssrLoadModule("/src/data/series-index.ts"));
+  ({ displaySeriesName } = await server.ssrLoadModule("/src/lib/series-names.ts"));
+} finally {
+  await server.close();
+}
 const issues = [];
 const errors = [];
 const entries = [];
