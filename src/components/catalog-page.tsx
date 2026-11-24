@@ -767,7 +767,7 @@ export function CatalogPage() {
         </form>
 
         {profile.series.length === 0 ? (
-          <MissingSeries brand={profile.brand} openInitially={search.ask === "1"} />
+          <MissingSeries brand={profile.brand} slug={slug} openInitially={search.ask === "1"} />
         ) : models.length === 0 ? (
           <div className="mt-6 rounded-2xl border border-line bg-surface p-6">
             <p className="font-semibold">По этим условиям моделей нет</p>
@@ -959,7 +959,7 @@ function flattenModels(list: Series[]) {
   });
 }
 
-function MissingSeries({ brand, openInitially }: { brand: string; openInitially: boolean }) {
+function MissingSeries({ brand, slug, openInitially }: { brand: string; slug: string; openInitially: boolean }) {
   const tasks: { id: CategoryId; title: string; unit: "kw" | "tph" }[] = [
     { id: "water", title: "Водогрейный", unit: "kw" },
     { id: "steam", title: "Паровой", unit: "tph" },
@@ -968,7 +968,8 @@ function MissingSeries({ brand, openInitially }: { brand: string; openInitially:
     { id: "auto", title: "Горелка", unit: "kw" },
   ];
   const [open, setOpen] = useState(openInitially);
-  const [task, setTask] = useState<CategoryId>("water");
+  const maker = manufacturerBySlug(slug);
+  const [task, setTask] = useState<CategoryId>(maker?.line === "burner" ? "auto" : maker?.line === "air" ? "air" : "water");
   const [fuel, setFuel] = useState<FuelId | "">("");
   const [amount, setAmount] = useState("");
   const [hits, setHits] = useState<ReturnType<typeof analogsForRequest> | null>(null);
@@ -1008,7 +1009,7 @@ function MissingSeries({ brand, openInitially }: { brand: string; openInitially:
           <div className="grid gap-2 sm:grid-cols-3">
             <label className="grid gap-1 text-sm">
               Задача
-              <select className="h-12 rounded-sm border border-line bg-surface px-3" value={task} onChange={(event) => setTask(event.target.value as CategoryId)}>
+              <select className="h-12 rounded-sm border border-line bg-surface px-3" value={task} onChange={(event) => { setTask(event.target.value as CategoryId); setHits(null); }}>
                 {tasks.map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.title}
@@ -1018,7 +1019,7 @@ function MissingSeries({ brand, openInitially }: { brand: string; openInitially:
             </label>
             <label className="grid gap-1 text-sm">
               Топливо
-              <select className="h-12 rounded-sm border border-line bg-surface px-3" value={fuel} onChange={(event) => setFuel(event.target.value as FuelId | "")}>
+              <select className="h-12 rounded-sm border border-line bg-surface px-3" value={fuel} onChange={(event) => { setFuel(event.target.value as FuelId | ""); setHits(null); }}>
                 <option value="">Не указано</option>
                 {fuels.map((item) => (
                   <option key={item.id} value={item.id}>
@@ -1032,7 +1033,7 @@ function MissingSeries({ brand, openInitially }: { brand: string; openInitially:
               <input
                 inputMode="decimal"
                 value={amount}
-                onChange={(event) => setAmount(event.target.value)}
+                onChange={(event) => { setAmount(event.target.value); setHits(null); }}
                 placeholder={unit === "tph" ? "например 10" : "например 3000"}
                 className="h-12 rounded-sm border border-line bg-surface px-3"
               />
@@ -1043,7 +1044,7 @@ function MissingSeries({ brand, openInitially }: { brand: string; openInitially:
           </button>
           {hits ? (
             hits.length === 0 ? (
-              <p className="text-sm">В открытом справочнике по этим цифрам серий нет.</p>
+              <p className="text-sm">Не найдено аналогов того же типа с совместимыми техническими параметрами. Измените требования или отправьте инженерный запрос.</p>
             ) : (
               <ul className="grid gap-2">
                 {hits.map((item) => (
@@ -1258,7 +1259,7 @@ function AnalogsDialog({ series, sourceSlug, onClose }: { series: Series | null;
             <div>
               <Dialog.Title className="font-display text-3xl leading-none font-extrabold tracking-[-0.04em]">Похожие серии</Dialog.Title>
               <Dialog.Description className="mt-2 text-sm text-muted">
-                Только открытые карточки с той же задачей. Совпадение диапазона и топлива указано, если оно есть в справочнике. Это не замена и не расчёт.
+                Только оборудование той же категории, с подтверждённым диапазоном мощности или паропроизводительности и совместимым топливом. Насосы, горелки и автоматика не заменяют котлы. Это предварительное сравнение, не подтверждение взаимозаменяемости.
               </Dialog.Description>
             </div>
             <Dialog.Close className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg bg-chip" aria-label="Закрыть">
@@ -1266,7 +1267,7 @@ function AnalogsDialog({ series, sourceSlug, onClose }: { series: Series | null;
             </Dialog.Close>
           </div>
           {hits.length === 0 ? (
-            <p className="text-sm">В открытом справочнике схожих серий нет.</p>
+            <p className="text-sm">Не найдено аналогов того же типа с пересекающимся диапазоном мощности или производительности. Уточните требования через инженерный запрос.</p>
           ) : (
             <ul className="grid gap-2">
               {hits.map((item) => (

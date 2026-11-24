@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { LeadForm } from "@/components/lead-form";
 import { fuels, type FuelId, type Series } from "@/data/catalog";
 import { manufacturers } from "@/data/manufacturers";
+import { equipmentFamily } from "@/lib/analog-engine";
 import { publishedCatalogs } from "@/data/series-index";
 import {
   formatEngineeringNumber as fmt,
@@ -55,12 +56,13 @@ const allEntries = publishedCatalogs.flatMap((catalog) =>
 type Entry = (typeof allEntries)[number];
 
 function matchesTask(entry: Entry, task: Task): boolean {
-  const category = entry.series.categoryId;
+  const family = equipmentFamily(entry.series, makerLine.get(entry.slug));
+  if (!family) return false;
   if (task === "any") return true;
-  if (task === "burner") return makerLine.get(entry.slug) === "burner";
-  if (task === "auto") return category === "auto" && makerLine.get(entry.slug) !== "burner";
-  if (task === "water") return category === "hw115" || category === "hw170" || category === "water";
-  return category === task;
+  if (task === "burner") return family === "burner";
+  if (task === "auto") return family === "automation";
+  if (task === "water") return family === "water";
+  return family === task;
 }
 
 function knownRange(series: Series, kind: "power" | "steam") {

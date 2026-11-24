@@ -1,3 +1,5 @@
+import { manufacturerBySlug } from "@/data/manufacturers";
+import { findAnalogCandidates, type AnalogHit } from "@/lib/analog-engine";
 import { abcoSeries } from "@/data/abco";
 import { acboilersSeries } from "@/data/acboilers";
 import { acvSeries } from "@/data/acv";
@@ -619,84 +621,37 @@ export const publishedCatalogs: { slug: string; title: string; series: Series[] 
   ...fills.map((item) => ({ slug: item.slug, title: item.title, series: item.series })),
 ];
 
-function family(id: CategoryId) {
-  if (id === "hw115" || id === "hw170" || id === "water") return "water";
-  return id;
-}
-
-function rangesOverlap(minA: number | null, maxA: number | null, minB: number | null, maxB: number | null) {
-  if (minA == null && maxA == null) return false;
-  if (minB == null && maxB == null) return false;
-  const left = Math.max(minA ?? maxA ?? 0, minB ?? maxB ?? 0);
-  const right = Math.min(maxA ?? minA ?? 0, maxB ?? minB ?? 0);
-  return right >= left;
-}
-
-export type AnalogHit = {
-  slug: string;
-  maker: string;
-  series: Series;
-  note: string;
-};
+export type { AnalogHit } from "@/lib/analog-engine";
+const analogEntries = publishedCatalogs.flatMap((catalog) =>
+  catalog.series.map((series) => ({
+    slug: catalog.slug,
+    maker: catalog.title,
+    line: manufacturerBySlug(catalog.slug)?.line,
+    series,
+  })),
+);
 
 export function analogsForRequest(
   input: { categoryId: CategoryId; fuel: FuelId | null; powerKw: number | null; steamKgH: number | null },
   limit = 8,
 ): AnalogHit[] {
-  const probe: Series = {
-    id: "request",
-    name: "Запрос",
-    categoryId: input.categoryId,
-    kind: "",
-    image: "",
-    summary: "",
-    powerMinKw: input.powerKw,
-    powerMaxKw: input.powerKw,
-    steamMinKgH: input.steamKgH,
-    steamMaxKgH: input.steamKgH,
-    tempMaxC: null,
-    pressureNote: null,
-    fuels: input.fuel ? [input.fuel] : [],
-    feature: "",
-    extra: null,
-    sizes: [],
-    sizesNote: null,
-    aliases: [],
+  const names: Partial<Record<CategoryId, string>> = {
+    water: "Водогрейный котёл", hw115: "Водогрейный котёл",
+    hw170: "Высокотемпературный водогрейный котёл",
+    steam: "Паровой котёл", oil: "Термомасляный котёл",
+    air: "Воздухонагреватель", auto: "Горелка", block: "Котельный блок",
   };
-  return similarSeries(probe, "", limit);
+  const probe: Series = {
+    id: "request", name: "Запрос", categoryId: input.categoryId,
+    kind: names[input.categoryId] ?? "", image: "", summary: "",
+    powerMinKw: input.powerKw, powerMaxKw: input.powerKw,
+    steamMinKgH: input.steamKgH, steamMaxKgH: input.steamKgH,
+    tempMaxC: null, pressureNote: null, fuels: input.fuel ? [input.fuel] : [],
+    feature: "", extra: null, sizes: [], sizesNote: null, aliases: [],
+  };
+  return findAnalogCandidates(probe, "", analogEntries, limit);
 }
 
 export function similarSeries(source: Series, sourceSlug: string, limit = 8): AnalogHit[] {
-  const group = family(source.categoryId);
-  const hits: { score: number; hit: AnalogHit }[] = [];
-  for (const catalog of publishedCatalogs) {
-    for (const series of catalog.series) {
-      if (catalog.slug === sourceSlug && series.id === source.id) continue;
-      if (family(series.categoryId) !== group) continue;
-      const shared = source.fuels.filter((fuel) => series.fuels.includes(fuel));
-      if (source.fuels.length > 0 && series.fuels.length > 0 && shared.length === 0) continue;
-      const range = group === "steam"
-        ? rangesOverlap(source.steamMinKgH, source.steamMaxKgH, series.steamMinKgH, series.steamMaxKgH)
-        : rangesOverlap(source.powerMinKw, source.powerMaxKw, series.powerMinKw, series.powerMaxKw);
-      const bits = ["та же задача"];
-      let score = 4;
-      if (series.categoryId === source.categoryId) score += 3;
-      if (range) {
-        score += 3;
-        bits.push("диапазон пересекается");
-      }
-      if (shared.length) {
-        score += shared.length;
-        bits.push("общее топливо");
-      }
-      hits.push({
-        score,
-        hit: { slug: catalog.slug, maker: catalog.title, series, note: bits.join(", ") },
-      });
-    }
-  }
-  return hits
-    .sort((a, b) => b.score - a.score || a.hit.series.name.localeCompare(b.hit.series.name, "ru"))
-    .slice(0, limit)
-    .map((item) => item.hit);
+  return findAnalogCandidates(source, sourceSlug, analogEntries, limit, manufacturerBySlug(sourceSlug)?.line);
 }

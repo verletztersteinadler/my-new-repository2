@@ -67,8 +67,9 @@ export function equipmentFamily(series: Series, makerLine?: LineId): EquipmentFa
   if (category === "auto") {
     // "Горелки" and "шкафы управления" share auto in the old catalogue:
     // an explicit equipment designation overrides a broad maker line.
-    if (controlWords.test(text) && !/^(?:горелк|burner)/iu.test(series.kind.trim())) return "automation";
+    if (/шкаф(?:\s+|ы\s+)управлен|блок управления|система управления|контроллер|control cabinet|\bcontroller\b/iu.test(series.kind)) return "automation";
     if (burnerWords.test(text)) return "burner";
+    if (controlWords.test(text)) return "automation";
     return makerLine === "burner" ? "burner" : "automation";
   }
 
