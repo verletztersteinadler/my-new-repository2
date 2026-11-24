@@ -31,6 +31,8 @@ jobs:
           cache: npm
       - name: Install project dependencies
         run: npm ci --no-audit --no-fund
+      - name: Test image audit validation rules
+        run: node --test scripts/image-audit.test.mjs
       - name: Gate images and generate provenance report
         run: npm run check:images && npm run audit:images
       - name: Upload image audit report
@@ -96,14 +98,8 @@ jobs:
           name: kotly-pro-ISPmanager-2026-11-24
           path: kotly-pro-ISPmanager-2026-11-24.zip
           retention-days: 30
-      - name: Publish ZIP in GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Show ZIP artifact publication details
         shell: bash
         run: |
-          set -euo pipefail
-          gh release create "ispmanager-static-${GITHUB_RUN_NUMBER}" \
-            "kotly-pro-ISPmanager-2026-11-24.zip" \
-            --title "kotly.pro static ISPmanager package ${GITHUB_RUN_NUMBER}" \
-            --notes "Validated static export. Upload the ZIP contents to /www/kotly.pro/ in ISPmanager. Server-side lead endpoints are not included in a static archive." \
-            --target "$GITHUB_SHA"
+          echo "Validated ZIP is uploaded as the GitHub Actions artifact named kotly-pro-ISPmanager-2026-11-24."
+          echo "Release publishing is intentionally disabled: repository GitHub Actions token lacks Releases write permissions (HTTP 403)."
