@@ -278,7 +278,7 @@ export function SolutionBuilder() {
       <div className="rounded-3xl border border-line bg-surface p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">Инженерный справочник</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">Подбор оборудования</p>
             <h2 className="mt-2 font-display text-3xl font-extrabold leading-[1.04] tracking-[-0.04em] sm:text-4xl">Подбор по техническим параметрам</h2>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
               Отбор по подтверждённым диапазонам серий. Числа пересчитываются в единицы СИ; отсутствие характеристики не заменяется нулём.
@@ -376,7 +376,7 @@ export function SolutionBuilder() {
               <p className="mt-2 text-sm text-ink">{targetMPa == null ? "1 бар = 0,1 МПа = 100 кПа" :
                 "= " + fmt(targetMPa, 6) + " МПа = " + fmt(targetMPa * 1000, 4) + " кПа = " + fmt(targetMPa * 10, 4) + " бар"}</p>}
             <p className="mt-2 text-xs leading-relaxed text-muted">
-              Давление сохраняется в техническом запросе, но не отбирает серии: сейчас в исходных данных только текстовые примечания о давлении, без единого числового поля и условий измерения.
+              Давление учитывается в вашем запросе. Допустимые рабочие параметры конкретной серии уточняются по технической документации.
             </p>
           </details>
         </div>
@@ -393,7 +393,7 @@ export function SolutionBuilder() {
 
         <div className="mt-7 flex flex-wrap items-end justify-between gap-3 border-t border-line pt-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Результат по открытым сериям</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Результаты подбора</p>
             <p className="mt-1 font-display text-3xl font-extrabold tabular-nums">{hits.length} <span className="text-sm font-medium text-muted">из {allEntries.length}</span></p>
           </div>
           <div className="grid gap-1 text-xs font-medium text-muted">
@@ -446,7 +446,7 @@ export function SolutionBuilder() {
           <div id="konsultaciya" className="mt-6 border-t border-line pt-5">
             <h3 className="font-display text-2xl font-extrabold">Инженерная консультация</h3>
             <p className="mt-2 max-w-2xl text-sm text-muted">
-              Передайте исходные условия специалисту. Справочник не подтверждает рабочие параметры оборудования и не оформляет заказ.
+              Результат предварительный. Для проверки параметров и комплектации отправьте запрос специалисту.
             </p>
             <div className="mt-4 max-w-xl">
               <LeadForm key={comment} context={{ intent: "pick" }} initialComment={comment} submitLabel="Отправить технический запрос" />
