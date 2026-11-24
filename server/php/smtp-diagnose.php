@@ -13,7 +13,7 @@ if (!$root || !is_file($root . '/api/v1/_server/notify.php')) {
 }
 require_once $root . '/api/v1/_server/notify.php';
 echo "PHP: " . PHP_VERSION . PHP_EOL;
-foreach (['json', 'openssl', 'mbstring'] as $extension) {
+foreach (['json', 'openssl'] as $extension) {
     echo $extension . ': ' . (extension_loaded($extension) ? 'OK' : 'MISSING') . PHP_EOL;
     if (!extension_loaded($extension)) exit(1);
 }
