@@ -100,7 +100,8 @@ function linkedCalc(id:string, name:string, values:Record<string,string>) {
   for(const [key,value] of Object.entries(values)) {
     if(value.trim())search.set("v_"+key,value);
   }
-  return <a href={"/calculators/"+encodeURIComponent(id)+"?"+search.toString()} className="inline-flex min-h-10 items-center rounded-lg border border-line px-4 text-sm font-semibold text-ink hover:bg-chip">{name} ↗</a>;
+  return <button type="button" onClick={()=>window.location.assign("/calculators/"+encodeURIComponent(id)+"?"+search.toString())}
+    className="inline-flex min-h-10 items-center rounded-lg border border-line px-4 text-sm font-semibold text-ink hover:bg-chip">{name} ↗</button>;
 }
 export function CalculatorDetail({tool}:{tool:string}) {
   const def=calculatorById(tool);
@@ -232,9 +233,10 @@ function CalculatorContent({def}:{def:CalDefinition}) {
           Неподтверждённые модели не выдаются за готовую спецификацию.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
-          <a href={transferLink(def,result)} className="inline-flex min-h-11 items-center rounded-xl bg-accent px-5 text-sm font-bold text-on-accent hover:bg-accent-hover">
+          <button type="button" onClick={()=>window.location.assign(transferLink(def,result))}
+            className="inline-flex min-h-11 items-center rounded-xl bg-accent px-5 text-sm font-bold text-on-accent hover:bg-accent-hover">
             Передать в конструктор котельной →
-          </a>
+          </button>
           <Link to="/" className="inline-flex min-h-11 items-center rounded-xl border border-white/30 px-5 text-sm font-bold hover:bg-white/10">Каталог котлов</Link>
           <Link to="/nasosy" className="inline-flex min-h-11 items-center rounded-xl border border-white/30 px-5 text-sm font-bold hover:bg-white/10">Насосы</Link>
         </div>
