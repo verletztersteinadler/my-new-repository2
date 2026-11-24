@@ -45,11 +45,11 @@ export function LeadForm({
   if (leadId) {
     return (
       <div className="rounded-xl border border-line bg-chip p-4" role="status">
-        <p className="text-base font-semibold">Обращение {leadId} принято</p>
+        <p className="text-base font-semibold">{delivery === "sent" ? "Запрос отправлен" : "Запрос сохранён"} · {leadId}</p>
         <p className="mt-2 text-sm text-muted">
           {delivery === "sent"
-            ? "Обращение сохранено, уведомление передано почтовому серверу. Запрос будет рассмотрен; отправка формы не является оформлением заказа."
-            : "Обращение сохранено на сервере. Отправка уведомления на почту ожидается; это не означает, что письмо уже доставлено."}
+            ? "Запрос получен. Мы свяжемся с вами по указанным контактам."
+            : "Запрос сохранён, но почтовый сервер пока не принял уведомление. Если вопрос срочный, напишите на info@kotly.pro и укажите номер обращения."}
         </p>
       </div>
     );
@@ -62,7 +62,7 @@ export function LeadForm({
     setPending(true);
     setErrors({});
     try {
-      const response = await fetch("/api/v1/leads", {
+      const response = await fetch("/api/v1/leads.php", {
         method: "POST",
         headers: { accept: "application/json", "content-type": "application/json" },
         body: JSON.stringify({
@@ -91,7 +91,7 @@ export function LeadForm({
       }
       setDelivery(payload.delivery === "sent" ? "sent" : "pending");
       setLeadId(payload.lead_id);
-      onDone?.(payload.lead_id);
+      if (payload.delivery === "sent") onDone?.(payload.lead_id);
     } catch {
       setErrors({ form: "Нет ответа сервера. Неизвестно, была ли заявка сохранена. Повторная отправка использует тот же идентификатор." });
     } finally {
@@ -100,7 +100,7 @@ export function LeadForm({
   }
 
   return (
-    <form className="grid gap-3 sm:grid-cols-2" action="/api/v1/leads" method="post" onSubmit={onSubmit} noValidate>
+    <form className="grid gap-3 sm:grid-cols-2" action="/api/v1/leads.php" method="post" onSubmit={onSubmit} noValidate>
       <input type="hidden" name="submission_id" value={submissionId.current} />
       <input type="hidden" name="series_id" value={context.seriesId ?? ""} />
       <input type="hidden" name="category_id" value={context.categoryId ?? series?.categoryId ?? ""} />
@@ -113,7 +113,7 @@ export function LeadForm({
         </label>
       </p>
       <p className="sm:col-span-2 text-sm text-muted">
-        Обращение остаётся в справочнике. Завод эту форму не получает. Запрос принят для рассмотрения технических требований и подготовки ответа; отправка формы не является оформлением заказа.
+        Опишите задачу — мы рассмотрим параметры оборудования и свяжемся с вами. Отправка запроса не означает оформление заказа.
       </p>
       {series ? (
         <p className="sm:col-span-2 rounded-sm bg-chip px-3 py-2 text-sm">
