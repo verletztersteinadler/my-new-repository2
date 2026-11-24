@@ -50,7 +50,6 @@ export function HomePage() {
               Подбор
             </a>
             <Link to="/kotelnaya" className="font-semibold text-accent hover:text-ink">Котельная под ключ</Link>
-            <Link to="/calculators" className="hover:text-ink">Калькуляторы</Link>
             <Link to="/configurators" className="hover:text-ink">Конфигураторы</Link>
             <Link to="/nasosy" className="hover:text-ink">Насосы</Link>
             <a href="#manufacturers" className="hover:text-ink">
@@ -80,6 +79,14 @@ export function HomePage() {
           <p className="mt-6 max-w-xl text-base text-muted">
             Открытые серии можно отфильтровать и запросить консультацию, подбор оборудования или готовое инженерное решение. Это не покупка и не сайт производителя.
           </p>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Link to="/calculators" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-accent px-6 text-sm font-extrabold text-on-accent shadow-sm transition hover:bg-accent-hover">
+              Выполнить инженерный расчёт →
+            </Link>
+            <p className="max-w-xs text-xs leading-relaxed text-muted">
+              52 калькулятора онлайн: котлы, пар, насосы, топливо и гидравлика.
+            </p>
+          </div>
         </section>
 
         <SolutionBuilder />
@@ -126,14 +133,14 @@ export function HomePage() {
           <div className="flex flex-col justify-between gap-5 rounded-3xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:p-7">
             <div className="max-w-2xl">
               <p className="text-xs font-bold uppercase tracking-[0.15em] text-accent">Инженерный центр · 52 расчёта</p>
-              <h2 className="mt-2 font-display text-2xl font-extrabold">Калькуляторы воды, пара, топлива и трубопроводов</h2>
+              <h2 className="mt-2 font-display text-2xl font-extrabold">Инженерные калькуляторы онлайн — 52 инструмента</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 Пересчёт давления и энергии, тепловые нагрузки и расходы воды, IAPWS-IF97 для пара,
                 потребление топлива и гидравлика. Результаты можно перенести в конструктор котельной.
               </p>
             </div>
             <Link to="/calculators" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-5 text-sm font-bold text-on-accent hover:bg-accent-hover">
-              Инженерные расчёты →
+              Выполнить инженерный расчёт →
             </Link>
             <Link to="/configurators" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl border border-line px-5 text-sm font-bold text-ink hover:bg-chip">
               4 конфигуратора →
