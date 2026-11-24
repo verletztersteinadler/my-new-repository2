@@ -110,6 +110,9 @@ jobs:
       - name: Verify published image provenance
         run: npm run check:images
 
+      - name: Validate series naming across catalog
+        run: npm run test:series-names && npm run audit:series-names
+
       - name: Validate catalog
         run: npm run check:catalog --if-present
 
