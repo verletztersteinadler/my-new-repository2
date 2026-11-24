@@ -72,7 +72,7 @@ function validatedInput(): array
         $errors['consent'] = 'Нужно согласие на обработку данных';
     }
     $consentVersion = value($input, 'consent_version', 80);
-    if ($consentVersion !== 'kotly-consent-draft-2026-11-15') {
+    if (!in_array($consentVersion, ['kotly-consent-2026-11-24', 'kotly-consent-draft-2026-11-15'], true)) {
         $errors['consent'] = 'Обновите страницу и согласие на обработку данных';
     }
     if ($errors !== []) reply(['message' => 'Проверьте поля', 'errors' => $errors], 422);
@@ -92,11 +92,11 @@ function validatedInput(): array
     ];
 }
 try {
+    $input = validatedInput();
     $config = kotlyMailConfig();
     if (!$config) {
-        reply(['message' => 'Почта сайта ещё не настроена. Повторите отправку позже.'], 503);
+        reply(['message' => 'Приём заявок временно недоступен. Свяжитесь с нами по info@kotly.pro.'], 503);
     }
-    $input = validatedInput();
     $folder = kotlyPrivatePath() . '/leads';
     if (!is_dir($folder) && !mkdir($folder, 0700, true) && !is_dir($folder)) {
         throw new RuntimeException('Could not create storage folder');
@@ -159,7 +159,8 @@ try {
         'status' => 'accepted',
         'delivery' => $lead['delivery'],
         'replay' => $replay,
-    ], $replay ? 200 : 201);
+        'message' => $lead['delivery'] === 'sent' ? 'Сообщение принято почтовым сервером' : 'Заявка сохранена, доставка почты ожидает повторной попытки',
+    ], $lead['delivery'] === 'sent' ? ($replay ? 200 : 201) : 202);
 } catch (Throwable $error) {
     error_log('kotly.pro lead endpoint failure: ' . $error->getMessage());
     reply(['message' => 'Не удалось сохранить заявку. Повторите отправку позже.'], 503);
