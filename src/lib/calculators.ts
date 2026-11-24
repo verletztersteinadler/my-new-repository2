@@ -7,8 +7,8 @@
  * Reference: Engineering Calculators TZ, 23 November 2026, sections 1–5, 9, 11.
  */
 import { solvePT, solvePx, solveTx } from "iapws-if97";
-import { secondaryDefinitions } from "./calculators-secondary-definitions";
-import { calculateSecondary } from "./calculators-secondary";
+import { secondaryDefinitions } from "./calculators-secondary-definitions.ts";
+import { calculateSecondary } from "./calculators-secondary.ts";
 
 export type CalField = {
   id: string;
