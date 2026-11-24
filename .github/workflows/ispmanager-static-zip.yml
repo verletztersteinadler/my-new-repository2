@@ -28,12 +28,12 @@ jobs:
           cache: npm
       - name: Install project dependencies
         run: npm ci --no-audit --no-fund
-      - name: Verify TypeScript
-        run: npm run typecheck
-      - name: Build static prerendered site
+      - name: Build static prerendered site and regenerate route typings
         env:
           KOTLY_STATIC_EXPORT: '1'
         run: npm run build:dev
+      - name: Verify TypeScript with regenerated routes
+        run: npm run typecheck
       - name: Inspect public export
         shell: bash
         run: |
