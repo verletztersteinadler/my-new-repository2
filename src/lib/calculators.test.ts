@@ -13,8 +13,8 @@ function value(id: string, label: string, updates: Record<string,string> = {}) {
 function near(a:number, expected:number, tolerance:number, message?:string) {
   assert.ok(Math.abs(a-expected)<=tolerance,(message??"") + " expected "+expected+" ±"+tolerance+", got "+a);
 }
-test("All 16 first-release calculators have unique permanent slugs", () => {
-  assert.equal(calculatorDefinitions.length,16);
+test("All 52 calculators have unique permanent slugs and computable defaults", () => {
+  assert.equal(calculatorDefinitions.length,52);
   assert.equal(new Set(calculatorDefinitions.map(x=>x.id)).size,16);
   for(const tool of calculatorDefinitions) {
     const result=read(tool.id);
