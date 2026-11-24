@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { ArrowRight, Calculator, Clock3, Layers3, Settings2, ShieldCheck } from "lucide-react";
 import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/logo";
+import { CatalogHeaderSearch } from "@/components/catalog-header-search";
+import { matchingManufacturerSlugs, normalizeCatalogText } from "@/lib/catalog-search";
 import { SolutionBuilder } from "@/components/solution-builder";
 import { manufacturers, regions, lines, type RegionId, type LineId } from "@/data/manufacturers";
 import { publishedCatalogs } from "@/data/series-index";
@@ -15,17 +17,18 @@ export function HomePage() {
   const navigate = useNavigate({ from: "/" });
   const region = regions.some((item) => item.id === search.region) ? (search.region as RegionId) : undefined;
   const line = lines.some((item) => item.id === search.line) ? (search.line as LineId) : undefined;
-  const q = (search.q ?? "").trim().toLocaleLowerCase("ru");
+  const q = normalizeCatalogText(search.q ?? "");
+  const catalogMatches = useMemo(() => q ? matchingManufacturerSlugs(q) : null, [q]);
 
   const rows = useMemo(() => {
     const found = manufacturers.filter((item) => {
       if (region && item.region !== region) return false;
       if (line && item.line !== line) return false;
       if (!q) return true;
-      return `${item.title} ${item.name} ${item.place}`.toLocaleLowerCase("ru").includes(q);
+      return catalogMatches?.has(item.slug) ?? false;
     });
     return found.slice().sort((a, b) => Number(b.published) - Number(a.published) || a.title.localeCompare(b.title, "ru"));
-  }, [q, region, line]);
+  }, [q, region, line, catalogMatches]);
 
   function patch(next: { q?: string; region?: string; line?: string }) {
     navigate({
@@ -46,13 +49,17 @@ export function HomePage() {
       <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0c1520] text-white">
         <div className="mx-auto flex h-16 max-w-[1536px] items-center gap-4 px-4 lg:h-20 lg:px-8">
           <Logo light />
-          <nav className="ml-auto hidden items-center gap-7 text-sm font-semibold text-white/85 lg:flex" aria-label="Навигация">
+          <nav className="ml-auto hidden items-center gap-4 text-sm font-semibold text-white/85 lg:flex xl:gap-6" aria-label="Навигация">
             <a href="#manufacturers" className="transition-colors hover:text-white">Каталог</a>
             <Link to="/kotelnaya" className="transition-colors hover:text-white">Решения</Link>
             <Link to="/nasosy" className="transition-colors hover:text-white">Насосы</Link>
             <a href="#podbor" className="transition-colors hover:text-white">Подбор</a>
             <Link to="/politika" className="transition-colors hover:text-white">О проекте</Link>
           </nav>
+          <CatalogHeaderSearch className="hidden w-[min(28vw,25rem)] shrink-0 lg:block" />
+        </div>
+        <div className="mx-auto max-w-[1536px] px-4 pb-3 pr-[4.75rem] lg:hidden">
+          <CatalogHeaderSearch compact />
         </div>
       </header>
 
@@ -152,8 +159,8 @@ export function HomePage() {
           <input
               value={search.q ?? ""}
               onChange={(event) => patch({ q: event.target.value })}
-              placeholder="Название"
-              aria-label="Поиск по производителю"
+              placeholder="Производитель, серия или обозначение модели"
+              aria-label="Поиск по производителю, серии и модели"
               className="h-12 w-full rounded-sm border border-line bg-surface px-5 text-sm"
             />
           <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Направление">
@@ -200,7 +207,7 @@ export function HomePage() {
 
         {rows.length === 0 ? (
           <p className="mx-auto mt-6 max-w-6xl border border-line bg-surface px-4 py-8 text-center text-sm text-muted">
-            По запросу никого нет. Сбросьте регион или измените фразу.
+            Ничего не найдено. Попробуйте название производителя, серии или обозначение модели.
           </p>
         ) : (
           <ul className="mx-auto mt-4 grid max-w-6xl gap-3 px-4 sm:grid-cols-2 lg:grid-cols-3">
