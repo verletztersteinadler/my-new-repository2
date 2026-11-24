@@ -15,7 +15,7 @@ function near(a:number, expected:number, tolerance:number, message?:string) {
 }
 test("All 52 calculators have unique permanent slugs and computable defaults", () => {
   assert.equal(calculatorDefinitions.length,52);
-  assert.equal(new Set(calculatorDefinitions.map(x=>x.id)).size,16);
+  assert.equal(new Set(calculatorDefinitions.map(x=>x.id)).size,52);
   for(const tool of calculatorDefinitions) {
     const result=read(tool.id);
     assert.ok(result.rows.length>=2,tool.id);
