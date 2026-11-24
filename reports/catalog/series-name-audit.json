@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T13:56:10.362Z",
+  "generatedAt": "2026-11-24T13:56:50.976Z",
   "rules": "Canonical display = manufacturer + exact series name, without duplicate prefixes. Source labels are retained except verified LAVART corrections.",
   "totals": {
     "catalogs": 310,
