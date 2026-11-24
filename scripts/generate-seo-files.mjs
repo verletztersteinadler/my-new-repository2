@@ -25,5 +25,5 @@ const xml = '<?xml version="1.0" encoding="UTF-8"?>\n' +
   paths.map((path) => '  <url><loc>' + entities(origin + (path ? "/" + encodeURIComponent(path) : "/")) + '</loc></url>').join("\n") +
   '\n</urlset>\n';
 writeFileSync(resolve(root, "sitemap.xml"), xml);
-writeFileSync(resolve(root, "robots.txt"), "User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /manufacturers/\nSitemap: https://kotly.pro/sitemap.xml\n");
+writeFileSync(resolve(root, "robots.txt"), "User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: https://kotly.pro/sitemap.xml\n");
 console.log("SEO files created for " + unique.length + " manufacturer pages and " + requiredPages.length + " landing pages.");
