@@ -9,7 +9,7 @@ import { rangeIntersects } from "./engineering-units.ts";
 import { pumpGroupBrief, type PumpGroup } from "./pump-engineering.ts";
 import { pumpRoles } from "../data/pumps.ts";
 
-export type PlantMode = "water" | "steam" | "combined";
+export type PlantMode = "water" | "steam" | "combined" | "oil";
 export type DutyKind = "water" | "steam";
 export type ReserveMode = "none" | "n-plus-one";
 export type OperationMode = "continuous" | "seasonal" | "variable";
@@ -54,7 +54,7 @@ export function calculateTrain(demand: number, totalUnits: number, reserve: Rese
 export function calculatePlant(input: PlantDuties) {
   return {
     heat: input.mode === "steam" ? null : calculateTrain(input.heatKw, input.heatUnitCount, input.heatReserve),
-    steam: input.mode === "water" ? null : calculateTrain(input.steamKgH, input.steamUnitCount, input.steamReserve),
+    steam: input.mode === "water" || input.mode === "oil" ? null : calculateTrain(input.steamKgH, input.steamUnitCount, input.steamReserve),
   };
 }
 
@@ -164,7 +164,7 @@ export function buildTechnicalBrief(x: PlantDraft): string {
     "ПРЕДВАРИТЕЛЬНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ — КОТЕЛЬНАЯ",
     "Статус: инженерный запрос для уточнения, не проектная документация.",
     "Объект: " + (x.object.trim() || "не указан") + "; местоположение: " + (x.location.trim() || "не указано"),
-    "Тип котельной: " + ({ water: "водогрейная", steam: "паровая", combined: "комбинированная" } as const)[x.mode],
+    "Тип котельной: " + ({ water: "водогрейная", steam: "паровая", combined: "комбинированная", oil: "термомасляная" } as const)[x.mode],
     "Потребители: " + (x.purpose.length ? x.purpose.join(", ") : "не указаны"),
   ];
   if (x.mode !== "steam") {
@@ -172,13 +172,18 @@ export function buildTechnicalBrief(x: PlantDraft): string {
       "Тепловые нагрузки, кВт: отопление/вентиляция " + fmt(x.heatLoads.heatingKw)
         + "; ГВС " + fmt(x.heatLoads.dhwKw) + "; технологические нужды " + fmt(x.heatLoads.processKw)
         + ". Сумма без коэффициента неодновременности: " + fmt(x.heatLoads.heatingKw + x.heatLoads.dhwKw + x.heatLoads.processKw) + " кВт.",
-      "Водяной график: " + (x.waterSupplyC == null ? "уточнить" : fmt(x.waterSupplyC) + " °C")
-        + " / " + (x.waterReturnC == null ? "уточнить" : fmt(x.waterReturnC) + " °C") + ".",
-      "Давление водяного контура: " + (x.waterPressureMPa == null ? "уточнить" : fmt(x.waterPressureMPa) + " МПа") + ".",
-      "Схема присоединения: " + scheme[x.circuit] + ".",
+      ...(x.mode === "oil" ? [
+        "Теплоноситель: термомасло; температура подачи: " + (x.waterSupplyC == null ? "уточнить" : fmt(x.waterSupplyC) + " °C") + ".",
+        "Давление контура термомасла: " + (x.waterPressureMPa == null ? "уточнить" : fmt(x.waterPressureMPa) + " МПа") + ".",
+      ] : [
+        "Водяной график: " + (x.waterSupplyC == null ? "уточнить" : fmt(x.waterSupplyC) + " °C")
+          + " / " + (x.waterReturnC == null ? "уточнить" : fmt(x.waterReturnC) + " °C") + ".",
+        "Давление водяного контура: " + (x.waterPressureMPa == null ? "уточнить" : fmt(x.waterPressureMPa) + " МПа") + ".",
+        "Схема присоединения: " + scheme[x.circuit] + ".",
+      ]),
     );
   }
-  if (x.mode !== "water") {
+  if (x.mode !== "water" && x.mode !== "oil") {
     lines.push(
       "Требуемая паропроизводительность: " + fmt(x.steamKgH / 3600, 6) + " кг/с (" + fmt(x.steamKgH) + " кг/ч).",
       "Требуемое давление пара: " + (x.steamPressureMPa == null ? "уточнить" : fmt(x.steamPressureMPa) + " МПа") + ".",
@@ -195,7 +200,7 @@ export function buildTechnicalBrief(x: PlantDraft): string {
       + "; суммарная установленная номинальная производительность не менее " + fmt(t.minimumTotalInstalled, 6) + " " + unit + ".",
     );
   };
-  unitLine("Водогрейная группа", x.heatTrain, "кВт");
+  unitLine(x.mode === "oil" ? "Термомасляная группа" : "Водогрейная группа", x.heatTrain, "кВт");
   unitLine("Паровая группа", x.steamTrain, "кг/ч");
   lines.push(
     "Основное топливо: " + (x.mainFuel || "уточнить") + "; резервное: " + (x.reserveFuel || "не предусмотрено / уточнить") + ".",
