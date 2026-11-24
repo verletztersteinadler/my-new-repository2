@@ -8,17 +8,18 @@ import {
 import type { PlantMode } from "@/lib/boiler-house";
 
 const control="h-10 w-full min-w-0 rounded-xl border border-line bg-surface px-3 text-sm text-ink";
-const roleRestriction: Partial<Record<PumpRoleId,"water"|"steam">> = {
+const roleRestriction: Partial<Record<PumpRoleId,"water"|"steam"|"oil">> = {
   network:"water",circulation:"water",makeup:"water",
-  feedwater:"steam",condensate:"steam",
+  feedwater:"steam",condensate:"steam","thermal-oil":"oil",
 };
 export function validPumpRoles(mode: PlantMode) {
   return pumpRoles.filter((r)=>{
     const allowed=roleRestriction[r.id];
-    return !allowed || mode==="combined" || mode===allowed;
+    return !allowed || (mode==="combined" && allowed!=="oil") || mode===allowed;
   });
 }
 export function defaultPumpRoles(mode:PlantMode):PumpRoleId[] {
+  if(mode==="oil")return ["thermal-oil"];
   if(mode==="steam")return ["feedwater","condensate"];
   if(mode==="combined")return ["network","makeup","feedwater","condensate"];
   return ["network","makeup"];
