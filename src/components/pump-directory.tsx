@@ -1,3 +1,4 @@
+import { CatalogHeaderSearch } from "@/components/catalog-header-search";
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { pumpPilotCompanies, pumpResearchCounts, pumpRoles, type PumpRoleId } from "@/data/pumps";
@@ -39,6 +40,10 @@ export function PumpDirectoryPage() {
           <Link to="/" className="hover:text-accent">Котлы</Link>
           <Link to="/kotelnaya" className="hover:text-accent">Конструктор котельной</Link>
         </nav>
+        <div className="ml-auto hidden w-[min(30vw,22rem)] rounded-xl bg-[#0c1520] lg:block"><CatalogHeaderSearch /></div>
+      </div>
+      <div className="mx-auto max-w-6xl px-4 pb-3 pr-[4.75rem] lg:hidden">
+        <div className="rounded-xl bg-[#0c1520]"><CatalogHeaderSearch compact /></div>
       </div>
     </header>
     <main className="mx-auto max-w-6xl px-4 pb-16 pt-9">
