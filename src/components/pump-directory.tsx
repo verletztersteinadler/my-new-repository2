@@ -35,7 +35,7 @@ export function PumpDirectoryPage() {
     <header className="border-b border-line bg-surface">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
         <Link to="/" className="font-display text-xl font-extrabold">Котлы<span className="text-accent">.pro</span></Link>
-        <nav className="flex gap-4 text-sm font-semibold">
+        <nav className="mr-14 hidden gap-4 text-sm font-semibold lg:flex">
           <Link to="/" className="hover:text-accent">Котлы</Link>
           <Link to="/kotelnaya" className="hover:text-accent">Конструктор котельной</Link>
         </nav>
@@ -66,7 +66,7 @@ export function PumpDirectoryPage() {
           </label>
           <label className="grid gap-1 text-sm font-semibold">Страна
             <select value={country} onChange={(e)=>{setCountry(e.target.value);setLimit(25);}}
-              className="h-11 rounded-xl border border-line bg-surface px-3 text-sm">
+              className="h-11 w-full min-w-0 rounded-xl border border-line bg-surface px-3 text-sm">
               {regionLabels.map((v)=><option key={v}>{v}</option>)}
             </select>
           </label>
@@ -110,7 +110,7 @@ export function PumpDirectoryPage() {
           <p className="mt-2 text-xs"><strong>Параметры:</strong> {v.required}</p>
           <p className="mt-1 text-xs text-muted">{v.caution}</p>
         </div>)}</div>
-        <Link to="/kotelnaya" className="mt-6 inline-flex h-12 items-center rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent">
+        <Link to="/kotelnaya" className="mt-6 inline-flex min-h-12 max-w-full items-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-on-accent">
           Задать параметры насосных групп в конструкторе котельной →
         </Link>
       </section>
