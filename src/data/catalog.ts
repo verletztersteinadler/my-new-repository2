@@ -1,7 +1,6 @@
 export const MANUFACTURER_ID = "lavart";
 export const BRAND = "LAVART";
 export const CONSENT_VERSION = "kotly-consent-draft-2026-11-15";
-export const MANUFACTURER_SITE = "https://omzit.ru/";
 export const SOURCE_CHECKED = "2026-11-15";
 
 export type CategoryId = "hw115" | "hw170" | "water" | "steam" | "oil" | "block" | "auto" | "air";
@@ -373,12 +372,12 @@ export const seriesList: Series[] = [
 ];
 
 export const documents = [
-  { title: "ТР ТС 016 — водогрейные котлы до 115 °C", href: "https://omzit.ru/litsenzii-i-sertifikaty/" },
-  { title: "ТР ТС 032 — серии SW и SWD", href: "https://omzit.ru/litsenzii-i-sertifikaty/" },
-  { title: "ТР ТС 032 — паровые котлы SV", href: "https://omzit.ru/litsenzii-i-sertifikaty/" },
-  { title: "Сертификат на серию OV с пароперегревателем", href: "https://omzit.ru/litsenzii-i-sertifikaty/" },
-  { title: "ТР ТС 032 — термомасляная серия DMH", href: "https://omzit.ru/litsenzii-i-sertifikaty/" },
-  { title: "Сертификат на шкафы управления и котловой блок", href: "https://omzit.ru/litsenzii-i-sertifikaty/" },
+  { title: "ТР ТС 016 — водогрейные котлы до 115 °C" },
+  { title: "ТР ТС 032 — серии SW и SWD" },
+  { title: "ТР ТС 032 — паровые котлы SV" },
+  { title: "Сертификат на серию OV с пароперегревателем" },
+  { title: "ТР ТС 032 — термомасляная серия DMH" },
+  { title: "Сертификат на шкафы управления и котловой блок" },
 ];
 
 export function categoryById(id: string | undefined) {

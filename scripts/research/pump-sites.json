@@ -1,0 +1,180 @@
+{
+  "purpose": "Editorial research only. Never import into client-side code.",
+  "sources": [
+    {
+      "id": "pump-a-01",
+      "name": "ГМС Ливгидромаш",
+      "site": "https://www.hms-livgidromash.ru/",
+      "catalog": "https://www.hms-livgidromash.ru/catalog/",
+      "reference": "https://www.hms-livgidromash.ru/documentation/advertising-materials/264/"
+    },
+    {
+      "id": "pump-a-02",
+      "name": "Катайский насосный завод (КНЗ)",
+      "site": "https://knz.ru/",
+      "catalog": "https://knz.ru/catalog/nasosy-dlya-vody",
+      "reference": "https://knz.ru/catalog/ekspluatatsionnaya-informatsiya"
+    },
+    {
+      "id": "pump-a-03",
+      "name": "ЭНА",
+      "site": "https://www.ena.ru/",
+      "catalog": "https://www.ena.ru/products/nasosy_vodoteplosnabj/",
+      "reference": "https://www.ena.ru/products/nasosy_vodoteplosnabj/"
+    },
+    {
+      "id": "pump-a-04",
+      "name": "ИСТРАТЕХ",
+      "site": "https://www.istratex.ru/",
+      "catalog": "https://www.istratex.ru/catalog/",
+      "reference": "https://www.istratex.ru/reference-list/gazprom-teploenergo-mo/"
+    },
+    {
+      "id": "pump-a-05",
+      "name": "SVN PUMP",
+      "site": "https://svnpump.ru/",
+      "catalog": "https://svnpump.ru/catalog/nasosy/",
+      "reference": "https://svnpump.ru/"
+    },
+    {
+      "id": "pump-a-06",
+      "name": "ГМС Ливнынасос",
+      "site": "https://www.livnasos.ru/",
+      "catalog": "https://www.livnasos.ru/catalog/",
+      "reference": "https://livnasos.pro/documents/Tekhnicheskie%20katalogi/"
+    },
+    {
+      "id": "pump-a-07",
+      "name": "ВИЛЛИНА",
+      "site": "https://villina.ru/",
+      "catalog": "https://villina.ru/product/",
+      "reference": "https://villina.ru/product/"
+    },
+    {
+      "id": "pump-a-08",
+      "name": "Валдайский механический завод",
+      "site": "https://www.vmz-nasos.ru/",
+      "catalog": "https://www.vmz-nasos.ru/catalog.html",
+      "reference": "https://www.vmz-nasos.ru/"
+    },
+    {
+      "id": "pump-a-09",
+      "name": "UNIPUMP",
+      "site": "https://www.unipump.ru/",
+      "catalog": "https://www.unipump.ru/catalog--nasosy/",
+      "reference": "https://unipump.ru/upload/iblock/f3a/axtvll6h0o6zmfyhmfiwns942x4zmjey/Katalog-2026.-Promyshlennoe-oborudovanie.pdf"
+    },
+    {
+      "id": "pump-a-10",
+      "name": "Ридан (Ridan)",
+      "site": "https://ridan.ru/",
+      "catalog": "https://ridan.ru/catalog/1487/nasosy",
+      "reference": "https://ridan.ru/instruments/configurator-pumps"
+    },
+    {
+      "id": "pump-a-11",
+      "name": "Grundfos",
+      "site": "https://www.grundfos.com/",
+      "catalog": "https://product-selection.grundfos.com/",
+      "reference": "https://www.grundfos.com/solutions/support/select-configure-tendering"
+    },
+    {
+      "id": "pump-a-12",
+      "name": "Wilo",
+      "site": "https://wilo.com/",
+      "catalog": "https://wilo.com/us/en_us/Products/en_us/products",
+      "reference": "https://wilo.com/us/en_us/Products/en_us/products"
+    },
+    {
+      "id": "pump-a-13",
+      "name": "KSB",
+      "site": "https://www.ksb.com/",
+      "catalog": "https://www.ksb.com/en-gb/product/product-catalogue?productType=PUMP",
+      "reference": "https://www.ksb.com/en-gb/product/product-catalogue?productType=PUMP"
+    },
+    {
+      "id": "pump-a-14",
+      "name": "DAB Pumps",
+      "site": "https://www.dabpumps.com/",
+      "catalog": "https://www.dabpumps.com/en_en/products/catalog",
+      "reference": "https://www.dabpumps.com/en_en/products"
+    },
+    {
+      "id": "pump-a-15",
+      "name": "Lowara (Xylem)",
+      "site": "https://www.xylem.com/",
+      "catalog": "https://www.xylem.com/en-na/brands/lowara/lowara-products/",
+      "reference": "https://www.xylem.com/nl-nl/brand/lowara/"
+    },
+    {
+      "id": "pump-a-16",
+      "name": "Ebara",
+      "site": "https://www.ebaraeurope.com/",
+      "catalog": "https://ebara.com/global-en/building-industry/standard-pump/",
+      "reference": "https://ebara.com/global-en/building-industry/standard-pump/"
+    },
+    {
+      "id": "pump-a-17",
+      "name": "Calpeda",
+      "site": "https://www.calpeda.com/",
+      "catalog": "https://www.calpeda.com/en/products/",
+      "reference": "https://www.calpeda.com/en/products/"
+    },
+    {
+      "id": "pump-a-18",
+      "name": "SAER Elettropompe",
+      "site": "https://www.saerelettropompe.com/",
+      "catalog": "https://www.saerelettropompe.com/en/products/product-filter-search-results.html",
+      "reference": "https://www.saerelettropompe.com/en/products.html"
+    },
+    {
+      "id": "pump-a-19",
+      "name": "IMP Pumps",
+      "site": "https://imp-pumps.com/",
+      "catalog": "https://imp-pumps.com/pumps/",
+      "reference": "https://www.c-o-k.ru/articles/cirkulyacionnye-nasosy-dlya-sistem-otopleniya-kak-perestroilsya-rossiyskiy-rynok"
+    },
+    {
+      "id": "pump-a-20",
+      "name": "HERMETIC-Pumpen",
+      "site": "https://www.hermetic-pumpen.com/",
+      "catalog": "https://www.hermetic-pumpen.com/us-en/products/canned-motor-pump/canned-motor-pumps-with-explosion-protection",
+      "reference": "https://www.hermetic-pumpen.com/us-en/products/canned-motor-pump/canned-motor-pumps-with-explosion-protection"
+    },
+    {
+      "id": "pump-a-21",
+      "name": "DICKOW PUMPEN",
+      "site": "https://www.dickow.de/",
+      "catalog": "https://www.dickow.de/index.php/en/products-equipment",
+      "reference": "https://www.dickow.de/index.php/en/products-equipment"
+    },
+    {
+      "id": "pump-a-22",
+      "name": "ALLWEILER",
+      "site": "https://www.allweiler.com/",
+      "catalog": "https://pumps.circor.com/allweiler",
+      "reference": "https://pumps.circor.com/allweiler"
+    },
+    {
+      "id": "pump-a-23",
+      "name": "ProMinent",
+      "site": "https://www.prominent.com/",
+      "catalog": "https://www.prominent.com/en/Products/Products/Process-Metering-Pumps/pg-process-metering-pumps.html",
+      "reference": "https://www.prominent.com/en/Products/Products/Process-Metering-Pumps/pg-process-metering-pumps.html"
+    },
+    {
+      "id": "pump-a-24",
+      "name": "CNP Nanfang Pump Industry",
+      "site": "https://www.cnprussia.ru/",
+      "catalog": "https://www.cnprussia.ru/catalog/cnp/",
+      "reference": "https://www.cnprussia.ru/"
+    },
+    {
+      "id": "pump-a-25",
+      "name": "SHINHOO",
+      "site": "https://www.shinhoopump.com/",
+      "catalog": "https://www.shinhoopump.com/products",
+      "reference": "https://www.shinhoopump.com/products"
+    }
+  ]
+}

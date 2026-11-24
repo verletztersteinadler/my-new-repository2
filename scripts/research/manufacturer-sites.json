@@ -1,0 +1,1245 @@
+{
+  "purpose": "Editorial research only. Never import into client-side code.",
+  "sources": [
+    {
+      "slug": "arcus",
+      "site": "https://www.arcus.pro/"
+    },
+    {
+      "slug": "brox",
+      "site": "https://broxboiler.ru/"
+    },
+    {
+      "slug": "geffen",
+      "site": "https://geffen.ru/"
+    },
+    {
+      "slug": "huntel",
+      "site": "https://huntel.ru/"
+    },
+    {
+      "slug": "meteor-thermo",
+      "site": "https://laggartt.ru/"
+    },
+    {
+      "slug": "nobel",
+      "site": "https://nobelteplo.ru/"
+    },
+    {
+      "slug": "polykraft",
+      "site": "https://polykraft.ru/"
+    },
+    {
+      "slug": "rossen",
+      "site": "https://rossen.ru/"
+    },
+    {
+      "slug": "teplofor",
+      "site": "https://teploros.org/"
+    },
+    {
+      "slug": "vetros",
+      "site": "https://vetros-boiler.ru/"
+    },
+    {
+      "slug": "w-e-b",
+      "site": "https://wiseecoburner.ru/"
+    },
+    {
+      "slug": "zota",
+      "site": "https://zota.ru/"
+    },
+    {
+      "slug": "lavart",
+      "site": "https://omzit.ru/"
+    },
+    {
+      "slug": "temron",
+      "site": "https://temron.ru/"
+    },
+    {
+      "slug": "aalborg-energie-technik-aet",
+      "site": "https://www.aet-biomass.com/"
+    },
+    {
+      "slug": "ab-co-tt-boilers",
+      "site": "https://www.abco.dk/"
+    },
+    {
+      "slug": "ac-boilers-ansaldo-boilers",
+      "site": "https://www.acboilers.com/"
+    },
+    {
+      "slug": "acv",
+      "site": "https://www.acv.com/"
+    },
+    {
+      "slug": "akkaya",
+      "site": "https://en.akkaya.com.tr/"
+    },
+    {
+      "slug": "alanga-boiler-system",
+      "site": "https://alanga.uz/"
+    },
+    {
+      "slug": "alba-steam-generator",
+      "site": "https://albasteamgenerator.com/"
+    },
+    {
+      "slug": "alfa-laval-aalborg",
+      "site": "https://www.alfalaval.com/"
+    },
+    {
+      "slug": "ambitermo",
+      "site": "https://www.ambitermo.com/"
+    },
+    {
+      "slug": "andritz",
+      "site": "https://www.andritz.com/"
+    },
+    {
+      "slug": "apen-group",
+      "site": "https://www.apengroup.com/"
+    },
+    {
+      "slug": "ariterm",
+      "site": "https://ariterm.fi/"
+    },
+    {
+      "slug": "astebo",
+      "site": "https://www.astebo.com/"
+    },
+    {
+      "slug": "teyvi",
+      "site": "https://www.attsu.com/"
+    },
+    {
+      "slug": "babcock-wilcox",
+      "site": "https://www.babcock.com/"
+    },
+    {
+      "slug": "riley-power",
+      "site": "https://www.babcockpower.com/"
+    },
+    {
+      "slug": "babcock-wanson",
+      "site": "https://www.babcock-wanson.com/"
+    },
+    {
+      "slug": "baltur",
+      "site": "https://www.baltur.com/intl/"
+    },
+    {
+      "slug": "bbs-gmbh",
+      "site": "https://www.bay-boiler.com/"
+    },
+    {
+      "slug": "bentone",
+      "site": "https://bentone.com/en/"
+    },
+    {
+      "slug": "berkes",
+      "site": "https://www.berkesgroup.com/"
+    },
+    {
+      "slug": "bhel",
+      "site": "https://bhel.com/"
+    },
+    {
+      "slug": "biemmedue",
+      "site": "https://www.biemmedue.com/"
+    },
+    {
+      "slug": "binder-energietechnik",
+      "site": "https://www.binder-gmbh.at/"
+    },
+    {
+      "slug": "bosch-industriekessel",
+      "site": "https://www.bosch-industrial.com/"
+    },
+    {
+      "slug": "brox-brox",
+      "site": "https://www.brox.com.tr/"
+    },
+    {
+      "slug": "bryan-steam",
+      "site": "https://bryanboilers.com/"
+    },
+    {
+      "slug": "buderus",
+      "site": "https://www.buderus.com/"
+    },
+    {
+      "slug": "burmeister-wain-energy-bwe",
+      "site": "https://www.bwe.dk/"
+    },
+    {
+      "slug": "burnham-commercial",
+      "site": "https://www.burnhamcommercial.com/"
+    },
+    {
+      "slug": "byworth-boilers",
+      "site": "https://byworth.co.uk/"
+    },
+    {
+      "slug": "bono-energia",
+      "site": "https://cannonbono.com/"
+    },
+    {
+      "slug": "carlieuklima",
+      "site": "https://www.carlieuklima.it/"
+    },
+    {
+      "slug": "cerney",
+      "site": "https://www.cerney.es/"
+    },
+    {
+      "slug": "certuss",
+      "site": "https://www.certuss.com/"
+    },
+    {
+      "slug": "cfb-boilers",
+      "site": "https://steamboilers.co.uk/"
+    },
+    {
+      "slug": "cheema-boilers-cbl",
+      "site": "https://cheemaboilers.com/"
+    },
+    {
+      "slug": "chromalox",
+      "site": "https://www.chromalox.com/"
+    },
+    {
+      "slug": "cib-unigas",
+      "site": "https://www.cibunigas.com/"
+    },
+    {
+      "slug": "clayton-industries",
+      "site": "https://www.claytonindustries.com/"
+    },
+    {
+      "slug": "cleaver-brooks",
+      "site": "https://www.cleaverbrooks.com/"
+    },
+    {
+      "slug": "cochran",
+      "site": "https://cochran.co.uk/"
+    },
+    {
+      "slug": "columbia-boiler",
+      "site": "https://www.columbiaboiler.com/"
+    },
+    {
+      "slug": "compte-r",
+      "site": "https://www.compte-r.com/"
+    },
+    {
+      "slug": "cuenod",
+      "site": "https://www.cuenod.com/"
+    },
+    {
+      "slug": "danstoker",
+      "site": "https://danstoker.com/"
+    },
+    {
+      "slug": "de-dietrich-heating",
+      "site": "https://pro.dedietrich-heating.com/"
+    },
+    {
+      "slug": "dieffenbacher-energy-bertschenergy",
+      "site": "https://dieffenbacher.com/energy"
+    },
+    {
+      "slug": "dunphy-combustion",
+      "site": "https://www.dunphy-combustion.com/"
+    },
+    {
+      "slug": "ecoflam",
+      "site": "https://www.ecoflam-burners.com/"
+    },
+    {
+      "slug": "eko-prom-energo",
+      "site": "https://www.ekoprom-energo.uz/"
+    },
+    {
+      "slug": "ekotek-heat-technology",
+      "site": "https://www.ekotekkazan.com/"
+    },
+    {
+      "slug": "ariston-group",
+      "site": "https://www.elco.net/"
+    },
+    {
+      "slug": "elco-burners",
+      "site": "https://www.elco-burners.com/"
+    },
+    {
+      "slug": "electro-steam-generator",
+      "site": "https://www.electrosteam.com/"
+    },
+    {
+      "slug": "enorpa",
+      "site": "https://enorpa.com/"
+    },
+    {
+      "slug": "erensan",
+      "site": "https://erensan.com.tr/"
+    },
+    {
+      "slug": "eta-heiztechnik",
+      "site": "https://www.eta.co.at/"
+    },
+    {
+      "slug": "f-h-crone",
+      "site": "https://www.fhcrone.nl/"
+    },
+    {
+      "slug": "f-b-r-bruciatori",
+      "site": "https://www.fbr.it/eng/"
+    },
+    {
+      "slug": "fako",
+      "site": "https://www.fako.pl/"
+    },
+    {
+      "slug": "fbm-hudson-italiana",
+      "site": "https://www.fbmhudson.com/"
+    },
+    {
+      "slug": "komforts",
+      "site": "https://www.fergy.eu/"
+    },
+    {
+      "slug": "ferroli-industrial-solutions",
+      "site": "https://www.ferroli.com/"
+    },
+    {
+      "slug": "fives-north-american-combustion",
+      "site": "https://www.fivesgroup.com/"
+    },
+    {
+      "slug": "flowair",
+      "site": "https://flowair.com/"
+    },
+    {
+      "slug": "flucal-caldeiras",
+      "site": "https://www.flucal.pt/"
+    },
+    {
+      "slug": "forbes-marshall",
+      "site": "https://www.forbesmarshall.com/"
+    },
+    {
+      "slug": "frico",
+      "site": "https://www.frico.net/"
+    },
+    {
+      "slug": "fr-ling",
+      "site": "https://www.froeling.com/"
+    },
+    {
+      "slug": "fulton",
+      "site": "https://fulton.com/"
+    },
+    {
+      "slug": "garioni-naval",
+      "site": "https://www.garioninaval.com/"
+    },
+    {
+      "slug": "gekakonus",
+      "site": "https://gekakonus.net/"
+    },
+    {
+      "slug": "getabec",
+      "site": "https://www.getabecboiler.com/"
+    },
+    {
+      "slug": "giersch",
+      "site": "https://www.giersch.de/en/"
+    },
+    {
+      "slug": "greczka",
+      "site": "https://www.greczka.pl/"
+    },
+    {
+      "slug": "g-kta-is",
+      "site": "https://www.goktasisi.com.tr/"
+    },
+    {
+      "slug": "hargassner-industry-gilles",
+      "site": "https://www.hargassner.com/"
+    },
+    {
+      "slug": "htt-energy",
+      "site": "https://www.heat11.com/"
+    },
+    {
+      "slug": "astec",
+      "site": "https://astecindustries.com/products/industrial-heating/"
+    },
+    {
+      "slug": "heiztechnik",
+      "site": "https://heiztechnik.pl/"
+    },
+    {
+      "slug": "hkb-boiler-solutions",
+      "site": "https://hkbboiler.com/"
+    },
+    {
+      "slug": "hoval",
+      "site": "https://www.hoval.com/"
+    },
+    {
+      "slug": "hurst-boiler-welding",
+      "site": "https://www.hurstboiler.com/"
+    },
+    {
+      "slug": "i-var-industry-s-r-l",
+      "site": "https://www.ivarindustry.it/en/"
+    },
+    {
+      "slug": "ici-caldaie-lcz",
+      "site": "https://www.icicaldaie.com/"
+    },
+    {
+      "slug": "indeck-group",
+      "site": "https://indeck.com/"
+    },
+    {
+      "slug": "industrial-combustion",
+      "site": "https://www.industrialcombustion.com/"
+    },
+    {
+      "slug": "eratic",
+      "site": "https://www.innergy-global.com/"
+    },
+    {
+      "slug": "isgec-heavy-engineering",
+      "site": "https://www.isgec.com/"
+    },
+    {
+      "slug": "isimek",
+      "site": "https://en.isimek.com.tr/"
+    },
+    {
+      "slug": "istal",
+      "site": "https://istal.uz/"
+    },
+    {
+      "slug": "heaton",
+      "site": "https://www.heaton.com.tr/"
+    },
+    {
+      "slug": "john-thompson",
+      "site": "https://www.johnthompson.co.za/"
+    },
+    {
+      "slug": "john-zink-hamworthy-combustion",
+      "site": "https://www.hamworthy-combustion.com/"
+    },
+    {
+      "slug": "johnston-boiler",
+      "site": "https://johnstonboiler.com/"
+    },
+    {
+      "slug": "schneider-kessel-berlin",
+      "site": "https://jumag.com/"
+    },
+    {
+      "slug": "justsen-energiteknik-euro-therm",
+      "site": "https://justsen.dk/"
+    },
+    {
+      "slug": "kalvis",
+      "site": "https://www.kalvis.lt/"
+    },
+    {
+      "slug": "kawasaki-thermal-engineering",
+      "site": "https://www.khi.co.jp/corp/kte/EN/"
+    },
+    {
+      "slug": "kohlbach-energieanlagen",
+      "site": "https://www.onekohlbach.com/"
+    },
+    {
+      "slug": "kromschroder",
+      "site": "https://www.honeywell.com/"
+    },
+    {
+      "slug": "lambion-energy-solutions",
+      "site": "https://www.lambion.de/"
+    },
+    {
+      "slug": "lamborghini-calor",
+      "site": "https://www.lamborghinicalor.it/"
+    },
+    {
+      "slug": "lattner-boiler",
+      "site": "https://www.lattner.com/"
+    },
+    {
+      "slug": "leroux-lotz-technologies",
+      "site": "https://www.lerouxlotz.com/"
+    },
+    {
+      "slug": "linka-energy",
+      "site": "https://linkaenergy.com/"
+    },
+    {
+      "slug": "lochinvar",
+      "site": "https://www.lochinvar.com/"
+    },
+    {
+      "slug": "macchi",
+      "site": "https://www.macchiboiler.it/"
+    },
+    {
+      "slug": "mark-climate-technology",
+      "site": "https://www.markclimate.com/"
+    },
+    {
+      "slug": "master-climate-solutions",
+      "site": "https://www.danthermgroup.com/"
+    },
+    {
+      "slug": "metalerg",
+      "site": "https://kotlynaslome.pl/"
+    },
+    {
+      "slug": "mimsan",
+      "site": "https://www.mimsanenergy.com/"
+    },
+    {
+      "slug": "mingazzini",
+      "site": "https://www.mingazzini.it/"
+    },
+    {
+      "slug": "miura",
+      "site": "https://www.miuraz.co.jp/en/"
+    },
+    {
+      "slug": "modine",
+      "site": "https://www.modinehvac.com/"
+    },
+    {
+      "slug": "nem-energy",
+      "site": "https://nem-energy.com/"
+    },
+    {
+      "slug": "eriksen",
+      "site": "https://cicgroup.com/nooter-eriksen/"
+    },
+    {
+      "slug": "nu-way",
+      "site": "https://www.nu-way.co.uk/"
+    },
+    {
+      "slug": "oilon",
+      "site": "https://oilon.com/"
+    },
+    {
+      "slug": "parat-halvorsen",
+      "site": "https://parat.no/"
+    },
+    {
+      "slug": "parker-boiler",
+      "site": "https://www.parkerboiler.com/"
+    },
+    {
+      "slug": "pbs-power-equipment",
+      "site": "https://www.pbspe.cz/"
+    },
+    {
+      "slug": "pirobloc",
+      "site": "https://www.pirobloc.com/"
+    },
+    {
+      "slug": "polytechnik",
+      "site": "https://polytechnik.com/"
+    },
+    {
+      "slug": "power-flame",
+      "site": "https://powerflame.com/"
+    },
+    {
+      "slug": "powrmatic",
+      "site": "https://www.powrmatic.co.uk/"
+    },
+    {
+      "slug": "precision-boilers",
+      "site": "https://thermon.com/precision-boilers/"
+    },
+    {
+      "slug": "proboilers",
+      "site": "https://proboilers.gr/"
+    },
+    {
+      "slug": "reimers-electra-steam",
+      "site": "https://www.reimersinc.com/"
+    },
+    {
+      "slug": "remming",
+      "site": "https://www.remming.co.rs/"
+    },
+    {
+      "slug": "rentech-boiler-systems",
+      "site": "https://rentechboilers.com/"
+    },
+    {
+      "slug": "reznor",
+      "site": "https://www.reznorhvac.com/"
+    },
+    {
+      "slug": "richard-kablitz",
+      "site": "https://www.kablitz.de/"
+    },
+    {
+      "slug": "riello",
+      "site": "https://www.riello.com/international/"
+    },
+    {
+      "slug": "robur",
+      "site": "https://www.robur.com/"
+    },
+    {
+      "slug": "saacke",
+      "site": "https://www.saacke.com/en/"
+    },
+    {
+      "slug": "mawera",
+      "site": "https://schmid-mawera.com/"
+    },
+    {
+      "slug": "sefako",
+      "site": "https://sefako.pl/"
+    },
+    {
+      "slug": "sellers-manufacturing",
+      "site": "https://sellersmfg.com/"
+    },
+    {
+      "slug": "selnikel",
+      "site": "https://www.selnikel.com/"
+    },
+    {
+      "slug": "ses-tlma-e",
+      "site": "https://www.ses.sk/"
+    },
+    {
+      "slug": "sigma-thermal",
+      "site": "https://www.sigmathermal.com/"
+    },
+    {
+      "slug": "sime",
+      "site": "https://www.sime.it/"
+    },
+    {
+      "slug": "sioux-corporation",
+      "site": "https://sioux.com/"
+    },
+    {
+      "slug": "standardkessel-baumgarte",
+      "site": "https://www.standardkessel-baumgarte.com/"
+    },
+    {
+      "slug": "steamrator",
+      "site": "https://steamrator.fi/"
+    },
+    {
+      "slug": "ait-stein",
+      "site": "https://ait-stein.com/"
+    },
+    {
+      "slug": "sugimat",
+      "site": "https://www.sugimat.com/"
+    },
+    {
+      "slug": "sumitomo-shi-fw",
+      "site": "https://www.shi-fw.com/"
+    },
+    {
+      "slug": "superior-boiler",
+      "site": "https://www.superiorboiler.com/"
+    },
+    {
+      "slug": "easco",
+      "site": "https://supremeboilers.com/"
+    },
+    {
+      "slug": "dht",
+      "site": "https://www.dhtnet.com/custom_product_cat/sussman-electric-boilers/"
+    },
+    {
+      "slug": "systema",
+      "site": "https://www.systema.it/"
+    },
+    {
+      "slug": "takuma",
+      "site": "https://www.takuma.co.jp/english/"
+    },
+    {
+      "slug": "tansu-industrial",
+      "site": "https://tansutech.com/"
+    },
+    {
+      "slug": "tecnoclima",
+      "site": "https://www.tecnoclimaspa.com/"
+    },
+    {
+      "slug": "thermax",
+      "site": "https://www.thermaxglobal.com/"
+    },
+    {
+      "slug": "thermobile",
+      "site": "https://www.thermobile.com/"
+    },
+    {
+      "slug": "thermogroup",
+      "site": "https://thermogroup.kz/"
+    },
+    {
+      "slug": "thermostahl-solar",
+      "site": "https://thermostahl.com/"
+    },
+    {
+      "slug": "tts-boilers",
+      "site": "https://www.ttseko.cz/"
+    },
+    {
+      "slug": "wiesberg",
+      "site": "https://www.unicalboiler.com/"
+    },
+    {
+      "slug": "unilux-advanced-manufacturing",
+      "site": "https://uniluxam.com/"
+    },
+    {
+      "slug": "urbas-maschinenfabrik",
+      "site": "https://www.urbas.at/"
+    },
+    {
+      "slug": "valmet",
+      "site": "https://www.valmet.com/"
+    },
+    {
+      "slug": "vapor-boilers",
+      "site": "https://www.vapor.fi/"
+    },
+    {
+      "slug": "vapor-power",
+      "site": "https://thermon.com/vapor-power/"
+    },
+    {
+      "slug": "osby-parca",
+      "site": "https://vea.se/"
+    },
+    {
+      "slug": "victory-energy",
+      "site": "https://victoryenergy.com/"
+    },
+    {
+      "slug": "viessmann-vitomax",
+      "site": "https://www.viessmann.co.uk/"
+    },
+    {
+      "slug": "vkkgroup",
+      "site": "https://vkkgroup.fi/"
+    },
+    {
+      "slug": "vkk-standardkessel-k-then",
+      "site": "https://vkkstandardkessel.de/"
+    },
+    {
+      "slug": "vmex-turaz-group",
+      "site": "https://www.vmexisi.uz/ru"
+    },
+    {
+      "slug": "vts-group",
+      "site": "https://vtsgroup.com/"
+    },
+    {
+      "slug": "vyncke",
+      "site": "https://www.vyncke.com/"
+    },
+    {
+      "slug": "webster-combustion",
+      "site": "https://www.webstercombustion.com/"
+    },
+    {
+      "slug": "weishaupt",
+      "site": "https://www.weishaupt.co.uk/"
+    },
+    {
+      "slug": "weiss-france-nergie",
+      "site": "https://www.weiss-france.fr/"
+    },
+    {
+      "slug": "williams-davis-boilers",
+      "site": "https://w-dboilers.com/"
+    },
+    {
+      "slug": "winterwarm",
+      "site": "https://www.winterwarm.com/"
+    },
+    {
+      "slug": "york-shipley-global",
+      "site": "https://www.yorkshipley.com/"
+    },
+    {
+      "slug": "zander-ingestr-m",
+      "site": "https://www.zeta.se/"
+    },
+    {
+      "slug": "zeeco",
+      "site": "https://www.zeeco.com/"
+    },
+    {
+      "slug": "zozen-boiler",
+      "site": "https://en.zozen.com/"
+    },
+    {
+      "slug": "niversal-kazan",
+      "site": "https://www.universalkazan.com.tr/"
+    },
+    {
+      "slug": "acs",
+      "site": "https://www.agyna.ru/"
+    },
+    {
+      "slug": "adin",
+      "site": "https://adin.ru/"
+    },
+    {
+      "slug": "akz22",
+      "site": "https://akz22.ru/"
+    },
+    {
+      "slug": "pkaem",
+      "site": "https://pkaem.ru/"
+    },
+    {
+      "slug": "belenergomash",
+      "site": "https://belenergomash.com/"
+    },
+    {
+      "slug": "urgk",
+      "site": "https://kostroma.urgk.ru/"
+    },
+    {
+      "slug": "akmz",
+      "site": "https://akmz.net/"
+    },
+    {
+      "slug": "bzko",
+      "site": "https://bzko.ru/"
+    },
+    {
+      "slug": "bkez",
+      "site": "https://bkez.ru/"
+    },
+    {
+      "slug": "bemz",
+      "site": "https://bemz.pro/"
+    },
+    {
+      "slug": "tis",
+      "site": "https://belkomin.com/"
+    },
+    {
+      "slug": "belboiler",
+      "site": "https://belboiler.by/"
+    },
+    {
+      "slug": "energomash",
+      "site": "https://energomash.ru/"
+    },
+    {
+      "slug": "bzkotlomash",
+      "site": "https://www.bzkotlomash.ru/"
+    },
+    {
+      "slug": "bzkkotel",
+      "site": "https://bzkkotel.ru/"
+    },
+    {
+      "slug": "bzk-vo",
+      "site": "https://bzk-vo.ru/"
+    },
+    {
+      "slug": "bkmz",
+      "site": "https://bkmz.ru/"
+    },
+    {
+      "slug": "buran-boiler",
+      "site": "https://buran.kz/"
+    },
+    {
+      "slug": "vskz",
+      "site": "https://vskz.ru/"
+    },
+    {
+      "slug": "vutherm",
+      "site": "https://vutherm.com/"
+    },
+    {
+      "slug": "vtek43",
+      "site": "https://vtek43.ru/"
+    },
+    {
+      "slug": "hortek-hl",
+      "site": "https://hortek.com/"
+    },
+    {
+      "slug": "greers",
+      "site": "https://greers.ru/"
+    },
+    {
+      "slug": "gskb",
+      "site": "https://gskb.by/"
+    },
+    {
+      "slug": "keo",
+      "site": "https://www.keo.by/"
+    },
+    {
+      "slug": "dkm",
+      "site": "https://dkm.ru/"
+    },
+    {
+      "slug": "denkar",
+      "site": "https://denkar.ru/"
+    },
+    {
+      "slug": "zeromax44",
+      "site": "https://www.zeromax44.ru/"
+    },
+    {
+      "slug": "pem-energo",
+      "site": "https://pem-energo.ru/"
+    },
+    {
+      "slug": "geosoyuz",
+      "site": "https://geosoyuz.ru/"
+    },
+    {
+      "slug": "oaozko",
+      "site": "https://oaozko.ru/"
+    },
+    {
+      "slug": "unisteam",
+      "site": "https://unisteam.com/"
+    },
+    {
+      "slug": "faci",
+      "site": "https://facirus.ru/"
+    },
+    {
+      "slug": "zzbo",
+      "site": "https://zzbo.ru/"
+    },
+    {
+      "slug": "stemi",
+      "site": "https://www.stemi.ru/"
+    },
+    {
+      "slug": "irbis-bor",
+      "site": "https://irbis-bor.ru/"
+    },
+    {
+      "slug": "kazkotloservis",
+      "site": "https://kazkotloservis.kz/"
+    },
+    {
+      "slug": "kas-kad",
+      "site": "https://kas-kad.ru/"
+    },
+    {
+      "slug": "eco-par",
+      "site": "https://kzko-gaz.ru/"
+    },
+    {
+      "slug": "kommun",
+      "site": "https://kommun.ru/"
+    },
+    {
+      "slug": "termowood",
+      "site": "https://termowood.ru/"
+    },
+    {
+      "slug": "komkont",
+      "site": "https://komkont.com/"
+    },
+    {
+      "slug": "geyzer",
+      "site": "https://kosgeyser.ru/"
+    },
+    {
+      "slug": "vulkan-rus",
+      "site": "https://vulkan-rus.ru/"
+    },
+    {
+      "slug": "automaticles",
+      "site": "https://www.automaticles.ru/"
+    },
+    {
+      "slug": "kotel-bogatyr",
+      "site": "https://www.kotel-bogatyr.ru/"
+    },
+    {
+      "slug": "steamexpert",
+      "site": "https://www.kvzr.ru/"
+    },
+    {
+      "slug": "sibkotlomash",
+      "site": "https://sibkotlomash.ru/"
+    },
+    {
+      "slug": "sfera-zavod",
+      "site": "https://sfera-zavod.ru/"
+    },
+    {
+      "slug": "cotlomash",
+      "site": "https://cotlomash.ru/"
+    },
+    {
+      "slug": "lutex",
+      "site": "https://lutex.group/"
+    },
+    {
+      "slug": "nvsk",
+      "site": "https://nvsk.net/"
+    },
+    {
+      "slug": "sibtm",
+      "site": "https://sibtm.ru/"
+    },
+    {
+      "slug": "nzeo",
+      "site": "https://nzeo.ru/"
+    },
+    {
+      "slug": "octane",
+      "site": "https://octane.su/"
+    },
+    {
+      "slug": "npo-teplovey",
+      "site": "https://teplovey.ru/"
+    },
+    {
+      "slug": "termotek",
+      "site": "https://www.termotek.ru/"
+    },
+    {
+      "slug": "termanik",
+      "site": "https://termanik.ru/"
+    },
+    {
+      "slug": "bzkeo",
+      "site": "https://bzkeo.ru/"
+    },
+    {
+      "slug": "kotel122",
+      "site": "https://kotel122.ru/"
+    },
+    {
+      "slug": "ural-power",
+      "site": "https://ural-power.ru/"
+    },
+    {
+      "slug": "riexpo",
+      "site": "https://www.riexpo.ru/"
+    },
+    {
+      "slug": "uralzavod-kotel",
+      "site": "https://uralzavod-kotel.ru/"
+    },
+    {
+      "slug": "pavlovskiy-kotelnyy-zavod",
+      "site": "https://xn--22-slcly.xn--p1ai/"
+    },
+    {
+      "slug": "pargarant",
+      "site": "https://pargarant.ru/"
+    },
+    {
+      "slug": "steam-technologies",
+      "site": "https://parogeneratorst.ru/"
+    },
+    {
+      "slug": "bkstroy",
+      "site": "https://bkstroy.ru/"
+    },
+    {
+      "slug": "zaomes",
+      "site": "https://zaomes.ru/"
+    },
+    {
+      "slug": "pkko",
+      "site": "https://pkko.ru/"
+    },
+    {
+      "slug": "al-kotel",
+      "site": "https://www.al-kotel.ru/"
+    },
+    {
+      "slug": "pkpotenzial",
+      "site": "https://pkpotenzial.ru/"
+    },
+    {
+      "slug": "kotlosnab",
+      "site": "https://kotlosnab.ru/"
+    },
+    {
+      "slug": "promteplo",
+      "site": "https://xn--24-mlcydldddgy.xn--p1ai/"
+    },
+    {
+      "slug": "pskovkotel",
+      "site": "https://www.pskovkotel.ru/"
+    },
+    {
+      "slug": "rostzip",
+      "site": "https://rostzip.com/"
+    },
+    {
+      "slug": "sarzem",
+      "site": "https://sarzem.ru/"
+    },
+    {
+      "slug": "sibstrong",
+      "site": "https://www.sibstrong.com/"
+    },
+    {
+      "slug": "sibteplomash22",
+      "site": "https://sibteplomash22.ru/"
+    },
+    {
+      "slug": "sibem-bkz",
+      "site": "http://sibem-bkz.ru"
+    },
+    {
+      "slug": "prometey54",
+      "site": "https://prometey54.ru/"
+    },
+    {
+      "slug": "genenergy",
+      "site": "https://sp-stm.ru/"
+    },
+    {
+      "slug": "tztis",
+      "site": "https://tztis.ru/"
+    },
+    {
+      "slug": "stankoterm",
+      "site": "https://www.stankoterm.ru/"
+    },
+    {
+      "slug": "termorobot",
+      "site": "https://termorobot.ru/"
+    },
+    {
+      "slug": "riman",
+      "site": "https://t-stroy.com/"
+    },
+    {
+      "slug": "teplomash",
+      "site": "https://www.teplomash-rf.ru/"
+    },
+    {
+      "slug": "rim-group",
+      "site": "https://rimgroup.ru/"
+    },
+    {
+      "slug": "teploelektromash",
+      "site": "https://teplotehnika.ru/"
+    },
+    {
+      "slug": "kts-bulat",
+      "site": "https://kts-bulat.ru/"
+    },
+    {
+      "slug": "termokraft",
+      "site": "https://www.termokraft.ru/"
+    },
+    {
+      "slug": "steampressor-hybrid",
+      "site": "https://tehnopar.ru/"
+    },
+    {
+      "slug": "tehnofleym",
+      "site": "https://technoflame.ru/"
+    },
+    {
+      "slug": "tkz",
+      "site": "https://tkz.su/"
+    },
+    {
+      "slug": "uralkotel",
+      "site": "https://uralkotel.ru/"
+    },
+    {
+      "slug": "fort",
+      "site": "https://fort-gaz.ru/"
+    },
+    {
+      "slug": "evan",
+      "site": "https://www.evan.ru/"
+    },
+    {
+      "slug": "geotherm",
+      "site": "https://ecospectrum.ru/"
+    },
+    {
+      "slug": "ecoenergo",
+      "site": "https://ecoenergo.su/"
+    },
+    {
+      "slug": "semm",
+      "site": "https://semm.ru/"
+    },
+    {
+      "slug": "electrum-spb",
+      "site": "https://electrum-spb.ru/"
+    },
+    {
+      "slug": "bikz",
+      "site": "https://bikz.ru/"
+    },
+    {
+      "slug": "entroros",
+      "site": "https://www.entroros.ru/"
+    },
+    {
+      "slug": "utomprom",
+      "site": "https://utomprom.ru/"
+    },
+    {
+      "slug": "kotel-oskol",
+      "site": "https://kotel-oskol.ru/"
+    },
+    {
+      "slug": "ygnis",
+      "site": "https://www.ygnis.com/"
+    },
+    {
+      "slug": "bkza",
+      "site": "https://bkza.ru/"
+    },
+    {
+      "slug": "valdex",
+      "site": "https://valdex-thermotechnica.com/"
+    },
+    {
+      "slug": "npogarant",
+      "site": "https://npogarant.ru/"
+    },
+    {
+      "slug": "ferraboiler",
+      "site": "https://ferraboiler.kz/"
+    },
+    {
+      "slug": "alltherm",
+      "site": "https://alltherm.ru/"
+    }
+  ]
+}

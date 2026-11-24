@@ -64,7 +64,7 @@ export function manufacturerSeo(maker: Manufacturer, hasVerifiedSeries: boolean)
 
 /** Only meaningful public source notes; never expose editorial instructions as manufacturer facts. */
 export function manufacturerPublicNote(maker: Manufacturer): string | null {
-  const note = maker.note.trim();
+  const note = maker.note.trim().replace(/https?:\/\/\S+/gi, "").replace(/\b(?:www\.)?[a-z0-9-]+\.(?:ru|com|pro|org|net|de|kz|tr|cn)(?:\/\S*)?/gi, "").trim();
   if (
     !note ||
     /не публиковать|спрос не доказан|спрос|необходимо подтвердить|сверить сайт|исходный реестр|данные не получены/i.test(note)

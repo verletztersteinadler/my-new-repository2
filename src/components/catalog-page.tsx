@@ -4,7 +4,6 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import {
   BRAND,
-  MANUFACTURER_SITE,
   SOURCE_CHECKED,
   categories,
   documents,
@@ -243,8 +242,6 @@ const routeApi = getRouteApi("/$slug");
 
 const lavartProfile = {
   brand: BRAND,
-  site: MANUFACTURER_SITE,
-  siteLabel: "omzit.ru",
   checked: SOURCE_CHECKED,
   categories,
   series: seriesList,
@@ -252,8 +249,6 @@ const lavartProfile = {
 };
 const temronProfile = {
   brand: "TEMRON",
-  site: "https://temron.ru/",
-  siteLabel: "temron.ru",
   checked: "2026-11-15",
   categories: temronCategories,
   series: temronSeries,
@@ -262,8 +257,6 @@ const temronProfile = {
 
 const arcusProfile = {
   brand: "ARCUS",
-  site: "https://www.arcus.pro/",
-  siteLabel: "arcus.pro",
   checked: "2026-11-15",
   categories: arcusCategories,
   series: arcusSeries,
@@ -272,8 +265,6 @@ const arcusProfile = {
 
 const broxProfile = {
   brand: "BROX",
-  site: "https://broxboiler.ru/",
-  siteLabel: "broxboiler.ru",
   checked: "2026-11-15",
   categories: broxCategories,
   series: broxSeries,
@@ -282,8 +273,6 @@ const broxProfile = {
 
 const geffenProfile = {
   brand: "GEFFEN",
-  site: "https://geffen.ru/",
-  siteLabel: "geffen.ru",
   checked: "2026-11-15",
   categories: geffenCategories,
   series: geffenSeries,
@@ -292,8 +281,6 @@ const geffenProfile = {
 
 const huntelProfile = {
   brand: "HUNTEL",
-  site: "https://huntel.ru/",
-  siteLabel: "huntel.ru",
   checked: "2026-11-15",
   categories: huntelCategories,
   series: huntelSeries,
@@ -302,8 +289,6 @@ const huntelProfile = {
 
 const meteorProfile = {
   brand: "METEOR / LaggarTT",
-  site: "https://laggartt.ru/",
-  siteLabel: "laggartt.ru",
   checked: "2026-11-15",
   categories: meteorCategories,
   series: meteorSeries,
@@ -312,8 +297,6 @@ const meteorProfile = {
 
 const nobelProfile = {
   brand: "NOBEL",
-  site: "https://nobelteplo.ru/",
-  siteLabel: "nobelteplo.ru",
   checked: "2026-11-16",
   categories: nobelCategories,
   series: nobelSeries,
@@ -322,8 +305,6 @@ const nobelProfile = {
 
 const polykraftProfile = {
   brand: "POLYKRAFT",
-  site: "https://polykraft.ru/",
-  siteLabel: "polykraft.ru",
   checked: "2026-11-16",
   categories: polykraftCategories,
   series: polykraftSeries,
@@ -332,8 +313,6 @@ const polykraftProfile = {
 
 const rossenProfile = {
   brand: "ROSSEN",
-  site: "https://rossen.ru/",
-  siteLabel: "rossen.ru",
   checked: "2026-11-16",
   categories: rossenCategories,
   series: rossenSeries,
@@ -342,8 +321,6 @@ const rossenProfile = {
 
 const teploforProfile = {
   brand: "TEPLOFOR",
-  site: "https://teplofor.pro/",
-  siteLabel: "teplofor.pro",
   checked: "2026-11-16",
   categories: teploforCategories,
   series: teploforSeries,
@@ -352,8 +329,6 @@ const teploforProfile = {
 
 const vetrosProfile = {
   brand: "VETROS",
-  site: "https://vetros-boiler.ru/",
-  siteLabel: "vetros-boiler.ru",
   checked: "2026-11-16",
   categories: vetrosCategories,
   series: vetrosSeries,
@@ -362,8 +337,6 @@ const vetrosProfile = {
 
 const webProfile = {
   brand: "W.E.B.",
-  site: "https://wiseecoburner.ru/",
-  siteLabel: "wiseecoburner.ru",
   checked: "2026-11-16",
   categories: webCategories,
   series: webSeries,
@@ -372,8 +345,6 @@ const webProfile = {
 
 const zotaProfile = {
   brand: "ZOTA",
-  site: "https://zota.ru/",
-  siteLabel: "zota.ru",
   checked: "2026-11-16",
   categories: zotaCategories,
   series: zotaSeries,
@@ -595,7 +566,7 @@ function pack(
   series: Series[],
   documents: { title: string }[],
 ) {
-  return { brand, site: "", siteLabel: "", checked: "2026-11-16", categories, series, documents };
+  return { brand, checked: "2026-11-16", categories, series, documents };
 }
 
 function emptyProfile(slug: string) {
@@ -611,8 +582,6 @@ function emptyProfile(slug: string) {
           ];
   return {
     brand: maker?.title ?? slug,
-    site: "",
-    siteLabel: "",
     checked: "2026-11-16",
     categories,
     series: [] as Series[],
@@ -914,7 +883,7 @@ export function CatalogPage() {
                     ))}
                   </ul>
                 ) : null}
-                <p className="mt-4 text-sm text-[#f0c4cc]">Сайт производителя в справочнике не открывается.</p>
+                <p className="mt-4 text-sm text-white/70">Подбор и уточнение комплектации — через инженерный запрос kotly.pro.</p>
               </aside>
             </div>
             <div className="mt-4 flex flex-col gap-4 rounded-2xl bg-[#161616] p-5 text-white sm:flex-row sm:items-center sm:justify-between sm:p-6">

@@ -91,11 +91,7 @@ export function PumpDirectoryPage() {
             <p className="mt-3 text-sm leading-relaxed">{maker.applications}</p>
             <p className="mt-2 text-xs leading-relaxed text-muted"><strong>Названия серий в реестре:</strong> {maker.seriesNames}</p>
             {maker.caveat && <p className="mt-3 border-l-2 border-accent pl-3 text-xs leading-relaxed text-muted">Проверка: {maker.caveat}</p>}
-            <div className="mt-4 flex flex-wrap gap-4 text-sm">
-              <a href={maker.catalog} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent underline underline-offset-4">Каталог на сайте компании</a>
-              <a href={maker.site} target="_blank" rel="noopener noreferrer" className="text-muted underline underline-offset-4">Сайт</a>
-              {maker.reference!==maker.catalog&&<a href={maker.reference} target="_blank" rel="noopener noreferrer" className="text-muted underline underline-offset-4">Источник</a>}
-            </div>
+            <p className="mt-4 text-xs leading-relaxed text-muted">Для подбора насосов и уточнения документации направьте инженерный запрос через kotly.pro.</p>
           </article>)}
         </div>
         {rows.length===0&&<p className="rounded-xl bg-bg/40 p-5 text-sm text-muted">Нет совпадений в пилотной группе. Попробуйте снять фильтр.</p>}
