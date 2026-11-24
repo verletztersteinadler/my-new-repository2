@@ -140,12 +140,12 @@ export function HomePage() {
         <section className="mx-auto mt-5 max-w-6xl px-4">
           <div className="flex flex-col justify-between gap-4 rounded-3xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:p-6">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.15em] text-accent">Новый раздел · На проверке</p>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-accent">Подбор насосного оборудования</p>
               <h2 className="mt-2 font-display text-2xl font-extrabold">Насосное оборудование для котельных</h2>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
                 Сетевые, котловые, питательные, подпиточные, конденсатные и другие насосы.
-                Пилотный реестр 25 производителей из предоставленного списка;
-                параметры моделей и гидравлические характеристики ещё требуют подтверждения.
+                Каталог производителей насосного оборудования по направлениям применения.
+                Для подбора конкретной модели учитываются расход, напор, рабочая среда и условия эксплуатации.
               </p>
             </div>
             <Link to="/nasosy" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl border border-line px-5 text-sm font-bold text-ink hover:bg-chip">
@@ -219,16 +219,16 @@ export function HomePage() {
                     {lines.find((entry) => entry.id === item.line)?.label}
                     {" · "}
                     {item.place}
-                    {hasSeries ? " · серии открыты" : " · карточка открыта"}
+                    
                   </p>
                   <h2 className="mt-2 font-display text-3xl leading-[0.95] font-extrabold tracking-[-0.04em]">{item.title}</h2>
                 </div>
                 <div className="flex flex-1 flex-col px-5 pt-4 pb-5">
                   {item.title !== item.name ? <p className="line-clamp-2 text-xs leading-relaxed text-muted">{item.name}</p> : null}
                   {hasSeries ? (
-                    <p className="mt-2 text-xs leading-relaxed text-muted">Взято с оф. сайта производителя</p>
+                    <p className="mt-2 text-xs leading-relaxed text-muted">Серии оборудования и технические параметры</p>
                   ) : (
-                    <p className="mt-2 text-sm leading-relaxed text-ink">Информация на сайте производителя не предоставлена.</p>
+                    <p className="mt-2 text-sm leading-relaxed text-ink">Подбор оборудования по вашим параметрам</p>
                   )}
                   <Link
                     to="/$slug"
@@ -251,7 +251,7 @@ export function HomePage() {
 
         <footer className="mx-auto mt-12 max-w-6xl px-4 py-8 text-xs leading-relaxed text-muted">
           <p>
-            Котлы.pro — независимый справочник. Названия производителей приведены для идентификации оборудования. Сведения о владельце и обработке данных — в правовом разделе.
+            kotly.pro — каталог промышленного оборудования и инструментов инженерного подбора. Доступность и применимость оборудования уточняются индивидуально.
           </p>
           <p className="mt-3 flex flex-wrap gap-4">
             <Link to="/politika" className="underline">
