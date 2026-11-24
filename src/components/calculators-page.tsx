@@ -44,7 +44,7 @@ const topicIds: Record<string, string> = {
   "Дополнительные расчёты": "dopolnitelnye-raschety",
 };
 const popularTools = [
-  { id: "water-power", title: "Мощность котла", detail: "Расход воды и температурный график" },
+  { id: "water-power", title: "Расчёт мощности котла", detail: "Расход воды и температурный график" },
   { id: "steam-capacity", title: "Расчёт пара", detail: "Паропроизводительность и энтальпия IF97" },
   { id: "gas-consumption", title: "Расход газа", detail: "Мощность, КПД, теплота сгорания" },
   { id: "pipe-loss", title: "Гидравлический расчёт", detail: "Потери давления в трубопроводе" },
