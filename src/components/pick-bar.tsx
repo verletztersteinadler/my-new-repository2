@@ -27,11 +27,11 @@ export function PickBar() {
 
   return (
     <>
-      <div aria-hidden="true" className="h-28 sm:h-24" />
+      <div aria-hidden="true" className="h-28 sm:h-24 print:hidden" />
       <div
         role="region"
         aria-label="Инженерная консультация"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] backdrop-blur-md"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-line print:hidden bg-surface/95 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] backdrop-blur-md"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
       >
         <div className="mx-auto flex min-h-[76px] max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:gap-6">
@@ -72,7 +72,7 @@ export function PickBar() {
                 </div>
                 <Dialog.Description id="sticky-lead-description" className="mt-3 text-sm leading-relaxed text-muted">
                   Опишите задачу — подготовим инженерную консультацию по подбору оборудования.
-                  Отправка заработает после активации защищённого приёма заявок на сайте.
+                  Если защищённый приём заявок пока не подключён, форма сообщит об этом до ввода контактов.
                 </Dialog.Description>
                 <div className="mt-5">
                   <LeadForm
