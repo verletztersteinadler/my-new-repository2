@@ -1,44 +1,47 @@
 /**
- * One catalog naming convention, without inventing a manufacturer's official
- * model designation: "BRAND Series" or "BRAND — descriptive product group".
- *
- * Keeps original spelling, codes, punctuation and Cyrillic. Series IDs, sizes
- * and technical characteristics are never modified by this formatter.
+ * Uniform, source-faithful series titles across all published catalogs.
+ * Named product marks (METEOR/LaggarTT) are kept as published; other
+ * bare series names gain the manufacturer's brand in presentation only.
  */
+const alternativeProductMarks: Readonly<Record<string, readonly string[]>> = {
+  "meteor thermo": ["METEOR", "LaggarTT"],
+};
+
+function normalizeSpaces(input: string): string {
+  return input.trim().replace(/\s+/g, " ");
+}
+
+function startsWithMark(title: string, mark: string): boolean {
+  if (title.slice(0, mark.length).toLocaleLowerCase("ru") !== mark.toLocaleLowerCase("ru")) return false;
+  const boundary = title[mark.length];
+  return boundary === undefined || /[\s,;:()\u2013\u2014/-]/u.test(boundary);
+}
+
+/** A complete maker brand or a verified alternative product trademark. */
+export function seriesNameHasBrand(brand: string, seriesTitle: string): boolean {
+  const maker = normalizeSpaces(brand);
+  const title = normalizeSpaces(seriesTitle);
+  if (!maker || !title) return false;
+  const aliases = alternativeProductMarks[maker.toLocaleLowerCase("ru")] ?? [];
+  return [maker, ...aliases].some((mark) => startsWithMark(title, mark));
+}
+
+/** Preserve source spelling and product codes; never invent model numbers. */
 export function displaySeriesName(brand: string, sourceName: string): string {
-  const maker = brand.trim().replace(/\s+/g, " ");
-  const title = sourceName.trim().replace(/\s+/g, " ");
+  const maker = normalizeSpaces(brand);
+  const title = normalizeSpaces(sourceName);
   if (!maker || !title) return title || maker;
 
-  const same = (left: string, right: string) => left.toLocaleLowerCase("ru") === right.toLocaleLowerCase("ru");
-  // A brand-only entry has no distinct published series designation.
-  // Do not misrepresent the manufacturer name as an invented product line.
-  if (same(title, maker)) return maker + " — серия не указана";
+  if (title.toLocaleLowerCase("ru") === maker.toLocaleLowerCase("ru")) {
+    return maker + " — серия не указана";
+  }
+  if (seriesNameHasBrand(maker, title)) return title;
 
-  // Some groups publish equipment under another verified trademark.
-  // Keep an existing official product mark intact instead of coining
-  // double-brand strings such as "METEOR Thermo METEOR C30".
-  const alternativeProductMarks: Record<string, readonly string[]> = {
-    "meteor thermo": ["METEOR", "LaggarTT"],
-  };
-  const marks = alternativeProductMarks[maker.toLocaleLowerCase("ru")] ?? [];
-  if (marks.some((mark) =>
-    same(title.slice(0, mark.length), mark) &&
-    (title.length === mark.length || /[\s,;:()\u2013\u2014/-]/u.test(title[mark.length]))
-  )) return title;
-
-  const startsWithMaker = same(title.slice(0, maker.length), maker) &&
-    (title.length === maker.length || /[\s,;:()\u2013\u2014/-]/u.test(title[maker.length]));
-  if (startsWithMaker) return title;
-
-  const endsWithMaker = same(title.slice(-maker.length), maker) &&
+  const atEnd = title.slice(-maker.length).toLocaleLowerCase("ru") === maker.toLocaleLowerCase("ru") &&
     (title.length === maker.length || /[\s,;:()\u2013\u2014/-]/u.test(title[title.length - maker.length - 1]));
-  if (endsWithMaker) {
+  if (atEnd) {
     const subject = title.slice(0, -maker.length).replace(/[\s,;:\u2013\u2014-]+$/u, "").trim();
     if (subject) return maker + " — " + subject;
   }
-
-  // "Reverse" -> "LAVART Reverse"; if this is an editorial category, the
-  // original category name is preserved verbatim after the brand.
   return maker + " " + title;
 }
