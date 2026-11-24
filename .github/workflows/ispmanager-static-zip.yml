@@ -13,6 +13,7 @@ on:
       - package-lock.json
       - scripts/generate-seo-files.mjs
       - scripts/check-no-external-links.mjs
+      - scripts/image-audit.mjs
   workflow_dispatch:
 
 permissions:
@@ -30,6 +31,14 @@ jobs:
           cache: npm
       - name: Install project dependencies
         run: npm ci --no-audit --no-fund
+      - name: Gate images and generate provenance report
+        run: npm run check:images && npm run audit:images
+      - name: Upload image audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: kotly-pro-image-audit
+          path: reports/images/
+          retention-days: 30
       - name: Build static prerendered site and regenerate route typings
         env:
           KOTLY_STATIC_EXPORT: '1'
