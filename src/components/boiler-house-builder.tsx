@@ -222,16 +222,17 @@ export function BoilerHouseBuilder() {
       .map((v)=>"Паровая группа: "+displaySeriesName(v.maker, v.series.name)) : []),
   ];
   const errs=[
-    (hasWater&&(!valid(s.heating)||!valid(s.dhw)||!valid(s.process)||heatKw<=0))||
+    (hasHeat&&(!valid(s.heating)||!valid(s.dhw)||!valid(s.process)||heatKw<=0))||
     (hasSteam&&(!valid(s.steam)||steamKgH<=0))?"Задайте положительную расчётную нагрузку для каждой выбранной группы. Допустимы числа с запятой.":null,
     (hasWater&&(!valid(s.supply,true)||!valid(s.returnWater,true)||!valid(s.waterPressure)
       ||(Boolean(s.supply.trim())!==Boolean(s.returnWater.trim()))
       ||(waterSupplyC!=null&&waterSupplyC< -273.15)||(waterReturnC!=null&&waterReturnC< -273.15)))
+      ||(hasOil&&(!valid(s.supply,true)||!valid(s.waterPressure)||(waterSupplyC!=null&&waterSupplyC< -273.15)))
       ||(hasSteam&&(!valid(s.steamPressure)||!valid(s.condensate)
       ||(condensate!=null&&condensate>100)||!valid(s.steamTemperature,true)))
       ? "Проверьте температуры, давление и возврат конденсата (0–100 %). Для воды укажите обе температуры или ни одной.":
       hasWater&&waterSupplyC!=null&&waterReturnC!=null&&waterSupplyC<=waterReturnC?"Температура подачи должна быть выше температуры обратной линии.":null,
-    (hasWater&&!plant.heat)||(hasSteam&&!plant.steam)?"При резервировании N+1 требуется минимум два котлоагрегата.":null,
+    (hasHeat&&!plant.heat)||(hasSteam&&!plant.steam)?"При резервировании N+1 требуется минимум два котлоагрегата.":null,
     pumpInputIssues.length ? "Проверьте параметры насосных групп: "+pumpInputIssues.join("; ") : null,
     null,
   ];
@@ -343,9 +344,9 @@ export function BoilerHouseBuilder() {
                 onClick={()=>togglePurpose(p)} className={(s.purposes.includes(p)?"bg-accent text-on-accent":"bg-chip text-ink")+
                 " rounded-xl px-3 py-2 text-sm"}>{p}</button>)}</div>
             </fieldset>
-            {hasWater&&<div className="mt-6 rounded-2xl border border-line p-4">
+            {hasHeat&&<div className="mt-6 rounded-2xl border border-line p-4">
               <div className="flex items-end justify-between gap-3">
-                <h3 className="font-semibold">Расчётные тепловые нагрузки</h3>
+                <h3 className="font-semibold">{hasOil?"Тепловая нагрузка термомасляного контура":"Расчётные тепловые нагрузки"}</h3>
                 <Select title="Ед." value={s.powerUnit} set={(v)=>changeUnit("powerUnit",v)}
                   options={[{value:"MW",title:"МВт"},{value:"kW",title:"кВт"}]}/>
               </div>
@@ -384,6 +385,15 @@ export function BoilerHouseBuilder() {
               <div className="mt-4"><Select title="Гидравлическая схема" value={s.circuit} set={(v)=>patch({circuit:v})}
                 options={[{value:"to-decide",title:"Определить проектом"},{value:"direct",title:"Зависимое присоединение"},{value:"independent",title:"Независимое через теплообменники"}]}/></div>
             </div>}
+            {hasOil&&<div className="mt-4 rounded-2xl border border-line p-4">
+              <h3 className="font-semibold">Рабочая температура термомасла</h3>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <Num title="Температура подачи" value={s.supply} set={(v)=>patch({supply:v})} placeholder="250"/>
+                <Select title="Ед." value={s.tempUnit} set={(v)=>changeUnit("tempUnit",v)}
+                  options={[{value:"C",title:"°C"},{value:"K",title:"K"}]}/>
+              </div>
+              <p className="mt-2 text-xs text-muted">Тип теплоносителя, условия его эксплуатации и защиты уточняются при проектировании.</p>
+            </div>}
             {hasSteam&&<div className="mt-4 rounded-2xl border border-line p-4">
               <h3 className="font-semibold">Состояние пара</h3>
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -397,21 +407,21 @@ export function BoilerHouseBuilder() {
             <div className="mt-4 rounded-2xl border border-line p-4">
               <h3 className="font-semibold">Рабочее давление</h3>
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                {hasWater&&<Num title="Водяной контур" value={s.waterPressure} set={(v)=>patch({waterPressure:v})} placeholder="6"/>}
+                {hasHeat&&<Num title={hasOil?"Контур термомасла":"Водяной контур"} value={s.waterPressure} set={(v)=>patch({waterPressure:v})} placeholder="6"/>}
                 {hasSteam&&<Num title="Пар" value={s.steamPressure} set={(v)=>patch({steamPressure:v})} placeholder="13"/>}
               </div>
               <div className="mt-3 flex flex-wrap items-end gap-3">
                 <Select title="Единицы" value={s.pressureUnit} set={(v)=>changeUnit("pressureUnit",v)}
                   options={[{value:"bar",title:"бар"},{value:"MPa",title:"МПа"},{value:"kPa",title:"кПа"}]}/>
-                <p className="text-xs text-muted">{hasWater&&"Вода: "+(pWater==null?"—":fmt(pWater)+" МПа")+"; "}{hasSteam&&"Пар: "+(pSteam==null?"—":fmt(pSteam)+" МПа")}</p>
+                <p className="text-xs text-muted">{hasHeat&&(hasOil?"Термомасло: ":"Вода: ")+(pWater==null?"—":fmt(pWater)+" МПа")+"; "}{hasSteam&&"Пар: "+(pSteam==null?"—":fmt(pSteam)+" МПа")}</p>
               </div>
               <p className="mt-2 text-xs text-muted">1 бар = 0,1 МПа. Абсолютное или избыточное давление — уточняется отдельно.</p>
             </div>
           </>}
           {step===2&&<>
             <StepHead n={3} title="Котлоагрегаты и резервирование" sub="Число рабочих и резервных агрегатов задаёте вы. Для N+1 один из общего количества выделяется как резервный."/>
-            {hasWater&&<div className="mb-4 rounded-2xl border border-line p-4">
-              <h3 className="font-semibold">Водогрейная группа</h3>
+            {hasHeat&&<div className="mb-4 rounded-2xl border border-line p-4">
+              <h3 className="font-semibold">{hasOil?"Термомасляная группа":"Водогрейная группа"}</h3>
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 <Select title="Всего котлов" value={String(s.heatCount)} set={(v)=>patch({heatCount:Number(v)})}
                   options={Array.from({length:12},(_,i)=>({value:String(i+1),title:String(i+1)+" шт."}))}/>
@@ -463,7 +473,7 @@ export function BoilerHouseBuilder() {
             <StepHead n={5} title="Сводная конфигурация и запрос" sub="Предварительное техническое задание можно скопировать для обсуждения с проектировщиком. Затем — общая форма обращения."/>
             {!allValid?<p role="alert" className="rounded-xl border border-accent p-4 text-sm">Проверьте ошибки на предыдущих шагах — окончательное ТЗ пока не готово.</p>:<>
               <div className="grid gap-3 sm:grid-cols-2">
-                {hasWater&&<TrainBox name="Водогрейная группа" train={plant.heat} unit="кВт"/>}
+                {hasHeat&&<TrainBox name={hasOil?"Термомасляная группа":"Водогрейная группа"} train={plant.heat} unit="кВт"/>}
                 {hasSteam&&<TrainBox name="Паровая группа" train={plant.steam} unit="кг/ч"/>}
               </div>
               <div className="mt-4 grid gap-3">
@@ -534,9 +544,9 @@ export function BoilerHouseBuilder() {
           <h2 className="mt-2 text-2xl font-extrabold">{labels.mode[s.mode]}</h2>
           <p className="mt-1 text-xs text-white/65">{s.location||"Регион не указан"}</p>
           <div className="mt-4 space-y-3 border-t border-white/20 pt-4">
-            {hasWater&&<p><span className="block text-xs text-white/60">Тепловая нагрузка</span><strong className="text-lg">{fmt(heatKw)} кВт</strong></p>}
+            {hasHeat&&<p><span className="block text-xs text-white/60">Тепловая нагрузка</span><strong className="text-lg">{fmt(heatKw)} кВт</strong></p>}
             {hasSteam&&<p><span className="block text-xs text-white/60">Паропроизводительность</span><strong className="text-lg">{fmt(steamKgH/3600,6)} кг/с</strong></p>}
-            {hasWater&&<p className="text-sm">Водогрейных: {s.heatCount}, резерв {s.heatReserve==="n-plus-one"?"1":"нет"}</p>}
+            {hasHeat&&<p className="text-sm">{hasOil?"Термомасляных":"Водогрейных"}: {s.heatCount}, резерв {s.heatReserve==="n-plus-one"?"1":"нет"}</p>}
             {hasSteam&&<p className="text-sm">Паровых: {s.steamCount}, резерв {s.steamReserve==="n-plus-one"?"1":"нет"}</p>}
             <p className="text-sm">Топливо: {fuelName(s.mainFuel)||"уточняется"}</p>
             <p className="text-sm">Размещение: {labels.placement[s.placement]}</p>
