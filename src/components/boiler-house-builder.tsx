@@ -1,3 +1,4 @@
+import { CatalogHeaderSearch } from "@/components/catalog-header-search";
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { LeadForm } from "@/components/lead-form";
@@ -289,7 +290,11 @@ export function BoilerHouseBuilder() {
     <header className="border-b border-line bg-surface">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4">
         <Link to="/" className="font-display text-xl font-extrabold">Котлы<span className="text-accent">.pro</span></Link>
-        <Link to="/" className="text-sm font-semibold hover:text-accent">← К каталогу</Link>
+        <div className="ml-auto mr-14 hidden w-[min(33vw,23rem)] rounded-xl bg-[#0c1520] lg:block"><CatalogHeaderSearch /></div>
+        <Link to="/" className="hidden text-sm font-semibold hover:text-accent lg:inline">← К каталогу</Link>
+      </div>
+      <div className="mx-auto max-w-6xl px-4 pb-3 pr-[4.75rem] lg:hidden">
+        <div className="rounded-xl bg-[#0c1520]"><CatalogHeaderSearch compact /></div>
       </div>
     </header>
     <main className="mx-auto max-w-6xl px-4 py-8">
