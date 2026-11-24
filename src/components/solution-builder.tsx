@@ -429,7 +429,7 @@ export function SolutionBuilder() {
                 <p className="mt-2 text-sm text-ink">{engineeringSpec(item.series)}</p>
                 {item.series.tempMaxC != null ?
                   <p className="mt-1 text-xs text-muted">T max: {fmt(temperatureCToK(item.series.tempMaxC), 3)} K ({fmt(item.series.tempMaxC)} °C)</p> : null}
-                <Link to="/manufacturers/$slug" params={{ slug: item.slug }} className="mt-3 inline-flex text-sm font-semibold text-accent hover:underline">
+                <Link to="/$slug" params={{ slug: item.slug }} className="mt-3 inline-flex text-sm font-semibold text-accent hover:underline">
                   Открыть карточку производителя
                 </Link>
               </li>

@@ -25,11 +25,15 @@ export const Route = createFileRoute("/")({
   component: HomePage,
   head: () => ({
     meta: [
-      { title: "KOTLY.SU — справочник промышленных котлов" },
+      { title: "Промышленные котлы и котельное оборудование — подбор и запрос КП | kotly.pro" },
       {
         name: "description",
-        content: "Независимый справочник открытых серий. Не сайт производителя и не предложение о продаже.",
+        content: "Подбор промышленных котлов, горелок и котельного оборудования для закупки: производители, серии, мощность, топливо, сравнение аналогов и запрос коммерческих условий.",
       },
+      { name: "robots", content: "index,follow,max-image-preview:large" },
+      { property: "og:title", content: "Промышленные котлы и котельное оборудование — kotly.pro" },
+      { property: "og:description", content: "Сравните производителей, технические характеристики и запросите подбор оборудования для закупки." },
     ],
+    links: [{ rel: "canonical", href: "https://kotly.pro/" }],
   }),
 });

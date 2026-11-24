@@ -105,7 +105,7 @@ export function HomePage() {
           </div>
         </section>
         <p className="mx-auto max-w-6xl px-4 pt-5 text-sm leading-relaxed text-muted">
-          Котлы.pro — независимый инженерный справочник. Подбор выполняется по открытым данным, применимость оборудования проверяется отдельно.
+          Подберите промышленные котлы и котельное оборудование по мощности, топливу и техническим характеристикам. Запросите подбор, аналоги и коммерческие условия. Данные и применимость проверяются перед закупкой.
         </p>
 
         <SolutionBuilder />
@@ -225,7 +225,7 @@ export function HomePage() {
                     <p className="mt-2 text-sm leading-relaxed text-ink">Информация на сайте производителя не предоставлена.</p>
                   )}
                   <Link
-                    to="/manufacturers/$slug"
+                    to="/$slug"
                     params={{ slug: item.slug }}
                     search={hasSeries ? {} : { ask: "1" }}
                     className={
@@ -234,7 +234,7 @@ export function HomePage() {
                         : "mt-4 inline-flex h-12 items-center self-start rounded-sm bg-accent px-5 text-base leading-none font-extrabold text-on-accent ring-2 ring-ink"
                     }
                   >
-                    {hasSeries ? "Смотреть серии" : "Подобрать аналоги"}
+                    {hasSeries ? "Серии и запрос КП" : "Подбор и аналоги"}
                   </Link>
                 </div>
               </li>

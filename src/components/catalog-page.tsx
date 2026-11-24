@@ -237,8 +237,9 @@ import { LeadForm, type LeadContext } from "@/components/lead-form";
 import { Logo } from "@/components/logo";
 import { FactoryCard } from "@/components/factory-card";
 import { manufacturerBySlug } from "@/data/manufacturers";
+import { equipmentIntent, manufacturerPublicNote } from "@/lib/seo";
 
-const routeApi = getRouteApi("/manufacturers/$slug");
+const routeApi = getRouteApi("/$slug");
 
 const lavartProfile = {
   brand: BRAND,
@@ -626,7 +627,7 @@ export function CatalogPage() {
   const maker = manufacturerBySlug(slug);
   const profile = profileFor(slug);
   const search = routeApi.useSearch();
-  const navigate = useNavigate({ from: "/manufacturers/$slug" });
+  const navigate = useNavigate({ from: "/$slug" });
   const [shown, setShown] = useState(PAGE);
   const [lead, setLead] = useState<LeadContext | null>(null);
   const [analogsFor, setAnalogsFor] = useState<Series | null>(null);
@@ -725,11 +726,13 @@ export function CatalogPage() {
           ) : null}
         </div>
         <p className="mt-3 max-w-3xl text-sm text-pretty text-muted">
-          Открытые серии и типоразмеры. Это не сайт производителя и не предложение купить оборудование.
+          {maker
+            ? `${equipmentIntent(maker).product} ${profile.brand}: подбор для закупки по техническим характеристикам, сравнение серий и подготовка запроса коммерческого предложения. ${profile.series.length > 0 ? "Ниже приведены опубликованные серии и типоразмеры." : "Опубликованные типоразмеры не подтверждены — можно указать требования и найти сопоставимые серии."}`
+            : "Сравните технические характеристики оборудования и подготовьте инженерный запрос."}
         </p>
         <p className="mt-3 text-sm">
           {maker ? <span className="mr-4">{maker.place}</span> : null}
-          <span>Взято с оф. сайта производителя</span>
+          <span>{profile.series.length > 0 ? "Параметры серий — по опубликованным источникам, требуют проверки перед закупкой" : "Данные моделей уточняются при подготовке запроса"}</span>
         </p>
 
         <form
@@ -849,10 +852,10 @@ export function CatalogPage() {
           <div className="max-w-3xl">
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent">Инженерная консультация</p>
             <h2 id="contact-heading" className="mt-2 font-display text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">
-              Связаться с инженером
+              Запросить подбор и коммерческие условия
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">
-              Укажите задачу и контактные данные. Поможем уточнить параметры и подобрать оборудование.
+              Укажите технические требования и контактные данные для уточнения оборудования, комплектации и условий поставки.
               Запрос поступает оператору справочника kotly.pro, а не производителю.
             </p>
           </div>
@@ -860,7 +863,7 @@ export function CatalogPage() {
             <LeadForm
               context={{ intent: "pick", categoryId: query.type }}
               initialComment={`Нужна консультация по оборудованию ${profile.brand}.`}
-              submitLabel="Отправить инженерный запрос"
+              submitLabel="Запросить подбор и КП"
             />
           </div>
         </section>
@@ -875,8 +878,24 @@ export function CatalogPage() {
                 <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">О производителе {profile.brand}</h2>
                 <p className="mt-3 text-sm text-pretty text-muted">
                   {maker ? maker.name : profile.brand}. {maker ? `${maker.place}. ` : ""}
-                  Специализация в справочнике: {maker?.line === "burner" ? "горелки" : maker?.line === "air" ? "воздухонагреватели" : "промышленные котлы"}. Год основания здесь не указан: в этой сборке он не подтверждён.
+                  {maker
+                    ? `${equipmentIntent(maker).product} ${maker.title} рассматриваются для технического подбора и комплектации закупочного запроса. Сравните опубликованные серии, уточните рабочие параметры и запросите коммерческие условия через kotly.pro.`
+                    : "Сравните оборудование и сформируйте запрос для закупки."}
                 </p>
+                {maker && manufacturerPublicNote(maker) ? (
+                  <p className="mt-3 text-sm text-muted">Сведения о направлении: {manufacturerPublicNote(maker)}</p>
+                ) : null}
+                {maker ? (
+                  <div className="mt-5">
+                    <h3 className="text-lg font-bold">Что указать для подбора и запроса КП</h3>
+                    <ul className="mt-3 grid gap-2 text-sm leading-relaxed text-muted">
+                      {equipmentIntent(maker).details.map((detail) => (
+                        <li key={detail} className="flex gap-2"><span aria-hidden="true" className="font-bold text-accent">•</span><span>{detail}</span></li>
+                      ))}
+                    </ul>
+                    <p className="mt-3 text-xs text-muted">Цена, наличие, сроки поставки, документация и применимость конкретной модели уточняются индивидуально, без неподтверждённых обещаний.</p>
+                  </div>
+                ) : null}
                 <div className="mt-4 flex flex-wrap gap-2">
                   {profile.categories.map((item) => (
                     <span key={item.id} className="rounded-full bg-chip px-3 py-1 text-sm">{item.title}</span>
@@ -913,7 +932,7 @@ export function CatalogPage() {
         <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 text-sm md:grid-cols-3">
           <div>
             <p className="font-display font-extrabold text-white">Котлы<span className="text-[#f0c4cc]">.pro</span></p>
-            <p className="mt-2">Независимый каталог. Не является офертой и сайтом завода.</p>
+            <p className="mt-2">Независимый каталог. Оборудование и коммерческие условия подбираются по запросу; не является офертой.</p>
           </div>
           <div className="grid gap-2">
             <Link to="/politika" className="hover:text-white">Политика обработки данных</Link>
@@ -1066,7 +1085,7 @@ function MissingSeries({ brand, openInitially }: { brand: string; openInitially:
                       {primarySpec(item.series).label}: {primarySpec(item.series).value}
                     </p>
                     <p className="mt-1 text-xs text-muted">{item.note}</p>
-                    <Link to="/manufacturers/$slug" params={{ slug: item.slug }} search={{ series: item.series.id }} className="mt-2 inline-flex text-sm font-semibold">
+                    <Link to="/$slug" params={{ slug: item.slug }} search={{ series: item.series.id }} className="mt-2 inline-flex text-sm font-semibold">
                       Открыть серию
                     </Link>
                   </li>
@@ -1290,7 +1309,7 @@ function AnalogsDialog({ series, sourceSlug, onClose }: { series: Series | null;
                   </p>
                   <p className="mt-1 text-xs text-muted">{item.note}</p>
                   <Link
-                    to="/manufacturers/$slug"
+                    to="/$slug"
                     params={{ slug: item.slug }}
                     search={{ series: item.series.id }}
                     className="mt-2 inline-flex text-sm font-semibold text-ink"
