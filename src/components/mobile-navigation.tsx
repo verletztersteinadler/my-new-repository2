@@ -30,7 +30,7 @@ export function MobileNavigation() {
           <Dialog.Content className="fixed inset-y-0 right-0 z-[90] flex w-[min(88vw,24rem)] max-w-full flex-col overflow-y-auto bg-surface px-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1.25rem+env(safe-area-inset-top))] shadow-2xl">
             <div className="flex items-center justify-between gap-3 border-b border-line pb-4">
               <div>
-                <Dialog.Title className="font-display text-xl font-extrabold">Котлы<span className="text-accent">.pro</span></Dialog.Title>
+                <Dialog.Title className="font-display text-xl font-extrabold">kotly<span className="text-accent">.pro</span></Dialog.Title>
                 <Dialog.Description className="mt-1 text-xs text-muted">Разделы справочника</Dialog.Description>
               </div>
               <Dialog.Close asChild>
