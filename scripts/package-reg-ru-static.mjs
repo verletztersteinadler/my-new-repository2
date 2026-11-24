@@ -35,6 +35,46 @@ const phpFolder = resolve(target, "api/v1/leads");
 await mkdir(phpFolder, { recursive: true });
 await copyFile(resolve(root, "scripts/reg-ru/api/v1/leads/index.php"), resolve(phpFolder, "index.php"));
 
+// Build canonical sitemap from actually prerendered pages.
+// Never include API, asset endpoints, SPA query variants or noindex pump research.
+const sitemapPaths = new Set();
+async function discoverPages(folder, subpath = "") {
+  for (const entry of await readdir(folder, { withFileTypes: true })) {
+    const relative = subpath ? subpath + "/" + entry.name : entry.name;
+    if (entry.isDirectory()) {
+      if (["api", "__grok", "_build", "assets", "catalog", "manufacturers"].includes(entry.name)) continue;
+      if (relative === "nasosy") continue; // research register is noindex
+      await discoverPages(resolve(folder, entry.name), relative);
+    } else if (entry.name === "index.html") {
+      const pagePath = subpath === "" ? "/" : "/" + subpath + "/";
+      sitemapPaths.add(pagePath);
+    }
+  }
+}
+await discoverPages(target);
+if (!sitemapPaths.has("/calculators/") || !sitemapPaths.has("/configurators/")) {
+  throw new Error("Cannot ship sitemap: engineering route index is missing");
+}
+const urlXml = [...sitemapPaths].sort().map((path) => (
+  "  <url><loc>https://kotly.pro" + path.replaceAll("&", "&amp;") + "</loc></url>"
+)).join("\n");
+await writeFile(resolve(target, "sitemap.xml"), [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  urlXml,
+  "</urlset>",
+  "",
+].join("\n"));
+await writeFile(resolve(target, "robots.txt"), [
+  "User-agent: *",
+  "Allow: /",
+  "Disallow: /api/",
+  "Disallow: /_serverFn/",
+  "Sitemap: https://kotly.pro/sitemap.xml",
+  "",
+].join("\n"));
+console.log("SEO:", sitemapPaths.size, "canonical prerendered pages (excluding research-only /nasosy).");
+
 const entries = await readdir(target);
 if (!entries.some((item) => item === "_build" || item === "assets")) {
   throw new Error("Missing compiled client assets in static output");
