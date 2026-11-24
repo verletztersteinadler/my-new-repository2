@@ -7,6 +7,8 @@
  * Reference: Engineering Calculators TZ, 23 November 2026, sections 1–5, 9, 11.
  */
 import { solvePT, solvePx, solveTx } from "iapws-if97";
+import { secondaryDefinitions } from "./calculators-secondary-definitions";
+import { calculateSecondary } from "./calculators-secondary";
 
 export type CalField = {
   id: string;
@@ -140,6 +142,10 @@ export const calculatorDefinitions: CalDefinition[] = [
     fields:[num("flow","Объёмный расход","40","м³/ч"),num("diameter","Внутренний диаметр","120","мм")],
     caveat:"Используйте именно внутренний, не условный или наружный диаметр. Допустимую скорость определяет проектировщик.",equipment:"pump"},
 ];
+
+// 36 additional engineering estimates use the same field schema and calculation UI.
+// Inputs without certified property curves are explicit, never secretly estimated.
+calculatorDefinitions.push(...secondaryDefinitions);
 
 export const calculatorById = (id: string) => calculatorDefinitions.find((def) => def.id === id);
 const PRESSURE_TO_PA: Record<string, number> = {
@@ -370,7 +376,7 @@ export function calculate(id: string, raw: Record<string,string>): CalResult {
           notes:["Фактическая допустимость скорости зависит от материала, теплоносителя и требований проекта."],
           selection:{flowM3h:flow}};
       }
-      default:throw new Error("Калькулятор не найден");
+      default:return calculateSecondary(id,raw);
     }
   });
 }
