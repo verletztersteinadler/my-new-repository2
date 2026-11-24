@@ -8,7 +8,7 @@ test("Pump register imports the workbook priority split without publishing B/C",
   assert.equal(pumpBacklogNames.C.length,25);
   assert.equal(pumpResearchCounts.total,106);
   assert.equal(pumpRoles.length,10);
-  assert.ok(pumpPilotCompanies.every(c=>c.priority==="A" && c.catalog.startsWith("https://") && c.editorialStatus==="source-register-unverified"));
+  assert.ok(pumpPilotCompanies.every(c=>c.priority==="A" && !("site" in c) && !("catalog" in c) && !("reference" in c) && c.editorialStatus==="source-register-unverified"));
   assert.ok(!pumpBacklogNames.C.includes("SVN PUMP"));
 });
 test("Flow SI conversions preserve physical quantity",()=>{
