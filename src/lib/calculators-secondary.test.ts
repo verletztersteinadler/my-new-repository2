@@ -42,7 +42,9 @@ test("Fuel comparison, season volume and tank autonomy use explicit efficiencies
   close(out("season-fuel","Расход топлива за сезон"),1000*.5*4000/(.93*9.5),1e-6);
 });
 test("Darcy losses and pump head/power preserve SI dimensions",()=>{
-  const dp=out("pipe-loss","Потери давления");
+  const pressureLoss = run("pipe-loss").rows.find(row=>row.label==="Потери давления"&&row.unit==="кПа");
+  assert.ok(pressureLoss, "Missing pipe pressure loss in kPa");
+  const dp=pressureLoss.value;
   assert.ok(dp>0 && dp<1000,"Expected engineering-scale friction losses in kPa");
   close(out("pump-head","Напор для компенсации потерь"),100000/(1000*9.80665),1e-8);
   close(out("pump-power","Потребляемая мощность"),1000*9.80665*40*20/(3.6e6*.7),1e-7);
