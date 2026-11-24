@@ -845,49 +845,71 @@ export function CatalogPage() {
           </button>
         ) : null}
 
-        <section className="mt-10 grid gap-4 lg:grid-cols-[1.4fr_0.8fr]">
-          <div className="rounded-2xl border border-line bg-surface p-5">
-            <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Информация о производителе</p>
-            <h2 className="mt-2 text-3xl font-semibold">О производителе {profile.brand}</h2>
-            <p className="mt-3 text-sm text-pretty text-muted">
-              {maker ? maker.name : profile.brand}. {maker ? `${maker.place}. ` : ""}
-              Специализация в справочнике: {maker?.line === "burner" ? "горелки" : maker?.line === "air" ? "воздухонагреватели" : "промышленные котлы"}. Год основания здесь не указан: в этой сборке он не подтверждён.
+        <section id="consult" aria-labelledby="contact-heading" className="mt-10 rounded-3xl border border-line bg-surface p-5 sm:p-8">
+          <div className="max-w-3xl">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent">Инженерная консультация</p>
+            <h2 id="contact-heading" className="mt-2 font-display text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+              Связаться с инженером
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted">
+              Укажите задачу и контактные данные. Поможем уточнить параметры и подобрать оборудование.
+              Запрос поступает оператору справочника kotly.pro, а не производителю.
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {profile.categories.map((item) => (
-                <span key={item.id} className="rounded-full bg-chip px-3 py-1 text-sm">{item.title}</span>
-              ))}
-            </div>
-            <p className="mt-4 text-xs text-muted">Взято с оф. сайта производителя. Сверка: {profile.checked}.</p>
           </div>
-          <aside className="rounded-2xl bg-[#161616] p-5 text-white">
-            <p className="text-xs font-semibold tracking-[0.14em] text-[#f0c4cc] uppercase">Полезная информация</p>
-            <h2 className="mt-2 text-2xl font-semibold">Что есть в карточке</h2>
-            <p className="mt-3 text-sm text-white/70">Параметр показывается только если он есть в открытом источнике. Нет цифры — поле не заполняется нулём.</p>
-            {profile.documents.length ? (
-              <ul className="mt-4 grid gap-1 text-sm">
-                {profile.documents.map((doc) => (
-                  <li key={doc.title}>{doc.title}</li>
-                ))}
-              </ul>
-            ) : null}
-            <p className="mt-4 text-sm text-[#f0c4cc]">Сайт производителя в справочнике не открывается.</p>
-          </aside>
-        </section>
-
-        <section id="consult" className="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#161616] px-5 py-6 text-white">
-          <div>
-            <p className="text-xs font-semibold tracking-[0.14em] text-[#f0c4cc] uppercase">Подбор по параметрам</p>
-            <h2 className="mt-2 font-display text-3xl leading-none font-extrabold tracking-[-0.04em]">Нужно подобрать модель под задачу?</h2>
-            <p className="mt-2 max-w-xl text-sm text-white/70">Запрос получает справочник, не завод. Это не покупка.</p>
+          <div className="mt-6 max-w-3xl">
+            <LeadForm
+              context={{ intent: "pick", categoryId: query.type }}
+              initialComment={`Нужна консультация по оборудованию ${profile.brand}.`}
+              submitLabel="Отправить инженерный запрос"
+            />
           </div>
-          <button type="button" className="inline-flex h-12 items-center rounded-full bg-accent px-5 text-sm font-semibold text-on-accent hover:bg-accent-hover" onClick={() => setLead({ intent: "pick", categoryId: query.type })}>
-            Подобрать модель
-          </button>
         </section>
       </main>
 
-      <footer className="bg-[#111] text-white/75">
+      <footer className="mt-10 bg-[#111] text-white/75">
+        <div className="bg-bg text-ink">
+          <div className="mx-auto max-w-6xl px-4 pb-8 pt-8">
+            <div className="grid gap-4 lg:grid-cols-[1.4fr_0.8fr]">
+              <div className="rounded-2xl border border-line bg-surface p-5">
+                <p className="text-xs font-semibold tracking-[0.14em] text-accent uppercase">Информация о производителе</p>
+                <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">О производителе {profile.brand}</h2>
+                <p className="mt-3 text-sm text-pretty text-muted">
+                  {maker ? maker.name : profile.brand}. {maker ? `${maker.place}. ` : ""}
+                  Специализация в справочнике: {maker?.line === "burner" ? "горелки" : maker?.line === "air" ? "воздухонагреватели" : "промышленные котлы"}. Год основания здесь не указан: в этой сборке он не подтверждён.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {profile.categories.map((item) => (
+                    <span key={item.id} className="rounded-full bg-chip px-3 py-1 text-sm">{item.title}</span>
+                  ))}
+                </div>
+                <p className="mt-4 text-xs text-muted">Взято с оф. сайта производителя. Сверка: {profile.checked}.</p>
+              </div>
+              <aside className="rounded-2xl bg-[#161616] p-5 text-white">
+                <p className="text-xs font-semibold tracking-[0.14em] text-[#f0c4cc] uppercase">Полезная информация</p>
+                <h2 className="mt-2 text-2xl font-semibold">Что есть в карточке</h2>
+                <p className="mt-3 text-sm text-white/70">Параметр показывается только если он есть в открытом источнике. Нет цифры — поле не заполняется нулём.</p>
+                {profile.documents.length ? (
+                  <ul className="mt-4 grid gap-1 text-sm">
+                    {profile.documents.map((doc) => (
+                      <li key={doc.title}>{doc.title}</li>
+                    ))}
+                  </ul>
+                ) : null}
+                <p className="mt-4 text-sm text-[#f0c4cc]">Сайт производителя в справочнике не открывается.</p>
+              </aside>
+            </div>
+            <div className="mt-4 flex flex-col gap-4 rounded-2xl bg-[#161616] p-5 text-white sm:flex-row sm:items-center sm:justify-between sm:p-6">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold tracking-[0.14em] text-[#f0c4cc] uppercase">Подбор по параметрам</p>
+                <h2 className="mt-2 font-display text-xl font-extrabold leading-tight tracking-tight sm:text-2xl">Нужно подобрать модель под задачу?</h2>
+                <p className="mt-2 text-sm text-white/70">Запрос получает справочник, не завод. Это не покупка.</p>
+              </div>
+              <a href="#consult" className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-on-accent hover:bg-accent-hover">
+                Перейти к форме связи
+              </a>
+            </div>
+          </div>
+        </div>
         <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 text-sm md:grid-cols-3">
           <div>
             <p className="font-display font-extrabold text-white">Котлы<span className="text-[#f0c4cc]">.pro</span></p>
