@@ -2,6 +2,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-r
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { PickBar } from "@/components/pick-bar";
+import { MobileNavigation } from "@/components/mobile-navigation";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -40,6 +41,7 @@ export const Route = createRootRoute({
         <PreviewHostBridge />
         <AuthProvider>
           <Outlet />
+          <MobileNavigation />
           <PickBar />
         </AuthProvider>
         <Scripts />
