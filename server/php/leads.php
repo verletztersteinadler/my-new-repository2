@@ -12,10 +12,20 @@ function reply(array $body, int $status): never
     echo json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }
+function utfLength(string $text): int
+{
+    if (function_exists('mb_strlen')) return mb_strlen($text, 'UTF-8');
+    $count = preg_match_all('/./us', $text);
+    return $count === false ? strlen($text) : $count;
+}
 function value(array $input, string $key, int $max = 3000): string
 {
     $raw = $input[$key] ?? '';
-    return is_string($raw) ? mb_substr(trim($raw), 0, $max, 'UTF-8') : '';
+    if (!is_string($raw)) return '';
+    $text = trim($raw);
+    if (function_exists('mb_substr')) return mb_substr($text, 0, $max, 'UTF-8');
+    $chars = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
+    return is_array($chars) ? implode('', array_slice($chars, 0, $max)) : '';
 }
 function validatedInput(): array
 {
@@ -55,15 +65,15 @@ function validatedInput(): array
     $email = value($input, 'email', 121);
     $comment = value($input, 'comment', 3001);
     $uuid = value($input, 'submission_id', 61);
-    if ($name === '' || mb_strlen($name) > 100) $errors['name'] = 'Укажите имя (не более 100 символов)';
-    if (preg_match('/\d/', $name) && mb_strlen($name) < 2) $errors['name'] = 'Укажите имя';
-    if (strlen(preg_replace('/\D+/', '', $phone)) < 8 || mb_strlen($phone) > 40) {
+    if ($name === '' || utfLength($name) > 100) $errors['name'] = 'Укажите имя (не более 100 символов)';
+    if (preg_match('/\d/', $name) && utfLength($name) < 2) $errors['name'] = 'Укажите имя';
+    if (strlen(preg_replace('/\D+/', '', $phone)) < 8 || utfLength($phone) > 40) {
         $errors['phone'] = 'Укажите телефон полностью';
     }
-    if ($email !== '' && (mb_strlen($email) > 120 || !filter_var($email, FILTER_VALIDATE_EMAIL))) {
+    if ($email !== '' && (utfLength($email) > 120 || !filter_var($email, FILTER_VALIDATE_EMAIL))) {
         $errors['email'] = 'Проверьте адрес почты';
     }
-    if (mb_strlen($comment) > 3000) $errors['comment'] = 'Слишком длинное сообщение';
+    if (utfLength($comment) > 3000) $errors['comment'] = 'Слишком длинное сообщение';
     if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $uuid)) {
         $errors['submissionId'] = 'Некорректный ключ заявки';
     }
