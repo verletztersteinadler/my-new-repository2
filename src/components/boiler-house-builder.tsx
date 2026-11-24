@@ -1,3 +1,4 @@
+import { displaySeriesName } from "@/lib/series-names";
 import { CatalogHeaderSearch } from "@/components/catalog-header-search";
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
@@ -149,7 +150,7 @@ function Matches({ kind, train, mainFuel, alternateFuel, temp, selected, setSele
       <ul className="mt-3 grid gap-3">{results.map((v)=><li key={v.slug+"-"+v.series.id}
         className="rounded-xl bg-bg/50 p-3">
         <p className="text-xs font-semibold uppercase text-accent">{v.maker}</p>
-        <p className="mt-1 text-sm font-bold">{v.series.name}</p>
+        <p className="mt-1 text-sm font-bold">{displaySeriesName(v.maker, v.series.name)}</p>
         <p className="mt-1 text-xs text-muted">Диапазон: {fmt(v.capacityMin)}–{fmt(v.capacityMax)} {unit}</p>
         <p className="mt-1 text-xs text-muted">{v.closestPublishedSize?"Опубликованный типоразмер по производительности: "+v.closestPublishedSize.name:
           "Подтверждён только диапазон серии — модель не определена"}</p>
@@ -208,9 +209,9 @@ export function BoilerHouseBuilder() {
     limit:5}),[plant.steam?.minimumPerDutyUnit,s.mainFuel,s.alternateFuel]);
   const preferredEquipment = [
     ...(hasWater ? waterCandidates.filter((v)=>v.slug+"/"+v.series.id===s.preferredWater)
-      .map((v)=>"Водогрейная группа: "+v.maker+" — "+v.series.name) : []),
+      .map((v)=>"Водогрейная группа: "+displaySeriesName(v.maker, v.series.name)) : []),
     ...(hasSteam ? steamCandidates.filter((v)=>v.slug+"/"+v.series.id===s.preferredSteam)
-      .map((v)=>"Паровая группа: "+v.maker+" — "+v.series.name) : []),
+      .map((v)=>"Паровая группа: "+displaySeriesName(v.maker, v.series.name)) : []),
   ];
   const errs=[
     (hasWater&&(!valid(s.heating)||!valid(s.dhw)||!valid(s.process)||heatKw<=0))||
