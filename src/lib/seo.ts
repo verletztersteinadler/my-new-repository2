@@ -1,4 +1,5 @@
 import type { Manufacturer } from "@/data/manufacturers";
+import { manufacturerSearchAliases } from "@/lib/catalog-brand-aliases";
 
 export const SITE_ORIGIN = "https://kotly.pro";
 
@@ -52,9 +53,14 @@ export function equipmentIntent(maker: Manufacturer): EquipmentIntent {
 export function manufacturerSeo(maker: Manufacturer, hasVerifiedSeries: boolean) {
   const intent = equipmentIntent(maker);
   const title = `${intent.product} ${maker.title} — подбор и запрос КП | kotly.pro`;
+  // Preserve the canonical name in the title, but index accepted
+  // Russian spelling in the public SEO description as well.
+  const seoBrand = manufacturerSearchAliases(maker.slug).length
+    ? `${maker.title} (${manufacturerSearchAliases(maker.slug).join(", ")})`
+    : maker.title;
   const description = hasVerifiedSeries
-    ? `${intent.product} ${maker.title}: серии, характеристики и подбор для закупки. Сравните модели, уточните комплектацию, цену и условия поставки через kotly.pro.`
-    : `${intent.product} ${maker.title} (${maker.place}): подбор по техническим параметрам, поиск аналогов и подготовка запроса КП. Характеристики моделей уточняются.`;
+    ? `${intent.product} ${seoBrand}: серии, характеристики и подбор для закупки. Сравните модели, уточните комплектацию, цену и условия поставки через kotly.pro.`
+    : `${intent.product} ${seoBrand} (${maker.place}): подбор по техническим параметрам, поиск аналогов и подготовка запроса КП. Характеристики моделей уточняются.`;
   return {
     title,
     description,
