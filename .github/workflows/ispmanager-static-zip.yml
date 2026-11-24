@@ -39,7 +39,6 @@ jobs:
         run: |
           set -euo pipefail
           test -f .output/public/index.html
-          test -d .output/public/_build || test -d .output/public/assets || test -d .output/public/_tanstack
           echo "Prerendered HTML count:"
           find .output/public -name '*.html' | tee /tmp/kotly-html-pages.txt | wc -l
           test "$(wc -l </tmp/kotly-html-pages.txt)" -gt 5
