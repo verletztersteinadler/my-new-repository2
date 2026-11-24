@@ -1,6 +1,7 @@
 import { useRef, useState, type FormEvent, type InputHTMLAttributes } from "react";
 import { CONSENT_VERSION, sizeById } from "@/data/catalog";
-import { findSeries } from "@/data/series-index";
+import { findSeries, publishedCatalogs } from "@/data/series-index";
+import { displaySeriesName } from "@/lib/series-names";
 import { cn } from "@/lib/utils";
 
 export type LeadContext = {
@@ -38,6 +39,7 @@ export function LeadForm({
   const [delivery, setDelivery] = useState<"sent" | "pending" | null>(null);
   const [sizeId, setSizeId] = useState(context.sizeId ?? "");
   const series = findSeries(context.seriesId);
+  const seriesBrand = series ? publishedCatalogs.find((item) => item.series.includes(series))?.title ?? "" : "";
   const size = sizeById(series, sizeId);
 
   if (leadId) {
@@ -116,7 +118,7 @@ export function LeadForm({
       {series ? (
         <p className="sm:col-span-2 rounded-sm bg-chip px-3 py-2 text-sm">
           <span className="text-muted">Оборудование: </span>
-          {series.name}
+          {displaySeriesName(seriesBrand, series.name)}
           {` · ${size ? size.name : "типоразмер не указан"}`}
         </p>
       ) : null}
