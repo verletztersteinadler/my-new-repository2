@@ -1,0 +1,15 @@
+{
+  "name": "kotly-pro/lead-mail",
+  "description": "Authenticated SMTP handler for static kotly.pro deployment",
+  "private": true,
+  "require": {
+    "php": ">=8.2",
+    "phpmailer/phpmailer": "6.10.0"
+  },
+  "config": {
+    "allow-plugins": false,
+    "audit": {
+      "block-insecure": true
+    }
+  }
+}
