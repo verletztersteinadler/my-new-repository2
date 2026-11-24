@@ -1,15 +1,18 @@
 <?php
 /**
- * COPY ONLY ON THE SERVER to a sibling directory OUTSIDE the site's document root:
- *   <parent-of-document-root>/kotly-private/mail-config.php
+ * This is an example only. Save the populated configuration one directory
+ * ABOVE the site document root, e.g. /www/kotly-private/mail-config.php.
+ * Never put a real password into public ZIPs, chat attachments or GitHub.
  *
- * Outgoing settings supplied via Thunderbird: smtp.kotly.pro:587 STARTTLS.\n * Ensure the server has a trusted TLS certificate for smtp.kotly.pro.\n * Do not put a real password in GitHub, ZIP or a public website directory.
+ * REG.RU-hosted mail (per published REG.RU support documentation):
+ * mail.hosting.reg.ru, port 465, SSL/TLS.
+ * If your mailbox is on a separate SMTP server, use its exact trusted host.
  */
 return [
-    'smtp_host' => 'smtp.kotly.pro',
-    'smtp_port' => 587,
-    'smtp_secure' => 'tls',
+    'smtp_host' => 'mail.hosting.reg.ru',
+    'smtp_port' => 465,
+    'smtp_secure' => 'ssl',
     'smtp_user' => 'info@kotly.pro',
-    'smtp_password' => 'REPLACE_WITH_PASSWORD_IN_ISPMANAGER_ONLY',
+    'smtp_password' => 'REPLACE_WITH_PASSWORD_ON_SERVER_ONLY',
     'recipient' => 'info@kotly.pro',
 ];
