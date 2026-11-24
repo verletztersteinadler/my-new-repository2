@@ -1,3 +1,4 @@
+import { displaySeriesName } from "@/lib/series-names";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { LeadForm } from "@/components/lead-form";
@@ -418,7 +419,7 @@ export function SolutionBuilder() {
             {hits.slice(0, shown).map((item) => (
               <li key={item.slug + "-" + item.series.id} className="rounded-2xl border border-line bg-surface p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-accent">{item.maker}</p>
-                <h3 className="mt-2 font-display text-xl font-extrabold leading-tight">{item.series.name}</h3>
+                <h3 className="mt-2 font-display text-xl font-extrabold leading-tight">{displaySeriesName(item.maker, item.series.name)}</h3>
                 <p className="mt-2 text-sm text-ink">{engineeringSpec(item.series)}</p>
                 {item.series.tempMaxC != null ?
                   <p className="mt-1 text-xs text-muted">T max: {fmt(temperatureCToK(item.series.tempMaxC), 3)} K ({fmt(item.series.tempMaxC)} °C)</p> : null}
