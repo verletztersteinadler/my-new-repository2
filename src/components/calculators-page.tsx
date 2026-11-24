@@ -42,6 +42,9 @@ export function CalculatorsIndex() {
         <Link to="/kotelnaya" className="inline-flex min-h-11 items-center rounded-xl bg-accent px-5 font-bold text-on-accent hover:bg-accent-hover">
           Конфигуратор котельной →
         </Link>
+        <Link to="/configurators" className="inline-flex min-h-11 items-center rounded-xl border border-line px-5 font-bold hover:bg-chip">
+          4 конфигуратора оборудования
+        </Link>
         <Link to="/" className="inline-flex min-h-11 items-center rounded-xl border border-line px-5 font-bold hover:bg-chip">
           Каталог котлов
         </Link>
