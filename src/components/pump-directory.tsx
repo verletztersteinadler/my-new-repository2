@@ -55,12 +55,6 @@ export function PumpDirectoryPage() {
         Этот список не является предложением конкретного насоса или подтверждением изготовителя каждой серии.
       </p>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-line bg-surface p-4"><p className="text-xs text-muted">Первичных записей в файле</p><p className="mt-2 text-3xl font-extrabold">{pumpResearchCounts.total}</p></div>
-        <div className="rounded-2xl border border-line bg-surface p-4"><p className="text-xs text-muted">Пилот — приоритет A</p><p className="mt-2 text-3xl font-extrabold">{pumpResearchCounts.A}</p></div>
-        <div className="rounded-2xl border border-line bg-surface p-4"><p className="text-xs text-muted">В редакционной очереди B/C</p><p className="mt-2 text-3xl font-extrabold">{pumpResearchCounts.B+pumpResearchCounts.C}</p></div>
-      </div>
-
       <section className="mt-7 rounded-3xl border border-line bg-surface p-4 sm:p-6" aria-label="Фильтры производителей насосов">
         <h2 className="font-display text-xl font-extrabold">Исследовательский реестр</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
