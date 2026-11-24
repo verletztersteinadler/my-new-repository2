@@ -47,6 +47,9 @@ jobs:
       - name: Verify short manufacturer routes and permanent redirects
         run: node --test scripts/manufacturer-short-urls.test.mjs
 
+      - name: Verify sticky bottom lead CTA behavior
+        run: node --test scripts/sticky-cta.test.mjs
+
       - name: Test all engineering calculators and IAPWS-IF97 against technical specification
         run: node --experimental-strip-types --test src/lib/calculators.test.ts src/lib/calculators-secondary.test.ts
 
