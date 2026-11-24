@@ -84,15 +84,25 @@ function compute(mode:Exclude<Mode,"modular">,v:Record<string,string>){
   if(mode==="steam"){
     const steam=call("steam-capacity",{steam:v.steam,pressure:v.pressure,feed:v.feed,basis:"absolute",state:"dry"});
     const power=steam.selection?.powerKw??0;
+    const oneKgH=positive("unit")*1000, totalKgH=positive("steam")*1000;
+    const maxLoad=positive("maxLoad")/100;
+    if(maxLoad>1)throw new Error("Загрузка одного парового котла не может превышать 100%");
+    const working=Math.ceil(totalKgH/(oneKgH*maxLoad));
+    const reserve:CalResult={
+      rows:[
+        {label:"Рабочих котлов",value:working,unit:"шт",digits:0},
+        {label:"Резервных котлов N+1",value:1,unit:"шт",digits:0},
+        {label:"Установленная паропроизводительность",value:(working+1)*oneKgH/1000,unit:"т/ч"},
+        {label:"Нагрузка одного рабочего котла",value:totalKgH/(working*oneKgH)*100,unit:"%"},
+      ],
+      notes:["Резерв N+1 по производительности. Необходимо проверить условия работы на минимальной нагрузке."],
+    };
     return [
       ["Тепловой баланс пара IAPWS-IF97",steam],
       ["Предварительный расход газа",call("gas-consumption",{power:String(power),eff:v.eff,hu:v.hu})],
-      ["Питательная вода и продувка",call("blowdown",{steam:String(positive("steam")*1000),percent:v.blowdown})],
+      ["Питательная вода и продувка",call("blowdown",{steam:String(totalKgH),percent:v.blowdown})],
       ["Предварительный паропровод",call("steam-pipe",{steam:v.steam,pressure:v.pressure,speed:v.speed})],
-      ["Котлы и резервирование N+1",call("boiler-count",{
-        load:String(positive("steam")*1000),unit:String(positive("unit")*1000),
-        maxLoad:v.maxLoad,reserve:"n+1",
-      })],
+      ["Котлы и резервирование N+1",reserve],
     ] as Array<[string,CalResult]>;
   }
   const oil=call("oil-flow",{power:v.power,supply:v.supply,return:v.return,rho:v.rho,cp:v.cp});
