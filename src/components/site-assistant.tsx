@@ -123,7 +123,7 @@ export function SiteAssistant() {
     <>
       {open ? (
         <section
-          className="fixed inset-x-3 bottom-24 z-50 flex max-h-[min(34rem,70dvh)] flex-col border border-line bg-surface shadow-xl sm:inset-x-auto sm:right-4 sm:bottom-20 sm:w-[24rem]"
+          className="fixed inset-x-3 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-50 flex max-h-[min(34rem,65dvh)] flex-col border border-line bg-surface shadow-xl sm:inset-x-auto sm:right-4 sm:bottom-20 sm:w-[24rem]"
           aria-label="Чат с оператором каталога"
         >
           <header className="flex items-center gap-3 bg-accent px-4 py-3 text-on-accent">
@@ -202,7 +202,7 @@ export function SiteAssistant() {
       ) : null}
       <button
         type="button"
-        className="fixed right-4 bottom-20 z-40 h-12 rounded-sm bg-accent px-4 text-sm font-semibold text-on-accent shadow-lg hover:bg-accent-hover md:bottom-5"
+        className="fixed right-4 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-40 h-12 rounded-sm bg-accent px-4 text-sm font-semibold text-on-accent shadow-lg hover:bg-accent-hover md:bottom-5"
         onClick={() => {
           if (open) {
             setOpen(false);
