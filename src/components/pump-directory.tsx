@@ -1,7 +1,7 @@
 import { CatalogHeaderSearch } from "@/components/catalog-header-search";
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { pumpPilotCompanies, pumpResearchCounts, pumpRoles, type PumpRoleId } from "@/data/pumps";
+import { pumpPilotCompanies, pumpRoles, type PumpRoleId } from "@/data/pumps";
 
 const rolesFilter: Record<PumpRoleId,string[]> = {
   network:["сетев"],circulation:["циркуляц","котлов"],makeup:["подпит"],
@@ -47,16 +47,15 @@ export function PumpDirectoryPage() {
       </div>
     </header>
     <main className="mx-auto max-w-6xl px-4 pb-16 pt-9">
-      <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">Каталог насосов · исследовательская версия</p>
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">Промышленные насосы</p>
       <h1 className="mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-5xl">Промышленные насосы для котельных</h1>
       <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted">
-        Реестр поставщиков и производственных брендов из файла от 16 ноября 2026 года.
-        Показаны только {pumpResearchCounts.A} записей пилотной группы A. Технические параметры моделей и совместимость со средой ещё не проверены.
-        Этот список не является предложением конкретного насоса или подтверждением изготовителя каждой серии.
+        Производители насосного оборудования для котельных и инженерных систем.
+        Подбор конкретной модели выполняется по рабочим параметрам, характеристикам и условиям эксплуатации.
       </p>
 
       <section className="mt-7 rounded-3xl border border-line bg-surface p-4 sm:p-6" aria-label="Фильтры производителей насосов">
-        <h2 className="font-display text-xl font-extrabold">Исследовательский реестр</h2>
+        <h2 className="font-display text-xl font-extrabold">Производители и оборудование</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
           <label className="grid gap-1 text-sm font-semibold">Поиск по бренду, назначению и названию серии
             <input value={q} onChange={(e)=>{setQ(e.target.value);setLimit(25);}}
@@ -71,7 +70,7 @@ export function PumpDirectoryPage() {
           </label>
         </div>
         <fieldset className="mt-5">
-          <legend className="text-sm font-semibold">Назначение, указанное в исходном реестре</legend>
+          <legend className="text-sm font-semibold">Назначение оборудования</legend>
           <div className="mt-2 flex flex-wrap gap-2">
             {[{id:"all" as const,name:"Все назначения"},...pumpRoles].map((v)=>
               <button key={v.id} type="button" aria-pressed={role===v.id} onClick={()=>{setRole(v.id);setLimit(25);}}
@@ -79,21 +78,20 @@ export function PumpDirectoryPage() {
                 {v.name}
               </button>)}
           </div>
-          <p className="mt-2 text-xs text-muted">Категория определяется по тексту реестра, а не по паспортной пригодности конкретной модели.</p>
+          <p className="mt-2 text-xs text-muted">Для выбора модели требуется сопоставление технического паспорта с условиями эксплуатации.</p>
         </fieldset>
         <p className="mt-5 text-sm font-semibold">Найдено: {rows.length}</p>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           {rows.slice(0,limit).map((maker)=><article key={maker.id} className="rounded-2xl border border-line bg-bg/40 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-accent">{maker.country} · данные на проверке</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-accent">{maker.country}</p>
             <h3 className="mt-2 font-display text-xl font-extrabold">{maker.name}</h3>
             <p className="mt-1 text-xs text-muted">{maker.entity}</p>
             <p className="mt-3 text-sm leading-relaxed">{maker.applications}</p>
-            <p className="mt-2 text-xs leading-relaxed text-muted"><strong>Названия серий в реестре:</strong> {maker.seriesNames}</p>
-            {maker.caveat && <p className="mt-3 border-l-2 border-accent pl-3 text-xs leading-relaxed text-muted">Проверка: {maker.caveat}</p>}
+            <p className="mt-2 text-xs leading-relaxed text-muted"><strong>Обозначения серий:</strong> {maker.seriesNames}</p>
             <p className="mt-4 text-xs leading-relaxed text-muted">Для подбора насосов и уточнения документации направьте инженерный запрос через kotly.pro.</p>
           </article>)}
         </div>
-        {rows.length===0&&<p className="rounded-xl bg-bg/40 p-5 text-sm text-muted">Нет совпадений в пилотной группе. Попробуйте снять фильтр.</p>}
+        {rows.length===0&&<p className="rounded-xl bg-bg/40 p-5 text-sm text-muted">Нет совпадений. Попробуйте изменить запрос или фильтры.</p>}
       </section>
 
       <section className="mt-7 rounded-3xl border border-line bg-surface p-5">
@@ -110,8 +108,7 @@ export function PumpDirectoryPage() {
         </Link>
       </section>
       <footer className="mt-8 text-xs text-muted">
-        Источник: KOTLY_PRO_PUMP_MANUFACTURERS_2026-11-16.xlsx. Все записи являются черновыми до редакторской и инженерной проверки.
-        Группы B и C не публикуются автоматически.
+        Технические характеристики и совместимость конкретной модели подтверждаются документацией производителя перед подбором и закупкой.
       </footer>
     </main>
   </div>;
