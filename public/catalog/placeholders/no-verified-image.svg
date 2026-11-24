@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title description">
+  <title id="title">Изображение оборудования не подтверждено</title>
+  <desc id="description">Нейтральная заглушка без изображения конкретной модели</desc>
+  <rect width="1600" height="900" fill="#18222d"/>
+  <rect x="70" y="70" width="1460" height="760" rx="36" fill="none" stroke="#334452" stroke-width="3"/>
+  <g stroke="#7b8a99" stroke-width="12" fill="none" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="650" y="265" width="300" height="190" rx="16"/>
+    <path d="m665 435 86-89 71 65 40-37 80 76"/>
+    <circle cx="869" cy="310" r="19"/>
+    <path d="M655 265 952 455"/>
+  </g>
+  <path d="M660 515h280" stroke="#d3123b" stroke-width="8" stroke-linecap="round"/>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <text x="800" y="607" font-size="35" font-weight="700" fill="#f4f7f9">Официальное изображение не подтверждено</text>
+    <text x="800" y="662" font-size="23" fill="#a9b5c1">Характеристики серии приведены отдельно</text>
+  </g>
+</svg>
