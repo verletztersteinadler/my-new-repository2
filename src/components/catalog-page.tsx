@@ -1,3 +1,4 @@
+import { CatalogHeaderSearch } from "@/components/catalog-header-search";
 import { useMemo, useState, type FormEvent } from "react";
 import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -666,9 +667,10 @@ export function CatalogPage() {
             <Link to="/" hash="manufacturers" className="hover:text-white">Производители</Link>
             <Link to="/politika" className="hover:text-white">О каталоге</Link>
           </nav>
-          <Link to="/" hash="podbor" className="ml-auto mr-14 hidden h-10 items-center rounded-full lg:mr-0 lg:inline-flex bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover">
-            Подобрать модель
-          </Link>
+          <CatalogHeaderSearch className="ml-auto hidden w-[min(26vw,23rem)] shrink-0 lg:block" />
+        </div>
+        <div className="mx-auto max-w-6xl px-4 pb-3 pr-[4.75rem] lg:hidden">
+          <CatalogHeaderSearch compact />
         </div>
       </header>
 
