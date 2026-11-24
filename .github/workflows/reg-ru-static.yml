@@ -47,6 +47,9 @@ jobs:
       - name: Verify short manufacturer routes and permanent redirects
         run: node --test scripts/manufacturer-short-urls.test.mjs
 
+      - name: Test all engineering calculators and IAPWS-IF97 against technical specification
+        run: node --experimental-strip-types --test src/lib/calculators.test.ts
+
       - name: Build static website
         run: npm run build:static
 
@@ -166,6 +169,21 @@ jobs:
           boiler_house_page = root / "kotelnaya" / "index.html"
           assert boiler_house_page.is_file(), "Missing prerendered /kotelnaya page"
           assert "конфигурацию котельной" in boiler_house_page.read_text(encoding="utf-8").lower(), "Boiler-house page content not prerendered"
+          calc_index = root / "calculators" / "index.html"
+          assert calc_index.is_file(), "Missing prerendered calculator directory"
+          assert "инженерные калькуляторы" in calc_index.read_text(encoding="utf-8").lower(), "Calculator directory not indexable"
+          tool_paths = [
+            "pressure", "power", "energy", "temperature", "volume-flow", "mass-flow",
+            "water-power", "water-flow", "steam-capacity", "steam-from-power",
+            "steam-saturation", "steam-properties", "gas-consumption", "diesel-consumption",
+            "pipe-diameter", "flow-velocity",
+          ]
+          for name in tool_paths:
+              page = root / "calculators" / name / "index.html"
+              assert page.is_file(), f"Missing prerendered /calculators/{name}"
+              data_text = page.read_text(encoding="utf-8").lower()
+              assert "инженерные калькуляторы" in data_text or "исходные данные" in data_text, f"Unrendered calculator page: {name}"
+          print("Verified",len(tool_paths),"prerendered calculator pages and semantic HTML")
           pumps_page = root / "nasosy" / "index.html"
           assert pumps_page.is_file(), "Missing prerendered /nasosy page"
           assert "промышленные насосы для котельных" in pumps_page.read_text(encoding="utf-8").lower(), "Pump page content missing"
