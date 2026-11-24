@@ -13,7 +13,9 @@ test("Russian, punctuation-heavy and abbreviated manufacturer names remain intac
   assert.equal(displaySeriesName("АКМЗ", "ПТВМ"), "АКМЗ ПТВМ");
   assert.equal(displaySeriesName("W.E.B.", "W.E.B. Heat"), "W.E.B. Heat");
   assert.equal(displaySeriesName("AB&CO – TT BOILERS", "FTV"), "AB&CO – TT BOILERS FTV");
-  assert.equal(displaySeriesName("АКМЗ", "АКМЗ"), "АКМЗ");
+  assert.equal(displaySeriesName("АКМЗ", "АКМЗ"), "АКМЗ — серия не указана");
+  assert.equal(displaySeriesName("METEOR Thermo", "METEOR C30"), "METEOR C30");
+  assert.equal(displaySeriesName("METEOR Thermo", "LaggarTT SK"), "LaggarTT SK");
 });
 test("keeps original series codes and whitespace clean", () => {
   assert.equal(displaySeriesName(" LAVART ", "  SWD  "), "LAVART SWD");
