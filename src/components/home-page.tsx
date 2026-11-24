@@ -45,7 +45,7 @@ export function HomePage() {
       <header className="sticky top-0 z-30 border-b border-line bg-surface">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
           <Logo />
-          <nav className="ml-auto hidden items-center gap-5 text-sm text-muted sm:flex" aria-label="Навигация">
+          <nav className="ml-auto hidden items-center gap-5 text-sm text-muted lg:flex" aria-label="Навигация">
             <a href="#podbor" className="hover:text-ink">
               Подбор
             </a>
@@ -217,7 +217,7 @@ export function HomePage() {
 
         <footer className="mx-auto mt-12 max-w-6xl px-4 py-8 text-xs leading-relaxed text-muted">
           <p>
-            KOTLY.SU — независимый справочник. Названия производителей приведены для идентификации оборудования. Сведения о владельце и обработке данных — в правовом разделе.
+            Котлы.pro — независимый справочник. Названия производителей приведены для идентификации оборудования. Сведения о владельце и обработке данных — в правовом разделе.
           </p>
           <p className="mt-3 flex flex-wrap gap-4">
             <Link to="/politika" className="underline">
