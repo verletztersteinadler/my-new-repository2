@@ -25,19 +25,62 @@ export function CalculatorsLayout({children}:{children:React.ReactNode}) {
   </div>;
 }
 
+const topicDescriptions: Record<string, string> = {
+  "Конвертеры": "Давление, мощность, энергия, температура, массовый и объёмный расход, теплота сгорания и размеры труб.",
+  "Водогрейные котлы": "Тепловая мощность, расход воды, нагрузка ГВС и здания, смешение потоков и время нагрева.",
+  "Паровые котлы": "Паропроизводительность, энтальпия и температура насыщения по IAPWS-IF97, паропроводы, продувка и себестоимость пара.",
+  "Топливо": "Природный газ, дизельное топливо, СУГ, стоимость тепла, объём газа и сезонный расход.",
+  "Гидравлика": "Скорость и диаметр трубопровода, потери давления, напор и мощность насоса, Kv/Cv и теплообменник.",
+  "Термомасляные системы": "Расход, мощность, расширение, гидравлика и нагрев масла с вводом свойств конкретного теплоносителя.",
+  "Дополнительные расчёты": "Резервирование N+1, теплопотери изолированных труб, КПД котла, горелки и системы КИП.",
+};
+const topicIds: Record<string, string> = {
+  "Конвертеры": "konvertery",
+  "Водогрейные котлы": "vodogreynye-kotly",
+  "Паровые котлы": "parovye-kotly",
+  "Топливо": "toplivo",
+  "Гидравлика": "gidravlika",
+  "Термомасляные системы": "termomaslo",
+  "Дополнительные расчёты": "dopolnitelnye-raschety",
+};
+const popularTools = [
+  { id: "water-power", title: "Мощность котла", detail: "Расход воды и температурный график" },
+  { id: "steam-capacity", title: "Расчёт пара", detail: "Паропроизводительность и энтальпия IF97" },
+  { id: "gas-consumption", title: "Расход газа", detail: "Мощность, КПД, теплота сгорания" },
+  { id: "pipe-loss", title: "Гидравлический расчёт", detail: "Потери давления в трубопроводе" },
+] as const;
+
 export function CalculatorsIndex() {
+  const [query, setQuery] = useState("");
+  const search = query.trim().toLocaleLowerCase("ru");
+  const visible = useMemo(
+    () => calculatorDefinitions.filter((item) =>
+      !search || [item.title, item.description, item.group, item.formula, item.example]
+        .join(" ").toLocaleLowerCase("ru").includes(search)),
+    [search],
+  );
+
   return <CalculatorsLayout>
-    <main className="mx-auto max-w-6xl px-4 pb-20 pt-10">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">kotly.pro / Инженерный центр</p>
-      <h1 className="mt-3 max-w-4xl font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-        Инженерные калькуляторы и конвертеры
+    <main className="mx-auto max-w-6xl px-4 pb-20 pt-10" id="engineering-calculators">
+      <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent">kotly.pro · Инженерный центр</p>
+      <h1 className="mt-3 max-w-5xl font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">
+        Инженерные калькуляторы онлайн — расчёты для котельных и промышленного оборудования
       </h1>
-      <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted">
-        52 расчётных инструмента: конвертеры, тепловые системы, пар IAPWS-IF97,
-        топливо, гидравлика, термомасла и предварительная эксплуатационная экономика.
-        Часть задач требует ручного ввода свойств конкретного топлива или масла.
-        Расчёт выполняется в браузере без отправки исходных данных на сервер.
+      <p className="mt-5 max-w-4xl text-base leading-relaxed text-muted">
+        <strong className="font-semibold text-ink">52 бесплатных инженерных калькулятора</strong> для предварительного
+        расчёта тепловой мощности котла, паропроизводительности, расхода газа и топлива, насосов,
+        трубопроводов и теплообменников. Переводите технические единицы измерения,
+        проверяйте формулы и передавайте рассчитанные параметры в конфигуратор котельной.
+        Все расчёты выполняются в браузере без отправки введённых значений на сервер.
       </p>
+      <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Популярные инженерные расчёты">
+        {popularTools.map(item=><Link key={item.id} to="/calculators/$tool" params={{tool:item.id}}
+          className="rounded-xl border border-line bg-surface p-4 transition hover:border-accent hover:bg-chip">
+          <span className="font-bold text-ink">{item.title}</span>
+          <span className="mt-1 block text-xs text-muted">{item.detail}</span>
+          <span className="mt-3 inline-block text-sm font-bold text-accent">Рассчитать →</span>
+        </Link>)}
+      </div>
       <div className="mt-7 flex flex-wrap gap-3 text-sm">
         <Link to="/kotelnaya" className="inline-flex min-h-11 items-center rounded-xl bg-accent px-5 font-bold text-on-accent hover:bg-accent-hover">
           Конфигуратор котельной →
@@ -46,32 +89,108 @@ export function CalculatorsIndex() {
           4 конфигуратора оборудования
         </Link>
         <Link to="/" className="inline-flex min-h-11 items-center rounded-xl border border-line px-5 font-bold hover:bg-chip">
-          Каталог котлов
+          Каталог промышленных котлов
         </Link>
       </div>
-      {groups.map(group=><section key={group} className="mt-12">
-        <div className="mb-5 flex items-end justify-between gap-3 border-b border-line pb-3">
-          <h2 className="font-display text-xl font-extrabold sm:text-2xl">{group}</h2>
-          <span className="text-sm text-muted">{calculatorDefinitions.filter(x=>x.group===group).length} инструмента</span>
+
+      <section aria-labelledby="calculator-navigation" className="mt-12 rounded-2xl border border-line bg-surface p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="calculator-navigation" className="text-lg font-extrabold">Найти нужный инженерный расчёт</h2>
+          <span className="text-xs text-muted">{visible.length} из {calculatorDefinitions.length} инструментов</span>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {calculatorDefinitions.filter(x=>x.group===group).map((def,i)=>
-            <Link key={def.id} to="/calculators/$tool" params={{tool:def.id}} className={toolClass}>
-              <p className="text-xs font-bold uppercase tracking-widest text-accent">{String(i+1).padStart(2,"0")} / расчёт</p>
+        <label htmlFor="calculator-search" className="mt-4 block text-sm font-semibold">Поиск по инструментам</label>
+        <input id="calculator-search" type="search" value={query} onChange={(event)=>setQuery(event.target.value)}
+          placeholder="Например: мощность котла, пар, расход газа, насос, давление"
+          className="mt-2 h-12 w-full rounded-xl border border-line bg-bg px-4 text-sm text-ink outline-offset-2 focus-visible:outline-2 focus-visible:outline-accent"
+        />
+        <nav aria-label="Разделы инженерных калькуляторов" className="mt-5 flex flex-wrap gap-2">
+          {groups.map(group=><a key={group} href={"#"+topicIds[group]}
+            className="inline-flex min-h-10 items-center rounded-lg border border-line bg-chip px-3 text-xs font-semibold text-ink hover:border-accent">
+            {group}
+          </a>)}
+        </nav>
+      </section>
+
+      {visible.length===0?<p className="mt-8 rounded-xl border border-line bg-surface p-5 text-sm">
+        По такому запросу инструменты не найдены. <button type="button" onClick={()=>setQuery("")} className="font-bold text-accent underline">Показать все калькуляторы</button>.
+      </p>:null}
+
+      {groups.map(group=>{
+        const tools=visible.filter(x=>x.group===group);
+        if(!tools.length)return null;
+        return <section key={group} id={topicIds[group]} className="mt-12 scroll-mt-24" aria-labelledby={"h-"+topicIds[group]}>
+          <div className="mb-5 border-b border-line pb-4">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 id={"h-"+topicIds[group]} className="font-display text-xl font-extrabold sm:text-2xl">{group}</h2>
+              <span className="text-sm tabular-nums text-muted">{tools.length} инструментов</span>
+            </div>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">{topicDescriptions[group]}</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {tools.map((def,i)=><Link key={def.id} to="/calculators/$tool" params={{tool:def.id}} className={toolClass}>
+              <p className="text-xs font-bold uppercase tracking-widest text-accent">{String(i+1).padStart(2,"0")} / онлайн-расчёт</p>
               <h3 className="mt-3 text-lg font-bold leading-snug">{def.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">{def.description}</p>
-              <span className="mt-5 inline-flex font-semibold text-accent">Рассчитать →</span>
-            </Link>
-          )}
+              <span className="mt-5 inline-flex font-semibold text-accent">Открыть калькулятор →</span>
+            </Link>)}
+          </div>
+        </section>;
+      })}
+
+      <section aria-labelledby="how-to-calculate" className="mt-14 grid gap-6 rounded-2xl border border-line bg-chip p-6 md:grid-cols-2">
+        <div>
+          <h2 id="how-to-calculate" className="text-xl font-extrabold">Как пользоваться инженерными калькуляторами</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted">
+            Выберите вид расчёта, введите исходные данные и проверьте единицы измерения.
+            Результат обновляется при каждом изменении полей. На странице инструмента показаны
+            расчётная формула, исходные допущения и пример. Расчёт можно скопировать
+            или распечатать в PDF.
+          </p>
         </div>
-      </section>)}
-      <section className="mt-12 rounded-2xl border border-line bg-chip p-6">
-        <h2 className="text-lg font-bold">Точность и применимость</h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted">
-          Все расчёты предварительные. Свойства воды в упрощённых схемах задаются явно;
-          вода и пар в паровых задачах рассчитываются по IAPWS-IF97. Для выбора оборудования,
-          размеров труб и обеспечения безопасности требуется проверка условий эксплуатации и паспортов.
-        </p>
+        <div>
+          <h2 className="text-xl font-extrabold">От калькулятора к подбору оборудования</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted">
+            Рассчитанные тепловую нагрузку, паропроизводительность или объёмный расход
+            можно передать в <Link to="/kotelnaya" className="font-semibold text-accent underline">конструктор котельной</Link>.
+            Это предварительный инженерный подбор, а не сертифицированный проект или подтверждённая
+            спецификация производителя.
+          </p>
+        </div>
+      </section>
+
+      <section aria-labelledby="calculator-faq" className="mt-12">
+        <h2 id="calculator-faq" className="text-xl font-extrabold">Вопросы об инженерных расчётах онлайн</h2>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <div className="rounded-xl border border-line bg-surface p-5">
+            <h3 className="font-bold">Как рассчитать мощность водогрейного котла?</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              По расходу теплоносителя, его плотности, теплоёмкости и разности температур.
+              Откройте <Link to="/calculators/$tool" params={{tool:"water-power"}} className="font-semibold text-accent underline">расчёт мощности по расходу воды</Link>.
+            </p>
+          </div>
+          <div className="rounded-xl border border-line bg-surface p-5">
+            <h3 className="font-bold">Как перевести паропроизводительность в кВт?</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              Нужны абсолютное давление пара, его состояние и температура питательной воды.
+              <Link to="/calculators/$tool" params={{tool:"steam-capacity"}} className="font-semibold text-accent underline">Калькулятор пара</Link> применяет IAPWS-IF97.
+            </p>
+          </div>
+          <div className="rounded-xl border border-line bg-surface p-5">
+            <h3 className="font-bold">Как определить расход природного газа?</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              Введите полезную мощность котла, КПД и низшую теплоту сгорания газа.
+              Для этого есть <Link to="/calculators/$tool" params={{tool:"gas-consumption"}} className="font-semibold text-accent underline">калькулятор расхода газа</Link>.
+            </p>
+          </div>
+          <div className="rounded-xl border border-line bg-surface p-5">
+            <h3 className="font-bold">Можно ли использовать результат в проекте?</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              Калькуляторы подходят для предварительной оценки и сверки исходных данных.
+              Безопасность, окончательный выбор оборудования, нормативные требования
+              и паспортные характеристики необходимо проверять отдельно.
+            </p>
+          </div>
+        </div>
       </section>
     </main>
   </CalculatorsLayout>;
