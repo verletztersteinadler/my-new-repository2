@@ -5,6 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { SeriesImage } from "@/components/series-image";
 import { displaySeriesName } from "@/lib/series-names";
+import { publicSeriesKind, publicSeriesFeature, publicSeriesSummary } from "@/lib/public-series-text";
 import {
   BRAND,
   SOURCE_CHECKED,
@@ -786,14 +787,14 @@ export function CatalogPage() {
                     <SeriesImage manufacturerSlug={slug} series={row.series} compact />
                     <div className="min-w-0">
                       <button type="button" className="max-w-full text-left font-semibold break-words hover:text-accent" onClick={() => openSeries(row.series.id)}>{row.title}</button>
-                      <p className="text-xs text-muted break-words">{row.series.kind} · {displaySeriesName(profile.brand, row.series.name)}</p>
+                      <p className="text-xs text-muted break-words">{publicSeriesKind(row.series)} · {displaySeriesName(profile.brand, row.series.name)}</p>
                     </div>
                   </div>
                   <p className="text-sm">
                     <span className="block font-semibold tabular-nums">{row.main}</span>
                     <span className="text-xs text-muted">{row.sub}</span>
                   </p>
-                  <p className="text-sm text-muted">{row.series.feature}</p>
+                  <p className="text-sm text-muted">{publicSeriesFeature(row.series)}</p>
                   <p className="text-sm">{row.series.fuels.length ? row.series.fuels.map(fuelTitle).join(" / ") : "Не указано"}</p>
                   <div className="flex items-center gap-3">
                     <button type="button" className="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent hover:bg-accent-hover" onClick={() => setLead({ intent: "kp", seriesId: row.series.id, sizeId: row.sizeId, categoryId: row.series.categoryId })}>
@@ -944,7 +945,7 @@ export function CatalogPage() {
 function flattenModels(list: Series[], brand: string) {
   return list.flatMap((series) => {
     if (series.sizes.length === 0) {
-      return [{ key: series.id, series, sizeId: undefined as string | undefined, title: displaySeriesName(brand, series.name), main: primarySpec(series).value, sub: series.kind }];
+      return [{ key: series.id, series, sizeId: undefined as string | undefined, title: displaySeriesName(brand, series.name), main: primarySpec(series).value, sub: publicSeriesKind(series) }];
     }
     return series.sizes.map((size) => ({
       key: size.id,
@@ -952,7 +953,7 @@ function flattenModels(list: Series[], brand: string) {
       sizeId: size.id,
       title: size.name,
       main: size.powerKw != null ? formatKw(size.powerKw) : size.steamKgH != null ? formatSteam(size.steamKgH) : "Не указано",
-      sub: size.powerKw != null && size.powerKw >= 1000 ? `${size.powerKw.toLocaleString("ru-RU")} кВт` : series.kind,
+      sub: size.powerKw != null && size.powerKw >= 1000 ? `${size.powerKw.toLocaleString("ru-RU")} кВт` : publicSeriesKind(series),
     }));
   });
 }
@@ -1093,7 +1094,7 @@ function SeriesCard({
             Серия{series.sizes.length ? ` · ${series.sizes.length}` : ""}
           </p>
           <h2 className="mt-1 font-display text-3xl leading-[0.92] font-extrabold tracking-[-0.04em] text-balance">{displaySeriesName(manufacturerBySlug(manufacturerSlug)?.title ?? "", series.name)}</h2>
-          <p className="mt-1 text-sm leading-snug text-muted">{series.kind}</p>
+          <p className="mt-1 text-sm leading-snug text-muted">{publicSeriesKind(series)}</p>
           <dl className="mt-3 grid gap-2 text-sm">
             <div className="flex items-start justify-between gap-3">
               <dt className="shrink-0 text-muted">{spec.label}</dt>
@@ -1107,7 +1108,7 @@ function SeriesCard({
             ) : (
               <div className="flex items-start justify-between gap-3">
                 <dt className="shrink-0 text-muted">Исполнение</dt>
-                <dd className="max-w-[65%] text-right font-medium">{series.feature}</dd>
+                <dd className="max-w-[65%] text-right font-medium">{publicSeriesFeature(series)}</dd>
               </div>
             )}
             <div className="flex items-start justify-between gap-3">
@@ -1173,7 +1174,7 @@ function SeriesDialog({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <Dialog.Title className="text-2xl font-semibold">{displaySeriesName(maker?.title ?? "", series.name)}</Dialog.Title>
-                  <Dialog.Description className="mt-1 text-sm text-muted">{series.kind}. Серия, не один типоразмер.</Dialog.Description>
+                  <Dialog.Description className="mt-1 text-sm text-muted">{publicSeriesKind(series)}. Серия, не один типоразмер.</Dialog.Description>
                 </div>
                 <Dialog.Close className="inline-flex size-11 items-center justify-center rounded-lg bg-chip" aria-label="Закрыть">
                   <X className="size-5" />
@@ -1182,7 +1183,7 @@ function SeriesDialog({
               <div className="mt-4 overflow-hidden rounded-xl border border-line">
                 <SeriesImage manufacturerSlug={manufacturerSlug} series={series} />
               </div>
-              <p className="mt-4 text-pretty">{series.summary}</p>
+              <p className="mt-4 text-pretty">{publicSeriesSummary(series)}</p>
               {maker ? <FactoryCard maker={maker} /> : null}
               <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
                 <Spec label="Мощность" value={formatPowerRange(series.powerMinKw, series.powerMaxKw)} />
@@ -1190,7 +1191,7 @@ function SeriesDialog({
                 <Spec label="Температура" value={formatTemp(series.tempMaxC)} />
                 <Spec label="Давление" value={series.pressureNote ?? "Уточняется"} />
                 <Spec label="Топливо" value={series.fuels.length ? series.fuels.map(fuelTitle).join(", ") : "Уточняется"} />
-                <Spec label="Исполнение" value={series.feature} />
+                <Spec label="Исполнение" value={publicSeriesFeature(series)} />
               </dl>
               <h3 className="mt-6 text-lg font-semibold">Типоразмеры</h3>
               {series.sizes.length === 0 ? (
