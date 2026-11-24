@@ -12,6 +12,7 @@ on:
       - package.json
       - package-lock.json
       - scripts/generate-seo-files.mjs
+      - scripts/check-no-external-links.mjs
   workflow_dispatch:
 
 permissions:
@@ -51,6 +52,8 @@ jobs:
           du -sh .vercel/output/static
       - name: Generate and verify SEO sitemap and robots.txt
         run: node scripts/generate-seo-files.mjs .vercel/output/static
+      - name: Audit generated pages for external outbound links
+        run: node scripts/check-no-external-links.mjs .vercel/output/static
       - name: Prepare Apache/ISPmanager package
         shell: bash
         run: |
