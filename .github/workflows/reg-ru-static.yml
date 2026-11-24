@@ -48,7 +48,7 @@ jobs:
         run: node --test scripts/manufacturer-short-urls.test.mjs
 
       - name: Test all engineering calculators and IAPWS-IF97 against technical specification
-        run: node --experimental-strip-types --test src/lib/calculators.test.ts
+        run: node --experimental-strip-types --test src/lib/calculators.test.ts src/lib/calculators-secondary.test.ts
 
       - name: Build static website
         run: npm run build:static
