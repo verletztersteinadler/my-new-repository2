@@ -124,7 +124,7 @@ export function HomePage() {
         <section className="mx-auto mt-5 max-w-6xl px-4">
           <div className="flex flex-col justify-between gap-5 rounded-3xl border border-line bg-surface p-5 sm:flex-row sm:items-center sm:p-7">
             <div className="max-w-2xl">
-              <p className="text-xs font-bold uppercase tracking-[0.15em] text-accent">Инженерный центр · 16 расчётов</p>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-accent">Инженерный центр · 52 расчёта</p>
               <h2 className="mt-2 font-display text-2xl font-extrabold">Калькуляторы воды, пара, топлива и трубопроводов</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 Пересчёт давления и энергии, тепловые нагрузки и расходы воды, IAPWS-IF97 для пара,
