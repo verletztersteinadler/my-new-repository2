@@ -88,7 +88,7 @@ function powerSizes(prefix: string, label: string, values: number[]): Size[] {
 export const seriesList: Series[] = [
   {
     id: "reverse",
-    name: "Reverse",
+    name: "LAVART Reverse",
     categoryId: "hw115",
     kind: "Водогрейный",
     image: "/catalog/reverse.jpg",
@@ -291,7 +291,7 @@ export const seriesList: Series[] = [
   },
   {
     id: "block",
-    name: "Котловой блок LAVART",
+    name: "LAVART — котловой блок",
     categoryId: "block",
     kind: "Котловой блок",
     image: "/catalog/skid.jpg",
