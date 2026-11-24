@@ -172,18 +172,35 @@ jobs:
           calc_index = root / "calculators" / "index.html"
           assert calc_index.is_file(), "Missing prerendered calculator directory"
           assert "инженерные калькуляторы" in calc_index.read_text(encoding="utf-8").lower(), "Calculator directory not indexable"
-          tool_paths = [
-            "pressure", "power", "energy", "temperature", "volume-flow", "mass-flow",
-            "water-power", "water-flow", "steam-capacity", "steam-from-power",
-            "steam-saturation", "steam-properties", "gas-consumption", "diesel-consumption",
-            "pipe-diameter", "flow-velocity",
-          ]
+          core = Path("src/lib/calculators.ts").read_text(encoding="utf-8")
+          extra = Path("src/lib/calculators-secondary-definitions.ts").read_text(encoding="utf-8")
+          original_tools = re.findall(r'\{id:"([a-z0-9-]+)",group:', core)
+          second_wave = re.findall(r'define\("([a-z0-9-]+)",', extra)
+          tool_paths = original_tools + second_wave
+          assert len(tool_paths) == 52 and len(set(tool_paths)) == 52, f"Expected 52 unique tools, got {len(tool_paths)}"
           for name in tool_paths:
               page = root / "calculators" / name / "index.html"
               assert page.is_file(), f"Missing prerendered /calculators/{name}"
               data_text = page.read_text(encoding="utf-8").lower()
               assert "инженерные калькуляторы" in data_text or "исходные данные" in data_text, f"Unrendered calculator page: {name}"
-          print("Verified",len(tool_paths),"prerendered calculator pages and semantic HTML")
+          print("Verified", len(tool_paths), "indexable calculator pages")
+          conf = root / "configurators" / "index.html"
+          assert conf.is_file(), "Missing configurator hub"
+          for name in ["water","steam","oil","modular"]:
+              page = root / "configurators" / name / "index.html"
+              assert page.is_file(), f"Missing configured /configurators/{name}"
+              data_text = page.read_text(encoding="utf-8").lower()
+              assert "кот" in data_text or "термомасл" in data_text, f"Missing configurator content: {name}"
+          sitemap = root / "sitemap.xml"
+          assert sitemap.is_file(), "No sitemap.xml"
+          xml = sitemap.read_text(encoding="utf-8")
+          assert xml.count("<url>") >= 300, "Incomplete sitemap"
+          assert "<loc>https://kotly.pro/calculators/steam-properties/</loc>" in xml, "Missing steam calculator canonical"
+          assert "<loc>https://kotly.pro/configurators/oil/</loc>" in xml, "Missing thermal-oil configurator canonical"
+          assert "https://kotly.pro/nasosy/" not in xml, "Noindex pump register must not enter sitemap"
+          robots = root / "robots.txt"
+          assert robots.is_file() and "Sitemap: https://kotly.pro/sitemap.xml" in robots.read_text(encoding="utf-8")
+          print("Verified four configurators, canonical sitemap, robots.txt")
           pumps_page = root / "nasosy" / "index.html"
           assert pumps_page.is_file(), "Missing prerendered /nasosy page"
           assert "промышленные насосы для котельных" in pumps_page.read_text(encoding="utf-8").lower(), "Pump page content missing"
