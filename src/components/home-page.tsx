@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { ArrowRight, Calculator, Clock3, Layers3, Settings2, ShieldCheck } from "lucide-react";
 import { Link, getRouteApi, useNavigate } from "@tanstack/react-router";
 import { Logo } from "@/components/logo";
 import { SolutionBuilder } from "@/components/solution-builder";
@@ -42,43 +43,70 @@ export function HomePage() {
 
   return (
     <div className="min-h-dvh">
-      <header className="sticky top-0 z-30 border-b border-line bg-surface">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
-          <Logo />
-          <nav className="ml-auto hidden items-center gap-5 text-sm text-muted lg:flex" aria-label="Навигация">
-            <a href="#podbor" className="hover:text-ink">
-              Подбор
-            </a>
-            <Link to="/kotelnaya" className="font-semibold text-accent hover:text-ink">Котельная под ключ</Link>
-            <Link to="/nasosy" className="hover:text-ink">Насосы</Link>
-            <a href="#manufacturers" className="hover:text-ink">
-              Производители
-            </a>
-            <Link to="/politika" className="hover:text-ink">
-              О проекте
-            </Link>
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0c1520] text-white">
+        <div className="mx-auto flex h-16 max-w-[1536px] items-center gap-4 px-4 lg:h-20 lg:px-8">
+          <Logo light />
+          <nav className="ml-auto hidden items-center gap-7 text-sm font-semibold text-white/85 lg:flex" aria-label="Навигация">
+            <a href="#manufacturers" className="transition-colors hover:text-white">Каталог</a>
+            <Link to="/kotelnaya" className="transition-colors hover:text-white">Решения</Link>
+            <Link to="/nasosy" className="transition-colors hover:text-white">Насосы</Link>
+            <a href="#podbor" className="transition-colors hover:text-white">Подбор</a>
+            <Link to="/politika" className="transition-colors hover:text-white">О проекте</Link>
           </nav>
         </div>
       </header>
 
       <main>
-        <section className="mx-auto max-w-6xl px-4 pt-8 sm:pt-12">
-          <div className="relative min-h-[22rem] overflow-hidden rounded-[2rem] sm:min-h-[26rem]">
-            <img src="/catalog/hero-boiler.jpg" alt="" className="absolute inset-0 h-full w-full object-cover object-[28%_center]" />
-            <div className="relative flex min-h-[22rem] items-end sm:min-h-[26rem]">
-              <div className="glass-plaque z-10 w-full rounded-none! rounded-b-[2rem]! px-5 py-5 sm:px-8 sm:py-7">
-                <p className="relative z-10 text-xs font-semibold uppercase tracking-[0.14em] text-white/80">Независимый справочник</p>
-                <h1 className="relative z-10 mt-3 font-display text-4xl leading-[0.88] font-extrabold tracking-[-0.04em] sm:text-6xl">
-                  <span className="block text-white">Промышленные</span>
-                  <span className="mt-1 block text-[#f0c4cc]">котлы</span>
-                </h1>
+        <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-[#0b1520] text-white">
+          <img
+            src="/catalog/hero-boiler.jpg"
+            alt="Промышленный котёл с трубопроводами и арматурой"
+            fetchPriority="high"
+            className="absolute inset-0 h-full w-full object-cover object-[58%_center] grayscale contrast-[1.08] lg:object-[center_45%]"
+          />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[#0b1520]/55 lg:bg-[linear-gradient(90deg,#0b1520_0%,rgba(11,21,32,.96)_30%,rgba(11,21,32,.75)_49%,rgba(11,21,32,.16)_78%,rgba(11,21,32,.1)_100%)]" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#0b1520] to-transparent" />
+
+          <div className="relative mx-auto flex min-h-[40rem] max-w-[1536px] flex-col justify-between px-4 pb-10 pt-16 sm:min-h-[44rem] sm:px-8 lg:min-h-[min(52rem,calc(100svh-5rem))] lg:px-10 lg:pb-12 lg:pt-20 xl:px-16">
+            <div className="max-w-[48rem]">
+              <p className="flex items-center gap-3 text-[0.7rem] font-bold uppercase tracking-[0.13em] text-white/90 sm:text-xs lg:text-sm">
+                <span aria-hidden="true" className="h-1 w-9 shrink-0 rounded-full bg-[#d3123b] sm:w-12" />
+                Промышленные котельные решения
+              </p>
+              <h1 id="hero-title" className="mt-7 max-w-3xl font-display text-[clamp(2rem,5vw,3.25rem)] leading-[1.12] font-extrabold tracking-[-0.045em] text-balance sm:mt-9 lg:text-[clamp(2.65rem,3.7vw,4.25rem)]">
+                Котлы и котельные для промышленности и инфраструктуры
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg lg:mt-8 lg:text-xl">
+                Подбор оборудования, инженерные расчёты и технические решения под вашу задачу.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap">
+                <a href="#podbor" className="inline-flex min-h-13 items-center justify-center gap-3 rounded-2xl bg-[#d3123b] px-6 py-3 text-center text-base font-extrabold text-white shadow-lg shadow-black/25 transition-colors hover:bg-[#a80f30]">
+                  Подобрать решение <ArrowRight aria-hidden="true" className="size-5" />
+                </a>
+                <Link to="/kotelnaya" className="inline-flex min-h-13 items-center justify-center gap-3 rounded-2xl border-2 border-white/85 bg-[#0b1520]/35 px-6 py-3 text-center text-base font-bold text-white backdrop-blur-sm transition-colors hover:bg-white/15">
+                  <Calculator aria-hidden="true" className="size-5" />
+                  Инженерный расчёт
+                </Link>
               </div>
             </div>
+            <div className="mt-16 grid grid-cols-2 gap-x-5 gap-y-8 border-t border-white/15 pt-8 sm:grid-cols-4 lg:mt-20 lg:gap-0 lg:border-t-0 lg:pt-0">
+              {[
+                { title: "Инженерный подход", Icon: Settings2 },
+                { title: "Быстрая реализация", Icon: Clock3 },
+                { title: "Надёжная эксплуатация", Icon: ShieldCheck },
+                { title: "Комплексная поддержка", Icon: Layers3 },
+              ].map(({ title, Icon }, index) => (
+                <div key={title} className={`min-w-0 lg:flex lg:items-center lg:gap-5 lg:px-8 ${index === 0 ? "lg:pl-0" : "lg:border-l lg:border-white/20"}`}>
+                  <Icon aria-hidden="true" className="mb-3 size-8 shrink-0 text-[#d3123b] sm:size-10 lg:mb-0 lg:size-11" strokeWidth={1.8} />
+                  <p className="max-w-[12rem] text-sm leading-snug font-bold text-white sm:text-base lg:text-lg">{title}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="mt-6 max-w-xl text-base text-muted">
-            Открытые серии можно отфильтровать и запросить консультацию, подбор оборудования или готовое инженерное решение. Это не покупка и не сайт производителя.
-          </p>
         </section>
+        <p className="mx-auto max-w-6xl px-4 pt-5 text-sm leading-relaxed text-muted">
+          Котлы.pro — независимый инженерный справочник. Подбор выполняется по открытым данным, применимость оборудования проверяется отдельно.
+        </p>
 
         <SolutionBuilder />
 
