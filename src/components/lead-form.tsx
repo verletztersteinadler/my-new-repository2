@@ -35,6 +35,7 @@ export function LeadForm({
   const [pending, setPending] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [leadId, setLeadId] = useState<string | null>(null);
+  const [delivery, setDelivery] = useState<"sent" | "pending" | null>(null);
   const [sizeId, setSizeId] = useState(context.sizeId ?? "");
   const series = findSeries(context.seriesId);
   const size = sizeById(series, sizeId);
@@ -44,7 +45,9 @@ export function LeadForm({
       <div className="rounded-xl border border-line bg-chip p-4" role="status">
         <p className="text-base font-semibold">Обращение {leadId} принято</p>
         <p className="mt-2 text-sm text-muted">
-          Номер выдан после записи на сервере. Обращение остаётся в справочнике. Запрос принят для рассмотрения технических требований и подготовки ответа; отправка формы не является оформлением заказа.
+          {delivery === "sent"
+            ? "Обращение сохранено, уведомление передано почтовому серверу. Запрос будет рассмотрен; отправка формы не является оформлением заказа."
+            : "Обращение сохранено на сервере. Отправка уведомления на почту ожидается; это не означает, что письмо уже доставлено."}
         </p>
       </div>
     );
@@ -75,7 +78,7 @@ export function LeadForm({
           website: String(data.get("website") ?? ""),
         }),
       });
-      const payload = (await response.json()) as { lead_id?: string; message?: string; errors?: FieldErrors };
+      const payload = (await response.json()) as { lead_id?: string; delivery?: "sent" | "pending"; message?: string; errors?: FieldErrors };
       if (response.status === 409) {
         setErrors({ form: payload.message || "Заявка уже сохранена с другими данными" });
         return;
@@ -84,10 +87,11 @@ export function LeadForm({
         setErrors(payload.errors && Object.keys(payload.errors).length ? payload.errors : { form: payload.message || "Не удалось сохранить обращение" });
         return;
       }
+      setDelivery(payload.delivery === "sent" ? "sent" : "pending");
       setLeadId(payload.lead_id);
       onDone?.(payload.lead_id);
     } catch {
-      setErrors({ form: "Нет ответа сервера. Поля сохранены, можно отправить ещё раз." });
+      setErrors({ form: "Нет ответа сервера. Неизвестно, была ли заявка сохранена. Повторная отправка использует тот же идентификатор." });
     } finally {
       setPending(false);
     }
