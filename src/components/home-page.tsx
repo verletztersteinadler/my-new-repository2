@@ -51,6 +51,7 @@ export function HomePage() {
             </a>
             <Link to="/kotelnaya" className="font-semibold text-accent hover:text-ink">Котельная под ключ</Link>
             <Link to="/calculators" className="hover:text-ink">Калькуляторы</Link>
+            <Link to="/configurators" className="hover:text-ink">Конфигураторы</Link>
             <Link to="/nasosy" className="hover:text-ink">Насосы</Link>
             <a href="#manufacturers" className="hover:text-ink">
               Производители
@@ -133,6 +134,9 @@ export function HomePage() {
             </div>
             <Link to="/calculators" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-5 text-sm font-bold text-on-accent hover:bg-accent-hover">
               Инженерные расчёты →
+            </Link>
+            <Link to="/configurators" className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl border border-line px-5 text-sm font-bold text-ink hover:bg-chip">
+              4 конфигуратора →
             </Link>
           </div>
         </section>
