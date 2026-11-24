@@ -52,7 +52,6 @@ export function HomePage() {
           <nav className="ml-auto hidden items-center gap-4 text-sm font-semibold text-white/85 lg:flex xl:gap-6" aria-label="Навигация">
             <a href="#manufacturers" className="transition-colors hover:text-white">Каталог</a>
             <Link to="/kotelnaya" className="transition-colors hover:text-white">Решения</Link>
-            <Link to="/nasosy" className="transition-colors hover:text-white">Насосы</Link>
             <a href="#podbor" className="transition-colors hover:text-white">Подбор</a>
             <Link to="/politika" className="transition-colors hover:text-white">О проекте</Link>
           </nav>
