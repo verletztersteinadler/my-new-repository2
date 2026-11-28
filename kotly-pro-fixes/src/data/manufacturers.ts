@@ -31,8 +31,8 @@ export const regions: { id: RegionId | "all"; label: string }[] = [
 export const lines: { id: LineId | "all"; label: string }[] = [
   { id: "all", label: "Все" },
   { id: "boiler", label: "Котлы" },
-  { id: "burner", label: "Горелки" },
-  { id: "air", label: "Воздух" },
+  { id: "burner", label: "Горелочное оборудование" },
+  { id: "air", label: "Воздухонагреватели" },
 ];
 
 export const manufacturers: Manufacturer[] = [

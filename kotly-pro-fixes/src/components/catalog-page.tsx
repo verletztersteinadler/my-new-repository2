@@ -739,7 +739,7 @@ export function CatalogPage() {
           <Logo light />
           <nav className="ml-4 hidden items-center gap-5 text-sm text-white/75 lg:flex" aria-label="Навигация">
             <Link to="/" search={{ line: "boiler" }} className="hover:text-white">Котлы</Link>
-            <Link to="/" search={{ line: "burner" }} className="hover:text-white">Горелки</Link>
+            <Link to="/" search={{ line: "burner" }} className="hover:text-white">Горелочное оборудование</Link>
             <Link to="/" search={{ line: "air" }} className="hover:text-white">Воздухонагреватели</Link>
             <Link to="/" hash="manufacturers" className="hover:text-white">Производители</Link>
             <Link to="/politika" className="hover:text-white">О каталоге</Link>
@@ -1000,11 +1000,11 @@ function flattenModels(list: Series[]) {
 
 function MissingSeries({ brand, openInitially }: { brand: string; openInitially: boolean }) {
   const tasks: { id: CategoryId; title: string; unit: "kw" | "tph" }[] = [
-    { id: "water", title: "Водогрейный", unit: "kw" },
-    { id: "steam", title: "Паровой", unit: "tph" },
-    { id: "oil", title: "Термомасло", unit: "kw" },
-    { id: "air", title: "Воздух", unit: "kw" },
-    { id: "auto", title: "Горелка", unit: "kw" },
+    { id: "water", title: "Водогрейные котлы", unit: "kw" },
+    { id: "steam", title: "Паровые котлы", unit: "tph" },
+    { id: "oil", title: "Термомасляные котлы", unit: "kw" },
+    { id: "air", title: "Воздухонагреватели", unit: "kw" },
+    { id: "auto", title: "Горелочное оборудование", unit: "kw" },
   ];
   const [open, setOpen] = useState(openInitially);
   const [task, setTask] = useState<CategoryId>("water");
