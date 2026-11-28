@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { LeadForm } from "@/components/lead-form";
+import { ManufacturerCard } from "@/components/manufacturer-card";
 import {
   filterSeries,
   fuels,
   powerBands,
-  primarySpec,
   steamBands,
   type FuelId,
   type PowerBand,
@@ -13,7 +12,7 @@ import {
   type SteamBand,
 } from "@/data/catalog";
 import { publishedCatalogs } from "@/data/series-index";
-import { manufacturers } from "@/data/manufacturers";
+import { manufacturers, type Manufacturer } from "@/data/manufacturers";
 
 type Task = "any" | "water" | "steam" | "oil" | "air" | "block" | "burner" | "auto";
 type KitId = "burner" | "auto" | "pumps" | "economizer" | "water" | "other";
@@ -31,6 +30,7 @@ const tasks: { id: Task; label: string }[] = [
 ];
 
 const makerLine = new Map(manufacturers.map((item) => [item.slug, item.line]));
+const makerBySlug = new Map(manufacturers.map((item) => [item.slug, item]));
 
 const kits: { id: KitId; label: string; published: boolean }[] = [
   { id: "burner", label: "Горелочное устройство", published: false },
@@ -85,6 +85,19 @@ export function SolutionBuilder() {
     );
     return [...boilers, ...automation.filter((item) => !seen.has(`${item.slug}-${item.series.id}`))];
   }, [fuel, kit, power, showSteam, steam, task]);
+
+  /** Производители из отбора: те же карточки, что и в фильтре каталога. */
+  const makerHits = useMemo(() => {
+    const bySlug = new Map<string, { item: Manufacturer; seriesCount: number }>();
+    for (const hit of hits) {
+      const item = makerBySlug.get(hit.slug);
+      if (!item) continue;
+      const entry = bySlug.get(hit.slug);
+      if (entry) entry.seriesCount += 1;
+      else bySlug.set(hit.slug, { item, seriesCount: 1 });
+    }
+    return [...bySlug.values()];
+  }, [hits]);
 
   function toggleKit(id: KitId) {
     setKit((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
@@ -175,26 +188,19 @@ export function SolutionBuilder() {
           <p className="mt-2 text-xs text-muted">Можно отметить несколько. Отдельной серии в справочнике может не быть — тогда позиция в списке не появляется.</p>
         </fieldset>
 
-        <p className="mt-5 text-sm text-muted">По фильтру в открытом каталоге: {hits.length}</p>
+        <p className="mt-5 text-sm text-muted">
+          По фильтру в открытом каталоге: {hits.length} серий у {makerHits.length} производителей.
+        </p>
         {hits.length === 0 ? (
           <p className="mt-2 text-sm">Совпадений в открытых сериях нет.</p>
         ) : (
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            {hits.slice(0, 8).map((item) => (
-              <li key={`${item.slug}-${item.series.id}`} className="rounded-2xl border border-line px-3 py-3">
-                <p className="text-xs font-semibold text-ink uppercase">{item.maker}</p>
-                <p className="mt-1 font-display text-xl leading-none font-extrabold tracking-[-0.04em]">{item.series.name}</p>
-                <p className="mt-2 text-sm text-muted">
-                  {primarySpec(item.series).label}: {primarySpec(item.series).value}
-                </p>
-                <Link to="/manufacturers/$slug" params={{ slug: item.slug }} className="mt-2 inline-flex text-sm font-semibold text-ink">
-                  Открыть производителя
-                </Link>
-              </li>
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {makerHits.slice(0, 8).map((hit) => (
+              <ManufacturerCard key={hit.item.slug} item={hit.item} hasSeries />
             ))}
           </ul>
         )}
-        {hits.length > 8 ? <p className="mt-2 text-xs text-muted">Показаны 8 из {hits.length}.</p> : null}
+        {makerHits.length > 8 ? <p className="mt-2 text-xs text-muted">Показаны 8 из {makerHits.length} производителей.</p> : null}
         {missingKit.length ? (
           <p className="mt-3 text-sm text-muted">
             {missingKit.join(", ")}: отдельных серий в опубликованном справочнике нет. Марка не подставляется.
