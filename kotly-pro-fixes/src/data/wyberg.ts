@@ -14,9 +14,9 @@ export const wybergDocuments = [{ title: "РЗКО / WYBERG / NORDMATIC" }];
 const gasDiesel: FuelId[] = ["gas", "diesel"];
 const gas: FuelId[] = ["gas"];
 
-function power(prefix: string, values: number[]): Series["sizes"] {
+function power(prefix: string, values: number[], idPrefix?: string): Series["sizes"] {
   return values.map((kw) => ({
-    id: `wyberg-${prefix}-${kw}`,
+    id: `wyberg-${idPrefix ?? prefix}-${kw}`,
     name: `${prefix.toUpperCase()} ${kw}`,
     powerKw: kw,
     steamKgH: null,
@@ -38,6 +38,7 @@ function boiler(
   aliases: string[],
   extraNote: string,
   sizePrefix: string,
+  sizeIdPrefix?: string,
 ): Series {
   return {
     id,
@@ -58,7 +59,7 @@ function boiler(
     fuels,
     feature,
     extra: `${checked} Источник: ${url}. ${extraNote}`,
-    sizes: power(sizePrefix, values),
+    sizes: power(sizePrefix, values, sizeIdPrefix),
     sizesNote: null,
     aliases,
   };
@@ -182,6 +183,7 @@ export const wybergSeries: Series[] = [
     ["box vs", "бокс vs"],
     "Категория «Котлы наружного размещения WYBERG BOX» (бытовые). Помимо 14 промышленных типоразмеров 10–150 кВт таблица содержит исполнения на базе настенных котлов-доноров BAXI (VS 1.24, VS 1.31 — рабочая мощность 24–31 кВт, турбированные, Luna-3 Comfort / Eco Nova).",
     "VS",
+    "box-vs",
   ),
   boiler(
     "wyberg-box-ws",
@@ -198,6 +200,7 @@ export const wybergSeries: Series[] = [
     ["box ws", "бокс ws"],
     "Сдвоенные бытовые наружные котлы 20–300 кВт. Таблица также содержит исполнения на базе доноров BAXI: WS 1.48 (Eco Nova 1.24 F, Luna-3 Comfort 1.240 Fi, 48–50 кВт) и WS 1.62 (Eco Nova 1.31 F, Luna-3 Comfort 1.310 Fi, 62 кВт).",
     "WS",
+    "box-ws",
   ),
   boiler(
     "nordmatic-vt-k",

@@ -1,3 +1,52 @@
+# Интеграция каталога в основной проект — 28.11.2026
+
+Все 58 карточек из `kotly-pro-fixes/src/data/` подключены в основной каталог
+`kotly-pro` (файлы положены поверх распакованного `kotly-pro.zip`):
+
+1. **Подключение карточек.**
+   - `src/data/manufacturers.ts` — +15 новых записей реестра (bisan,
+     energostandart, farta, hermes, laggartt, nord, premiumgaz, schuster,
+     termata, thermojet, tiatron, turboterm, vecoster, wyberg, ziosab),
+     итого 324 карточки. Убрана запись-дубль `eco-par`: марка ECO-PAR
+     принадлежит тому же заводу КЗКЭО «Когенерация» и полностью покрыта
+     карточкой `vecoster` («VECOSTER / ECO-PAR»).
+   - `src/data/series-index.ts` — +23 записи `publishedCatalogs`
+     (bisan, energostandart, farta, hermes, i-var-industry-s-r-l, laggartt,
+     lamborghini-calor, mimsan, nord, premiumgaz, riexpo, rim-group,
+     schuster, termata, thermojet, tiatron, turboterm, uralzavod-kotel,
+     vecoster, vkk-standardkessel-k-then, wyberg, ziosab, zzbo).
+   - `src/data/fill-rest.ts` — удалены 8 заглушек `one(...)`, заменённые
+     полноценными карточками (i-var-industry-s-r-l, lamborghini-calor,
+     mimsan, riexpo, rim-group, uralzavod-kotel, vkk-standardkessel-k-then,
+     zzbo) и заглушка `eco-par` (покрыта vecoster).
+   - `src/components/catalog-page.tsx` — +26 импортов и +23 строки
+     `pack(...)` в `getCatalogData`; исправлены перепутанные подключения:
+     страница schneider показывала данные JUMAG, страница wiesberg —
+     данные Unical, страница lavart — глобальный демо-список.
+     Для брендов без экспорта документов (hermes, laggartt, tiatron,
+     vecoster, rim-group, uralzavod-kotel) документы переданы литералами.
+
+2. **Восстановление оборванного teplofor.ts.**
+   Файл в zip был оборван на 1057-й строке (35 серий из 39, массив
+   типоразмеров не закрыт). Хвост достроен по живому сайту teplofor.pro:
+   39 серий, 347 типоразмеров; возвращён утерянный при обрыве экспорт
+   `teploforDocuments` (5 ссылок на разделы каталога завода).
+
+3. **Дубли id типоразмеров.**
+   - `wyberg.ts`: серии WYBERG BOX (VS 70–150, WS 20–300) получали те же
+     id, что промышленные PROM-серии; id бокс-серий выделены префиксом
+     `wyberg-box-*`.
+   - `zota.ts`: в серии Zuma модель 18D дублировала id модели 18S
+     (два разных котла одной мощности); id исправлен на `zota-zuma-18d`.
+   - Кросс-брендовые совпадения id (dkm/gskb «КВ-10», pkaem/bzk-во
+     «КВТС-2,5-2,6», «ПТВМ-50», «ДКВр» и др.) оставлены осознанно: это
+     разные заводы с одинаковыми названиями моделей, id типоразмеров
+     используются только внутри своей серии.
+
+Итог: 324 карточки, 1151 серия, 4351 типоразмер. `catalog-check: ok`.
+
+---
+
 # Исправления R22 — аудит от 28.11.2026
 
 Файлы в этой папке заменяют одноимённые файлы внутри `kotly-pro.zip`.
