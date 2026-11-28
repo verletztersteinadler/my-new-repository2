@@ -49,3 +49,13 @@
 
 - Импорт-тест (`node --experimental-strip-types`, копия с заменой `@/data/catalog`): 17 серий, id уникальны, легаси-id ici-gx/ici-gxs/ici-gxc на месте — ok.
 - `node --experimental-strip-types scripts/catalog-check.mjs` — «catalog-check: ok».
+
+## Контроль серий (лист «Контроль серий»)
+
+Контрольный список: REX, SIXEN, EVOSTEAM, ECOVAPOR и остальные заводские серии.
+
+- SIXEN — covered (SIXEN N, паровой, промышленный раздел).
+- EVOSTEAM — covered (паровой).
+- ECOVAPOR — covered (паровой).
+- REX — на действующем сайте ICI отнесён к разделу Commercial Solutions (неконденсационные котлы), вне линейки Industrial Boilers; в промышленную карточку P1 не включён. Позиция зафиксирована на случай отдельного решения по коммерческому сегменту.
+- Остальные серии промышленного раздела (GX/GX S/GX C, TNX/TNOX, ASX EN/ASGX EN, OPX, TReVAPOR, BNX, FX N, FLASH, ISG, WHB/WHS/WHC/WHO) — covered, см. список серий выше.
