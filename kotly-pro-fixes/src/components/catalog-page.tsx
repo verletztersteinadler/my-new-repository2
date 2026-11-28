@@ -262,6 +262,13 @@ import { vecosterCategories, vecosterSeries } from "@/data/vecoster";
 import { vkkCategories, vkkSeries, vkkDocuments } from "@/data/vkk";
 import { wybergCategories, wybergSeries, wybergDocuments } from "@/data/wyberg";
 import { ziosabCategories, ziosabSeries, ziosabDocuments } from "@/data/ziosab";
+import { termikCategories, termikSeries, termikDocuments } from "@/data/termik";
+import { yahtecCategories, yahtecSeries, yahtecDocuments } from "@/data/yahtec";
+import { enggazpromCategories, enggazpromSeries, enggazpromDocuments } from "@/data/enggazprom";
+import { cambridgeCategories, cambridgeSeries, cambridgeDocuments } from "@/data/cambridge-air-solutions";
+import { absolutaireCategories, absolutaireSeries, absolutaireDocuments } from "@/data/absolutaire";
+import { lbwhiteCategories, lbwhiteSeries, lbwhiteDocuments } from "@/data/lb-white";
+import { engineeredAirCategories, engineeredAirSeries, engineeredAirDocuments } from "@/data/engineered-air";
 import { zzboCategories, zzboSeries, zzboDocuments } from "@/data/zzbo";
 
 const routeApi = getRouteApi("/manufacturers/$slug");
@@ -631,6 +638,13 @@ function profileFor(slug: string) {
   if (slug === "vkk-standardkessel-k-then") return pack("VKK STANDARDKESSEL Köthen", vkkCategories, vkkSeries, vkkDocuments);
   if (slug === "wyberg") return pack("WYBERG / РЗКО", wybergCategories, wybergSeries, wybergDocuments);
   if (slug === "ziosab") return pack("ЗИОСАБ", ziosabCategories, ziosabSeries, ziosabDocuments);
+  if (slug === "termik") return pack("Термик", termikCategories, termikSeries, termikDocuments);
+  if (slug === "yahtec") return pack("Yahtec", yahtecCategories, yahtecSeries, yahtecDocuments);
+  if (slug === "enggazprom") return pack("ИнжГазПром", enggazpromCategories, enggazpromSeries, enggazpromDocuments);
+  if (slug === "cambridge-air-solutions") return pack("Cambridge Air Solutions", cambridgeCategories, cambridgeSeries, cambridgeDocuments);
+  if (slug === "absolutaire") return pack("AbsolutAire", absolutaireCategories, absolutaireSeries, absolutaireDocuments);
+  if (slug === "lb-white") return pack("L.B. White", lbwhiteCategories, lbwhiteSeries, lbwhiteDocuments);
+  if (slug === "engineered-air") return pack("Engineered Air", engineeredAirCategories, engineeredAirSeries, engineeredAirDocuments);
   if (slug === "zzbo") return pack("ЗЗБО / TEPLO", zzboCategories, zzboSeries, zzboDocuments);
   const filled = fillBySlug(slug);
   if (filled) return pack(filled.title, filled.categories, filled.series, filled.documents);

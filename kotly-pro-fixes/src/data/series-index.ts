@@ -228,6 +228,13 @@ import { wiesbergCategories, wiesbergDocuments, wiesbergSeries } from "@/data/wi
 import { wybergCategories, wybergDocuments, wybergSeries } from "@/data/wyberg";
 import { ziosabCategories, ziosabSeries } from "@/data/ziosab";
 import { zzboCategories, zzboDocuments, zzboSeries } from "@/data/zzbo";
+import { termikCategories, termikSeries } from "@/data/termik";
+import { yahtecCategories, yahtecSeries } from "@/data/yahtec";
+import { enggazpromCategories, enggazpromSeries } from "@/data/enggazprom";
+import { cambridgeCategories, cambridgeSeries } from "@/data/cambridge-air-solutions";
+import { absolutaireCategories, absolutaireSeries } from "@/data/absolutaire";
+import { lbwhiteCategories, lbwhiteSeries } from "@/data/lb-white";
+import { engineeredAirCategories, engineeredAirSeries } from "@/data/engineered-air";
 
 export function findSeries(id: string | undefined) {
   return (
@@ -661,6 +668,13 @@ export const publishedCatalogs: { slug: string; title: string; series: Series[] 
   { slug: "turboterm", title: "ТУРБОТЕРМ", series: turbotermSeries },
   { slug: "uralzavod-kotel", title: "ООО «Уральский завод»", series: uralzavodSeries },
   { slug: "vecoster", title: "VECOSTER / ECO-PAR", series: vecosterSeries },
+  { slug: "termik", title: "Термик", series: termikSeries },
+  { slug: "yahtec", title: "Yahtec", series: yahtecSeries },
+  { slug: "enggazprom", title: "ИнжГазПром", series: enggazpromSeries },
+  { slug: "cambridge-air-solutions", title: "Cambridge Air Solutions", series: cambridgeSeries },
+  { slug: "absolutaire", title: "AbsolutAire", series: absolutaireSeries },
+  { slug: "lb-white", title: "L.B. White", series: lbwhiteSeries },
+  { slug: "engineered-air", title: "Engineered Air", series: engineeredAirSeries },
   { slug: "vkk-standardkessel-k-then", title: "VKK STANDARDKESSEL Köthen", series: vkkSeries },
   { slug: "wyberg", title: "WYBERG / РЗКО", series: wybergSeries },
   { slug: "ziosab", title: "ЗИОСАБ", series: ziosabSeries },
