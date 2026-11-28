@@ -937,3 +937,419 @@ export function CatalogPage() {
       </main>
 
       <footer className="bg-[#111] text-white/75">
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 text-sm md:grid-cols-3">
+          <div>
+            <p className="font-display font-extrabold text-white">Котлы<span className="text-[#f0c4cc]">.pro</span></p>
+            <p className="mt-2">Независимый каталог. Не является офертой и сайтом завода.</p>
+          </div>
+          <div className="grid gap-2">
+            <Link to="/politika" className="hover:text-white">Политика обработки данных</Link>
+            <Link to="/soglasie" className="hover:text-white">Согласие на обращение</Link>
+          </div>
+          <p>Логотип производителя в интерфейсе не используется.</p>
+        </div>
+      </footer>
+
+      <SeriesDialog
+        series={activeSeries}
+        maker={maker}
+        onClose={closeSeries}
+        onConsult={(sizeId) => {
+          if (!activeSeries) return;
+          setLead({ intent: "kp", seriesId: activeSeries.id, sizeId, categoryId: activeSeries.categoryId });
+        }}
+        onAnalogs={() => activeSeries && setAnalogsFor(activeSeries)}
+      />
+
+      <AnalogsDialog series={analogsFor} sourceSlug={slug} onClose={() => setAnalogsFor(null)} />
+
+      <Dialog.Root open={lead != null} onOpenChange={(open) => !open && setLead(null)}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-40 bg-black/70" />
+          <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 max-h-dvh overflow-y-auto rounded-t-3xl bg-surface p-4 shadow-lg md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <Dialog.Title className="font-display text-3xl leading-none font-extrabold tracking-[-0.04em]">Консультация по серии</Dialog.Title>
+              <Dialog.Close className="inline-flex size-11 items-center justify-center rounded-lg bg-chip" aria-label="Закрыть">
+                <X className="size-5" />
+              </Dialog.Close>
+            </div>
+            <Dialog.Description className="sr-only">Форма инженерной консультации. Не заказ и не покупка.</Dialog.Description>
+            {lead ? <LeadForm key={`${lead.seriesId ?? ""}-${lead.sizeId ?? ""}`} context={lead} submitLabel="Получить консультацию" /> : null}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </div>
+  );
+}
+
+function flattenModels(list: Series[]) {
+  return list.flatMap((series) => {
+    if (series.sizes.length === 0) {
+      return [{ key: series.id, series, sizeId: undefined as string | undefined, title: series.name, main: primarySpec(series).value, sub: series.kind }];
+    }
+    return series.sizes.map((size) => ({
+      key: size.id,
+      series,
+      sizeId: size.id,
+      title: size.name,
+      main: size.powerKw != null ? formatKw(size.powerKw) : size.steamKgH != null ? formatSteam(size.steamKgH) : "Не указано",
+      sub: size.powerKw != null && size.powerKw >= 1000 ? `${size.powerKw.toLocaleString("ru-RU")} кВт` : series.kind,
+    }));
+  });
+}
+
+function MissingSeries({ brand, openInitially }: { brand: string; openInitially: boolean }) {
+  const tasks: { id: CategoryId; title: string; unit: "kw" | "tph" }[] = [
+    { id: "water", title: "Водогрейный", unit: "kw" },
+    { id: "steam", title: "Паровой", unit: "tph" },
+    { id: "oil", title: "Термомасло", unit: "kw" },
+    { id: "air", title: "Воздух", unit: "kw" },
+    { id: "auto", title: "Горелка", unit: "kw" },
+  ];
+  const [open, setOpen] = useState(openInitially);
+  const [task, setTask] = useState<CategoryId>("water");
+  const [fuel, setFuel] = useState<FuelId | "">("");
+  const [amount, setAmount] = useState("");
+  const [hits, setHits] = useState<ReturnType<typeof analogsForRequest> | null>(null);
+  const unit = tasks.find((item) => item.id === task)?.unit ?? "kw";
+
+  function run(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const value = Number(amount.replace(",", "."));
+    const number = Number.isFinite(value) && value > 0 ? value : null;
+    setHits(
+      analogsForRequest({
+        categoryId: task,
+        fuel: fuel || null,
+        powerKw: unit === "kw" ? number : null,
+        steamKgH: unit === "tph" && number != null ? Math.round(number * 1000) : null,
+      }),
+    );
+  }
+
+  return (
+    <div id="analogs" className="mt-6 rounded-3xl border-2 border-accent bg-surface p-6">
+      <p className="font-display text-2xl leading-none font-extrabold tracking-[-0.04em]">Информация на сайте производителя не предоставлена</p>
+      <p className="mt-3 max-w-2xl text-sm text-muted">
+        У {brand} в открытых страницах нет ряда, который можно перенести. Модель справочник не назначает.
+      </p>
+      <button
+        type="button"
+        className="mt-5 inline-flex h-14 items-center rounded-sm bg-accent px-6 text-base font-extrabold text-on-accent ring-2 ring-ink"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+      >
+        Подобрать аналоги
+      </button>
+      {open ? (
+        <form className="mt-5 grid gap-3 border-t border-line pt-5" onSubmit={run}>
+          <p className="text-sm text-muted">Что нужно было от {brand}. По этим цифрам ниже — открытые серии других заводов. Это не замена и не расчёт.</p>
+          <div className="grid gap-2 sm:grid-cols-3">
+            <label className="grid gap-1 text-sm">
+              Задача
+              <select className="h-12 rounded-sm border border-line bg-surface px-3" value={task} onChange={(event) => setTask(event.target.value as CategoryId)}>
+                {tasks.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-1 text-sm">
+              Топливо
+              <select className="h-12 rounded-sm border border-line bg-surface px-3" value={fuel} onChange={(event) => setFuel(event.target.value as FuelId | "")}>
+                <option value="">Не указано</option>
+                {fuels.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-1 text-sm">
+              {unit === "tph" ? "Пар, т/ч" : "Мощность, кВт"}
+              <input
+                inputMode="decimal"
+                value={amount}
+                onChange={(event) => setAmount(event.target.value)}
+                placeholder={unit === "tph" ? "например 10" : "например 3000"}
+                className="h-12 rounded-sm border border-line bg-surface px-3"
+              />
+            </label>
+          </div>
+          <button type="submit" className="inline-flex h-12 w-fit items-center rounded-sm bg-ink px-5 text-sm font-semibold text-bg">
+            Показать открытые серии
+          </button>
+          {hits ? (
+            hits.length === 0 ? (
+              <p className="text-sm">В открытом справочнике по этим цифрам серий нет.</p>
+            ) : (
+              <ul className="grid gap-2">
+                {hits.map((item) => (
+                  <li key={`${item.slug}-${item.series.id}`} className="rounded-2xl border border-line px-3 py-3">
+                    <p className="text-xs font-semibold uppercase">{item.maker}</p>
+                    <p className="mt-1 font-display text-xl leading-none font-extrabold tracking-[-0.04em]">{item.series.name}</p>
+                    <p className="mt-2 text-sm text-muted">
+                      {primarySpec(item.series).label}: {primarySpec(item.series).value}
+                    </p>
+                    <p className="mt-1 text-xs text-muted">{item.note}</p>
+                    <Link to="/manufacturers/$slug" params={{ slug: item.slug }} search={{ series: item.series.id }} className="mt-2 inline-flex text-sm font-semibold">
+                      Открыть серию
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )
+          ) : null}
+        </form>
+      ) : null}
+    </div>
+  );
+}
+
+function SeriesCard({
+  series,
+  eager,
+  onOpen,
+  onConsult,
+  onAnalogs,
+}: {
+  series: Series;
+  eager: boolean;
+  onOpen: () => void;
+  onConsult: () => void;
+  onAnalogs: () => void;
+}) {
+  const spec = primarySpec(series);
+  const second = series.categoryId === "steam" ? null : { label: "Температура", value: formatTemp(series.tempMaxC) };
+  return (
+    <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-surface">
+      <button type="button" onClick={onOpen} className="block w-full text-left">
+        <img
+          src={series.image}
+          alt={`Иллюстрация серии ${series.name}. Внешний вид и комплектация уточняются.`}
+          width={1600}
+          height={1200}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+          className="aspect-video w-full object-cover"
+        />
+        <div className="p-4 pb-3">
+          <p className="text-xs font-semibold text-ink uppercase">
+            Серия{series.sizes.length ? ` · ${series.sizes.length}` : ""}
+          </p>
+          <h2 className="mt-1 font-display text-3xl leading-[0.92] font-extrabold tracking-[-0.04em] text-balance">{series.name}</h2>
+          <p className="mt-1 text-sm leading-snug text-muted">{series.kind}</p>
+          <dl className="mt-3 grid gap-2 text-sm">
+            <div className="flex items-start justify-between gap-3">
+              <dt className="shrink-0 text-muted">{spec.label}</dt>
+              <dd className="text-right font-medium tabular-nums">{spec.value}</dd>
+            </div>
+            {second ? (
+              <div className="flex items-start justify-between gap-3">
+                <dt className="shrink-0 text-muted">{second.label}</dt>
+                <dd className="text-right font-medium">{second.value}</dd>
+              </div>
+            ) : (
+              <div className="flex items-start justify-between gap-3">
+                <dt className="shrink-0 text-muted">Исполнение</dt>
+                <dd className="max-w-[65%] text-right font-medium">{series.feature}</dd>
+              </div>
+            )}
+            <div className="flex items-start justify-between gap-3">
+              <dt className="shrink-0 text-muted">Топливо</dt>
+              <dd className="max-w-[65%] text-right font-medium">{series.fuels.length ? series.fuels.map(fuelTitle).join(", ") : "Уточняется"}</dd>
+            </div>
+          </dl>
+          <p className="mt-3 text-xs leading-relaxed text-muted">Иллюстрация серии. Внешний вид на странице завода может отличаться. Стоимость здесь не указывается.</p>
+        </div>
+      </button>
+      <div className="mt-auto flex shrink-0 flex-col gap-2 border-t border-line p-4">
+        <button type="button" className="inline-flex h-11 items-center justify-center rounded-sm bg-accent px-3 text-sm leading-none font-semibold text-on-accent hover:bg-accent-hover" onClick={onConsult}>
+          Консультация по серии
+        </button>
+        <button type="button" className="inline-flex h-11 items-center justify-center rounded-sm bg-ink px-3 text-sm leading-none font-semibold text-bg hover:bg-ink/80" onClick={onAnalogs}>
+          Подобрать аналоги
+        </button>
+        <button type="button" className="inline-flex h-11 items-center justify-center rounded-sm bg-chip px-3 text-sm leading-none font-semibold" onClick={onOpen}>
+          Характеристики
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function hideManufacturerSites(text: string) {
+  const next = text
+    .replace(/https?:\/\/\S+/gi, "")
+    .replace(/\b(?:[a-z0-9-]+\.)+[a-z]{2,}\b/gi, "")
+    .replace(/\s+на\s*,/gi, "")
+    .replace(/,\s*на него ведёт\s*\./gi, ".")
+    .replace(/Источник:\s*\./gi, "")
+    .replace(/\(\s*\)/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([.,;:])/g, "$1")
+    .replace(/([.!?])\s*\./g, "$1")
+    .trim();
+  return next.replace(/[.\s]+$/, "");
+}
+
+function SeriesDialog({
+  series,
+  maker,
+  onClose,
+  onConsult,
+  onAnalogs,
+}: {
+  series: Series | undefined;
+  maker: ReturnType<typeof manufacturerBySlug>;
+  onClose: () => void;
+  onConsult: (sizeId?: string) => void;
+  onAnalogs: () => void;
+}) {
+  return (
+    <Dialog.Root open={Boolean(series)} onOpenChange={(open) => !open && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-40 bg-ink/50" />
+        <Dialog.Content className="fixed inset-x-0 bottom-0 z-50 max-h-dvh overflow-y-auto rounded-t-sm bg-surface p-4 md:inset-x-auto md:top-8 md:bottom-8 md:left-1/2 md:w-full md:max-w-3xl md:-translate-x-1/2 md:rounded-sm">
+          {series ? (
+            <>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <Dialog.Title className="text-2xl font-semibold">{series.name}</Dialog.Title>
+                  <Dialog.Description className="mt-1 text-sm text-muted">{series.kind}. Серия, не один типоразмер.</Dialog.Description>
+                </div>
+                <Dialog.Close className="inline-flex size-11 items-center justify-center rounded-lg bg-chip" aria-label="Закрыть">
+                  <X className="size-5" />
+                </Dialog.Close>
+              </div>
+              <img src={series.image} alt="" width={1600} height={1200} className="mt-4 aspect-video w-full rounded-xl object-cover" />
+              <p className="mt-2 text-xs text-muted">Иллюстрация серии; внешний вид и комплектация уточняются. Визуализация не является обмером.</p>
+              <p className="mt-4 text-pretty">{series.summary}</p>
+              {maker ? <FactoryCard maker={maker} /> : null}
+              <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+                <Spec label="Мощность" value={formatPowerRange(series.powerMinKw, series.powerMaxKw)} />
+                <Spec label="Пар" value={formatSteamRange(series.steamMinKgH, series.steamMaxKgH)} />
+                <Spec label="Температура" value={formatTemp(series.tempMaxC)} />
+                <Spec label="Давление" value={series.pressureNote ?? "Уточняется"} />
+                <Spec label="Топливо" value={series.fuels.length ? series.fuels.map(fuelTitle).join(", ") : "Уточняется"} />
+                <Spec label="Исполнение" value={series.feature} />
+              </dl>
+              {series.extra ? (
+                <p className="mt-3 text-sm text-muted">
+                  {[hideManufacturerSites(series.extra), "Взято с оф. сайта производителя."].filter(Boolean).join(" ")}
+                </p>
+              ) : null}
+              <h3 className="mt-6 text-lg font-semibold">Типоразмеры</h3>
+              {series.sizes.length === 0 ? (
+                <p className="mt-2 text-sm text-muted">{series.sizesNote ?? "Перечень типоразмеров в открытом источнике не разложен. Справочник модель не назначает."}</p>
+              ) : (
+                <div className="mt-2 overflow-x-auto rounded-xl border border-line">
+                  <table className="w-full min-w-[36rem] text-left text-sm">
+                    <thead className="bg-chip text-muted">
+                      <tr>
+                        <th className="px-3 py-2 font-medium">Обозначение</th>
+                        <th className="px-3 py-2 font-medium">Параметр</th>
+                        <th className="px-3 py-2 font-medium" />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {series.sizes.map((size) => (
+                        <tr key={size.id} className="border-t border-line">
+                          <td className="px-3 py-2 font-medium">{size.name}</td>
+                          <td className="px-3 py-2 tabular-nums">
+                            {size.powerKw != null ? formatKw(size.powerKw) : size.steamKgH != null ? formatSteam(size.steamKgH) : "Уточняется"}
+                          </td>
+                          <td className="px-3 py-2 text-right">
+                            <button type="button" className="h-11 px-2 text-sm font-semibold text-ink" onClick={() => onConsult(size.id)}>
+                              Консультация
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {series.sizesNote && series.sizes.length > 0 ? <p className="mt-2 text-sm text-muted">{series.sizesNote}</p> : null}
+              <button type="button" className="mt-4 inline-flex h-12 items-center rounded-lg bg-accent px-5 text-sm font-semibold text-on-accent" onClick={onAnalogs}>
+                Подобрать аналоги
+              </button>
+              <button type="button" className="mt-2 inline-flex h-12 items-center rounded-lg bg-ink px-5 text-sm font-semibold text-bg" onClick={() => onConsult(undefined)}>
+                Инженерное решение по серии
+              </button>
+            </>
+          ) : null}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+function AnalogsDialog({ series, sourceSlug, onClose }: { series: Series | null; sourceSlug: string; onClose: () => void }) {
+  const hits = series ? similarSeries(series, sourceSlug) : [];
+  return (
+    <Dialog.Root open={series != null} onOpenChange={(open) => !open && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-[60] bg-black/70" />
+        <Dialog.Content className="fixed inset-x-0 bottom-0 z-[70] max-h-dvh overflow-y-auto rounded-t-3xl bg-surface p-4 shadow-lg md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-full md:max-w-xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl">
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <div>
+              <Dialog.Title className="font-display text-3xl leading-none font-extrabold tracking-[-0.04em]">Похожие серии</Dialog.Title>
+              <Dialog.Description className="mt-2 text-sm text-muted">
+                Только открытые карточки с той же задачей. Совпадение диапазона и топлива указано, если оно есть в справочнике. Это не замена и не расчёт.
+              </Dialog.Description>
+            </div>
+            <Dialog.Close className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg bg-chip" aria-label="Закрыть">
+              <X className="size-5" />
+            </Dialog.Close>
+          </div>
+          {hits.length === 0 ? (
+            <p className="text-sm">В открытом справочнике схожих серий нет.</p>
+          ) : (
+            <ul className="grid gap-2">
+              {hits.map((item) => (
+                <li key={`${item.slug}-${item.series.id}`} className="rounded-2xl border border-line px-3 py-3">
+                  <p className="text-xs font-semibold text-ink uppercase">{item.maker}</p>
+                  <p className="mt-1 font-display text-xl leading-none font-extrabold tracking-[-0.04em]">{item.series.name}</p>
+                  <p className="mt-2 text-sm text-muted">
+                    {primarySpec(item.series).label}: {primarySpec(item.series).value}
+                  </p>
+                  <p className="mt-1 text-xs text-muted">{item.note}</p>
+                  <Link
+                    to="/manufacturers/$slug"
+                    params={{ slug: item.slug }}
+                    search={{ series: item.series.id }}
+                    className="mt-2 inline-flex text-sm font-semibold text-ink"
+                    onClick={onClose}
+                  >
+                    Открыть серию
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+function Spec({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg bg-chip px-3 py-2">
+      <dt className="text-muted">{label}</dt>
+      <dd className="font-medium">{value}</dd>
+    </div>
+  );
+}
+
+function isFuel(value: string | undefined): value is FuelId {
+  return fuels.some((item) => item.id === value);
+}
+function isPower(value: string | undefined): value is PowerBand {
+  return powerBands.some((item) => item.id === value);
+}
+function isSteam(value: string | undefined): value is SteamBand {
+  return steamBands.some((item) => item.id === value);
+}
